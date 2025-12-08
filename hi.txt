@@ -1,0 +1,155 @@
+student_council_project/
+├── .env ✨
+├── .gitignore ✨
+├── manage.py ✅
+├── requirements.txt ✨
+├── student_council/
+│   ├── __init__.py ⚡  (edited for Celery)
+│   ├── settings.py ⚡
+│   ├── urls.py ⚡
+│   ├── celery.py ✨
+│   ├── wsgi.py ✅
+│   └── asgi.py ✅
+├── accounts/
+│   ├── __init__.py ✅
+│   ├── apps.py ✅
+│   ├── models.py ⚡
+│   ├── views.py ⚡
+│   ├── urls.py ✨
+│   ├── serializers.py ✨
+│   ├── permissions.py ✨
+│   ├── signals.py ✨
+│   ├── admin.py ⚡
+│   └── tests.py ⚡
+├── duty_roster/
+│   ├── __init__.py ✅
+│   ├── apps.py ✅
+│   ├── models.py ⚡
+│   ├── views.py ⚡
+│   ├── urls.py ✨
+│   ├── serializers.py ✨
+│   ├── admin.py ⚡
+│   └── tests.py ⚡
+├── meetings/
+│   ├── __init__.py ✅
+│   ├── apps.py ✅
+│   ├── models.py ⚡
+│   ├── views.py ⚡
+│   ├── urls.py ✨
+│   ├── serializers.py ✨
+│   ├── admin.py ⚡
+│   └── tests.py ⚡
+├── announcements/
+│   ├── __init__.py ✅
+│   ├── apps.py ✅
+│   ├── models.py ⚡
+│   ├── views.py ⚡
+│   ├── urls.py ✨
+│   ├── serializers.py ✨
+│   ├── admin.py ⚡
+│   └── tests.py ⚡
+├── discipline/
+│   ├── __init__.py ✅
+│   ├── apps.py ✅
+│   ├── models.py ⚡
+│   ├── views.py ⚡
+│   ├── urls.py ✨
+│   ├── serializers.py ✨
+│   ├── admin.py ⚡
+│   └── tests.py ⚡
+├── projects/
+│   ├── __init__.py ✅
+│   ├── apps.py ✅
+│   ├── models.py ⚡
+│   ├── views.py ⚡
+│   ├── urls.py ✨
+│   ├── serializers.py ✨
+│   ├── admin.py ⚡
+│   └── tests.py ⚡
+├── notifications/
+│   ├── __init__.py ✅
+│   ├── apps.py ✅
+│   ├── models.py ⚡
+│   ├── views.py ⚡
+│   ├── urls.py ✨
+│   ├── serializers.py ✨
+│   ├── tasks.py ✨
+│   ├── admin.py ⚡
+│   └── tests.py ⚡
+├── media/ ✨
+│   ├── avatars/
+│   ├── announcements/
+│   ├── meetings/
+│   ├── discipline/
+│   └── projects/
+└── staticfiles/ ✨
+|
+├── frontend/                           # Frontend HTML pages
+│   ├── templates/                      # Django templates
+│   │   ├── base.html                   # Base template (CSS + JS inline)
+│   │   ├── login.html                  # Login page
+│   │   ├── dashboard.html              # Dashboard
+│   │   │
+│   │   ├── duties/
+│   │   │   ├── duties.html             # Duties list
+│   │   │   ├── my_duties.html          # My duties
+│   │   │   ├── duty_roster.html        # Roster table
+│   │   │   └── duty_calendar.html      # Calendar view
+│   │   │
+│   │   ├── meetings/
+│   │   │   ├── meetings.html           # Meetings list
+│   │   │   ├── meeting_detail.html     # Meeting details
+│   │   │   ├── create_meeting.html     # Create meeting
+│   │   │   └── minutes.html            # MoM view
+│   │   │
+│   │   ├── announcements/
+│   │   │   ├── announcements.html      # Announcements list
+│   │   │   ├── announcement_detail.html
+│   │   │   ├── create_announcement.html
+│   │   │   └── my_events.html
+│   │   │
+│   │   ├── discipline/
+│   │   │   ├── discipline.html         # Overview
+│   │   │   ├── record_offence.html     # Record offence
+│   │   │   ├── defaulters.html         # Defaulters list
+│   │   │   └── review_offences.html    # Review page
+│   │   │
+│   │   ├── projects/
+│   │   │   ├── projects.html           # Projects list
+│   │   │   ├── project_detail.html     # Project details
+│   │   │   ├── create_project.html     # Create project
+│   │   │   └── approvals.html          # Approvals
+│   │   │
+│   │   ├── users/
+│   │   │   ├── users.html              # Users list
+│   │   │   ├── profile.html            # User profile
+│   │   │   └── roles.html              # Roles management
+│   │   │
+│   │   ├── notifications/
+│   │   │   ├── notifications.html      # All notifications
+│   │   │   └── settings.html           # Settings
+│   │   │
+│   │   └── errors/
+│   │       ├── 404.html                # Not found
+│   │       └── unauthorized.html       # Unauthorized
+│   │
+│   └── static/                         # Static files (if needed)
+│       ├── images/
+│       │   ├── logo.png
+│       │   ├── default-avatar.png
+│       │   └── hero-bg.jpg
+│       └── icons/
+│           └── icons.svg
+│
+├── media/                              # User uploaded files
+│   ├── avatars/
+│   ├── announcements/
+│   ├── meetings/
+│   │   └── mom/
+│   ├── discipline/
+│   │   └── offences/
+│   └── projects/
+│       ├── attachments/
+│       └── receipts/
+│
+└── staticfiles/                        # Collected static files (production)
