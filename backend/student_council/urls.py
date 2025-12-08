@@ -25,20 +25,24 @@ urlpatterns = [
     # HTML PAGES (All CSS/JS inline in templates)
     # ============================================
     
-    # Authentication
+    # Authentication & Home
     path('', TemplateView.as_view(template_name='login.html'), name='login'),
     
     # Dashboard
     path('dashboard/', TemplateView.as_view(template_name='dashboard.html'), name='dashboard'),
     
+    # Announcements
+    path('announcements/', TemplateView.as_view(template_name='announcements.html'), name='announcements'),
+    path('announcements/new/', TemplateView.as_view(template_name='new_announcement.html'), name='new_announcement'),
+    path('announcements/edit/<int:pk>/', TemplateView.as_view(template_name='edit_announcement.html'), name='edit_announcement'),
+    path('announcements/detail/<int:pk>/', TemplateView.as_view(template_name='announcement_detail.html'), name='announcement_detail'),
+    
     # Duties
-    path('duties/', TemplateView.as_view(template_name='duties.html'), name='duties'),
+    path('duties/', TemplateView.as_view(template_name='duty-roster.html'), name='duty-roster'),
+    path('duty-roster/', TemplateView.as_view(template_name='duty_roster.html'), name='duty_roster'),
     
     # Meetings
     path('meetings/', TemplateView.as_view(template_name='meetings.html'), name='meetings'),
-    
-    # Announcements
-    path('announcements/', TemplateView.as_view(template_name='announcements.html'), name='announcements'),
     
     # Discipline
     path('discipline/', TemplateView.as_view(template_name='discipline.html'), name='discipline'),

@@ -17,7 +17,7 @@ class MeetingViewSet(viewsets.ModelViewSet):
     ordering = ['date']
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy', 'upload_mom', 'delete_mom']:
+        if self.action in ['create', 'update', 'partial_update', 'destroy', 'mom']:
             permission_classes = [IsAuthenticated, CanScheduleMeetings]
         else:
             permission_classes = [IsAuthenticated]
@@ -36,33 +36,34 @@ class MeetingViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(organized_by=self.request.user)
 
-    @action(detail=True, methods=['post'], url_path='mom')
-    def upload_mom(self, request, pk=None):
-        """Upload Minutes of Meeting"""
+    @action(detail=True, methods=['get', 'post', 'delete'], url_path='mom')
+    def mom(self, request, pk=None):
+        """Manage Minutes of Meeting (GET, POST, DELETE)"""
         meeting = self.get_object()
-        if hasattr(meeting, 'mom'):
-            return Response({'detail': 'MOM already exists.'}, status=status.HTTP_400_BAD_REQUEST)
-        serializer = MinutesOfMeetingSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(meeting=meeting, uploaded_by=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    @action(detail=True, methods=['delete'], url_path='mom')
-    def delete_mom(self, request, pk=None):
-        meeting = self.get_object()
-        if not hasattr(meeting, 'mom'):
-            return Response({'detail': 'No MOM exists.'}, status=status.HTTP_404_NOT_FOUND)
-        meeting.mom.delete()
-        return Response({'detail': 'MOM deleted.'}, status=status.HTTP_204_NO_CONTENT)
-
-    @action(detail=True, methods=['get'], url_path='mom')
-    def get_mom(self, request, pk=None):
-        meeting = self.get_object()
-        if not hasattr(meeting, 'mom'):
-            return Response({'detail': 'No MOM exists.'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = MinutesOfMeetingSerializer(meeting.mom)
-        return Response(serializer.data)
+        
+        if request.method == 'GET':
+            # Get MOM
+            if not hasattr(meeting, 'mom'):
+                return Response({'detail': 'No MOM exists.'}, status=status.HTTP_404_NOT_FOUND)
+            serializer = MinutesOfMeetingSerializer(meeting.mom)
+            return Response(serializer.data)
+        
+        elif request.method == 'POST':
+            # Upload/Create MOM
+            if hasattr(meeting, 'mom'):
+                return Response({'detail': 'MOM already exists.'}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = MinutesOfMeetingSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save(meeting=meeting, uploaded_by=request.user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        elif request.method == 'DELETE':
+            # Delete MOM
+            if not hasattr(meeting, 'mom'):
+                return Response({'detail': 'No MOM exists.'}, status=status.HTTP_404_NOT_FOUND)
+            meeting.mom.delete()
+            return Response({'detail': 'MOM deleted.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class MinutesOfMeetingViewSet(viewsets.ModelViewSet):

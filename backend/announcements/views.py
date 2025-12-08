@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.utils import timezone
 from django.db.models import Q
 from .models import Announcement, EventParticipant, AnnouncementRead
@@ -13,6 +14,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
     queryset = Announcement.objects.prefetch_related('target_roles', 'target_users')
     serializer_class = AnnouncementSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
     filterset_fields = ['announcement_type', 'is_published', 'is_pinned']
     search_fields = ['title', 'content']
     
@@ -37,6 +39,12 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         
         return queryset.filter(is_published=True)
     
+    def retrieve(self, request, *args, **kwargs):
+        """Get single announcement with proper permissions"""
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, context={'request': request})
+        return Response(serializer.data)
+    
     def create(self, request, *args, **kwargs):
         if not request.user.role.can_create_announcements:
             return Response(
@@ -44,11 +52,26 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN
             )
         
-        request.data['created_by'] = request.user.id
-        if request.data.get('is_published', True):
-            request.data['published_at'] = timezone.now()
+        # Handle both JSON and form data
+        data = request.data.copy()
         
-        return super().create(request, *args, **kwargs)
+        # Set created_by to current user
+        data['created_by'] = request.user.id
+        
+        # Set published_at if is_published is True
+        is_published = data.get('is_published', 'true')
+        if isinstance(is_published, str):
+            is_published = is_published.lower() == 'true'
+        
+        if is_published:
+            data['published_at'] = timezone.now()
+        
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def update(self, request, *args, **kwargs):
         announcement = self.get_object()
@@ -102,7 +125,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         announcement.is_pinned = not announcement.is_pinned
         announcement.save()
         
-        return Response(AnnouncementSerializer(announcement).data)
+        return Response(AnnouncementSerializer(announcement, context={'request': request}).data)
 
 
 class EventParticipantViewSet(viewsets.ModelViewSet):
@@ -125,6 +148,10 @@ class EventParticipantViewSet(viewsets.ModelViewSet):
         announcement_id = self.request.query_params.get('announcement')
         if announcement_id:
             queryset = queryset.filter(announcement_id=announcement_id)
+        
+        user_id = self.request.query_params.get('user')
+        if user_id:
+            queryset = queryset.filter(user_id=user_id)
         
         return queryset
     
@@ -179,7 +206,7 @@ class EventParticipantViewSet(viewsets.ModelViewSet):
         participant.is_confirmed = True
         participant.save()
         
-        return Response(EventParticipantSerializer(participant).data)
+        return Response(EventParticipantSerializer(participant, context={'request': request}).data)
     
     @action(detail=True, methods=['post'])
     def mark_attendance(self, request, pk=None):
@@ -195,4 +222,4 @@ class EventParticipantViewSet(viewsets.ModelViewSet):
         participant.status = 'ATTENDED' if attended else 'ABSENT'
         participant.save()
         
-        return Response(EventParticipantSerializer(participant).data)
+        return Response(EventParticipantSerializer(participant, context={'request': request}).data)

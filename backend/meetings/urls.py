@@ -8,5 +8,5 @@ router.register(r'mom', MinutesOfMeetingViewSet, basename='mom')
 router.register(r'attendance', MeetingAttendanceViewSet, basename='attendance')
 
 urlpatterns = [
-    path('', include(router.urls)),  # just include the router here
+    path('', include(router.urls)),  
 ]

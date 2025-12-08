@@ -42,6 +42,42 @@ class AnnouncementSerializer(serializers.ModelSerializer):
                 user=request.user
             ).exists()
         return False
+    
+    def create(self, validated_data):
+        """Handle creation with proper field handling"""
+        # Extract many-to-many fields
+        target_roles = validated_data.pop('target_roles', [])
+        target_users = validated_data.pop('target_users', [])
+        
+        # Create the announcement
+        announcement = Announcement.objects.create(**validated_data)
+        
+        # Set many-to-many relationships
+        if target_roles:
+            announcement.target_roles.set(target_roles)
+        if target_users:
+            announcement.target_users.set(target_users)
+        
+        return announcement
+    
+    def update(self, instance, validated_data):
+        """Handle updates with proper field handling"""
+        # Extract many-to-many fields
+        target_roles = validated_data.pop('target_roles', None)
+        target_users = validated_data.pop('target_users', None)
+        
+        # Update simple fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        
+        # Update many-to-many relationships if provided
+        if target_roles is not None:
+            instance.target_roles.set(target_roles)
+        if target_users is not None:
+            instance.target_users.set(target_users)
+        
+        return instance
 
 
 class EventParticipantSerializer(serializers.ModelSerializer):
