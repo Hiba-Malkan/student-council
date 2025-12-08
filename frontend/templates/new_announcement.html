@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+
+{% block title %}New Announcement - CouncilApp{% endblock %}
+
+{% block nav_announcements %}text-primary bg-primary-light dark:bg-primary/20{% endblock %}
+
+{% block page_title %}New Announcement{% endblock %}
+{% block page_subtitle %}Create and publish a new announcement or event{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-6">
+    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-xl font-bold text-text-main-light dark:text-white">Announcement Details</h2>
+                <p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-1">Fill in the details below to publish a new update.</p>
+            </div>
+            <div class="flex-shrink-0">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 border border-green-200 dark:border-green-800">
+                    <span class="material-icons-round text-sm mr-1">edit</span>
+                    Draft
+                </span>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form id="announcementForm" class="p-6 space-y-6">
+            <!-- Title -->
+            <div>
+                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="title">
+                    Title <span class="text-red-500">*</span>
+                </label>
+                <input 
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400 dark:placeholder-gray-500 py-2.5" 
+                    id="title" 
+                    name="title" 
+                    placeholder="e.g., Upcoming Sports Day Schedule Changes" 
+                    type="text"
+                    required
+                />
+            </div>
+
+            <!-- Announcement Type -->
+            <div>
+                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="announcement_type">
+                    Announcement Type <span class="text-red-500">*</span>
+                </label>
+                <select 
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
+                    id="announcement_type" 
+                    name="announcement_type"
+                    required
+                >
+                    <option value="GENERAL">General</option>
+                    <option value="EVENT">Event</option>
+                    <option value="URGENT">Urgent</option>
+                    <option value="IH_SCHEDULE">Inter-House Schedule</option>
+                    <option value="CULTURAL">Cultural Event</option>
+                </select>
+            </div>
+
+            <!-- Content -->
+            <div>
+                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="content">
+                    Content <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <textarea 
+                        class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400 dark:placeholder-gray-500 resize-y" 
+                        id="content" 
+                        name="content" 
+                        placeholder="Type your announcement content here..." 
+                        rows="8"
+                        required
+                    ></textarea>
+                    <div class="absolute bottom-2 right-2 pointer-events-none text-gray-400 dark:text-gray-600">
+                        <span class="material-icons-round text-xs">drag_handle</span>
+                    </div>
+                </div>
+                <div class="flex justify-end mt-1.5">
+                    <span class="text-xs text-text-sub-light dark:text-gray-400" id="charCount">0/5000 characters</span>
+                </div>
+            </div>
+
+            <!-- Event Details (shown when type is EVENT) -->
+            <div id="eventDetails" style="display: none;" class="space-y-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <h3 class="text-sm font-semibold text-text-main-light dark:text-white flex items-center">
+                    <span class="material-icons-round text-lg mr-2">event</span>
+                    Event Information
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="event_date">
+                            Event Date
+                        </label>
+                        <input 
+                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
+                            id="event_date" 
+                            name="event_date" 
+                            type="date"
+                        />
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="event_time">
+                            Event Time
+                        </label>
+                        <input 
+                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
+                            id="event_time" 
+                            name="event_time" 
+                            type="time"
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="event_location">
+                        Event Location
+                    </label>
+                    <input 
+                        class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400" 
+                        id="event_location" 
+                        name="event_location" 
+                        placeholder="e.g., School Auditorium"
+                        type="text"
+                    />
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <label class="flex items-center cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            id="registration_required" 
+                            name="registration_required"
+                            class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
+                        />
+                        <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Registration Required</span>
+                    </label>
+                </div>
+
+                <div id="registrationDeadlineField" style="display: none;">
+                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="registration_deadline">
+                        Registration Deadline
+                    </label>
+                    <input 
+                        class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
+                        id="registration_deadline" 
+                        name="registration_deadline" 
+                        type="date"
+                    />
+                </div>
+            </div>
+
+            <!-- Targeting Options -->
+            <div class="space-y-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 class="text-sm font-semibold text-text-main-light dark:text-white flex items-center">
+                    <span class="material-icons-round text-lg mr-2">groups</span>
+                    Target Audience
+                </h3>
+
+                <label class="flex items-center cursor-pointer">
+                    <input 
+                        type="checkbox" 
+                        id="is_public" 
+                        name="is_public"
+                        class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
+                    />
+                    <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Make this announcement public (visible to all users)</span>
+                </label>
+
+                <div id="targetingOptions">
+                    <div>
+                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">
+                            Target Houses (comma-separated, e.g., A,B,C)
+                        </label>
+                        <input 
+                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400" 
+                            id="target_houses" 
+                            name="target_houses" 
+                            placeholder="e.g., Red,Blue,Green"
+                            type="text"
+                        />
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">
+                            Target Grades (comma-separated, e.g., 9,10,11)
+                        </label>
+                        <input 
+                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400" 
+                            id="target_grades" 
+                            name="target_grades" 
+                            placeholder="e.g., 9,10,11,12"
+                            type="text"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attachments -->
+            <div>
+                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">
+                    Attachments
+                </label>
+                <div class="mt-1 flex justify-center px-6 pt-10 pb-10 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer group">
+                    <div class="space-y-2 text-center">
+                        <div class="mx-auto h-12 w-12 text-gray-400 group-hover:text-primary transition-colors bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                            <span class="material-icons-round text-2xl">cloud_upload</span>
+                        </div>
+                        <div class="flex flex-col text-sm text-text-sub-light dark:text-gray-400">
+                            <label class="relative cursor-pointer bg-transparent rounded-md font-medium text-primary hover:text-primary-hover focus-within:outline-none" for="attachments">
+                                <span>Upload a file</span>
+                                <input class="sr-only" id="attachments" name="attachments" type="file"/>
+                            </label>
+                            <p class="pl-1">or drag and drop</p>
+                        </div>
+                        <p class="text-xs text-text-sub-light dark:text-gray-500">
+                            PDF, PNG, JPG up to 10MB
+                        </p>
+                        <div id="fileNameDisplay" class="text-sm text-primary font-medium mt-2" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Publishing Options -->
+            <div class="space-y-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 class="text-sm font-semibold text-text-main-light dark:text-white flex items-center">
+                    <span class="material-icons-round text-lg mr-2">settings</span>
+                    Publishing Options
+                </h3>
+
+                <div class="flex items-center gap-6">
+                    <label class="flex items-center cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            id="is_published" 
+                            name="is_published"
+                            class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
+                            checked
+                        />
+                        <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Publish immediately</span>
+                    </label>
+
+                    <label class="flex items-center cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            id="send_email" 
+                            name="send_email"
+                            class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
+                            checked
+                        />
+                        <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Send email notification</span>
+                    </label>
+
+                    <label class="flex items-center cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            id="is_pinned" 
+                            name="is_pinned"
+                            class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
+                        />
+                        <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Pin announcement</span>
+                    </label>
+                </div>
+            </div>
+        </form>
+
+        <!-- Footer Actions -->
+        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between gap-3">
+            <button 
+                id="cancelBtn"
+                class="px-4 py-2 bg-white dark:bg-gray-700 text-text-main-light dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" 
+                type="button"
+            >
+                Cancel
+            </button>
+            <div class="flex gap-3">
+                <button 
+                    id="saveDraftBtn"
+                    class="px-4 py-2 bg-white dark:bg-gray-700 text-text-main-light dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" 
+                    type="button"
+                >
+                    <span class="material-icons-round text-[18px] mr-1 align-middle">save</span>
+                    Save Draft
+                </button>
+                <button 
+                    id="publishBtn"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-primary border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" 
+                    type="button"
+                >
+                    <span class="material-icons-round text-[18px]">send</span>
+                    Publish Announcement
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const textarea = document.getElementById('content');
+    const charCounter = document.getElementById('charCount');
+    const announcementTypeSelect = document.getElementById('announcement_type');
+    const eventDetails = document.getElementById('eventDetails');
+    const registrationRequired = document.getElementById('registration_required');
+    const registrationDeadlineField = document.getElementById('registrationDeadlineField');
+    const isPublicCheckbox = document.getElementById('is_public');
+    const targetingOptions = document.getElementById('targetingOptions');
+    const fileInput = document.getElementById('attachments');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+
+    // Character counter
+    textarea.addEventListener('input', function() {
+        const currentLength = this.value.length;
+        charCounter.textContent = `${currentLength}/5000 characters`;
+        
+        if (currentLength > 5000) {
+            charCounter.classList.add('text-red-500');
+        } else {
+            charCounter.classList.remove('text-red-500');
+        }
+    });
+
+    // Show/hide event details
+    announcementTypeSelect.addEventListener('change', function() {
+        if (this.value === 'EVENT') {
+            eventDetails.style.display = 'block';
+        } else {
+            eventDetails.style.display = 'none';
+        }
+    });
+
+    // Show/hide registration deadline
+    registrationRequired.addEventListener('change', function() {
+        registrationDeadlineField.style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Show/hide targeting options
+    isPublicCheckbox.addEventListener('change', function() {
+        targetingOptions.style.display = this.checked ? 'none' : 'block';
+    });
+
+    // File upload handling
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            fileNameDisplay.textContent = `Selected: ${this.files[0].name}`;
+            fileNameDisplay.style.display = 'block';
+        } else {
+            fileNameDisplay.style.display = 'none';
+        }
+    });
+
+    // Cancel button
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+            window.location.href = '/announcements/';
+        }
+    });
+
+    // Save Draft button
+    document.getElementById('saveDraftBtn').addEventListener('click', function() {
+        document.getElementById('is_published').checked = false;
+        submitForm();
+    });
+
+    // Publish button
+    document.getElementById('publishBtn').addEventListener('click', function() {
+        document.getElementById('is_published').checked = true;
+        submitForm();
+    });
+
+    async function submitForm() {
+        const form = document.getElementById('announcementForm');
+        
+        // Validate required fields
+        const title = document.getElementById('title').value.trim();
+        const content = document.getElementById('content').value.trim();
+        
+        if (!title || !content) {
+            showError('Please fill in all required fields (Title and Content)');
+            return;
+        }
+
+        if (content.length > 5000) {
+            showError('Content exceeds maximum length of 5000 characters');
+            return;
+        }
+
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        formData.append('announcement_type', document.getElementById('announcement_type').value);
+        formData.append('is_public', document.getElementById('is_public').checked);
+        formData.append('is_published', document.getElementById('is_published').checked);
+        formData.append('send_email', document.getElementById('send_email').checked);
+        formData.append('is_pinned', document.getElementById('is_pinned').checked);
+
+        // Add event details if applicable
+        if (announcementTypeSelect.value === 'EVENT') {
+            const eventDate = document.getElementById('event_date').value;
+            const eventTime = document.getElementById('event_time').value;
+            const eventLocation = document.getElementById('event_location').value;
+            
+            if (eventDate) formData.append('event_date', eventDate);
+            if (eventTime) formData.append('event_time', eventTime);
+            if (eventLocation) formData.append('event_location', eventLocation);
+            formData.append('registration_required', document.getElementById('registration_required').checked);
+            
+            if (registrationRequired.checked) {
+                const regDeadline = document.getElementById('registration_deadline').value;
+                if (regDeadline) formData.append('registration_deadline', regDeadline);
+            }
+        }
+
+        // Add targeting options
+        const targetHouses = document.getElementById('target_houses').value.trim();
+        const targetGrades = document.getElementById('target_grades').value.trim();
+        if (targetHouses) formData.append('target_houses', targetHouses);
+        if (targetGrades) formData.append('target_grades', targetGrades);
+
+        // Add attachment if exists
+        if (fileInput.files.length > 0) {
+            formData.append('attachments', fileInput.files[0]);
+        }
+
+        try {
+            const publishBtn = document.getElementById('publishBtn');
+            const saveDraftBtn = document.getElementById('saveDraftBtn');
+            publishBtn.disabled = true;
+            saveDraftBtn.disabled = true;
+            publishBtn.innerHTML = '<span class="material-icons-round text-[18px] animate-spin">refresh</span> Processing...';
+
+            const response = await fetch(`${API_BASE}/announcements/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const isPublished = document.getElementById('is_published').checked;
+                showSuccess(isPublished ? 'Announcement published successfully!' : 'Draft saved successfully!');
+                
+                setTimeout(() => {
+                    window.location.href = '/announcements/';
+                }, 1500);
+            } else {
+                const errorData = await response.json();
+                showError(errorData.error || 'Failed to create announcement. Please try again.');
+                publishBtn.disabled = false;
+                saveDraftBtn.disabled = false;
+                publishBtn.innerHTML = '<span class="material-icons-round text-[18px]">send</span> Publish Announcement';
+            }
+        } catch (error) {
+            console.error('Error creating announcement:', error);
+            showError('An error occurred while creating the announcement.');
+            publishBtn.disabled = false;
+            saveDraftBtn.disabled = false;
+            publishBtn.innerHTML = '<span class="material-icons-round text-[18px]">send</span> Publish Announcement';
+        }
+    }
+
+    // Check if user has permission to create announcements
+    if (!userData.role_detail?.can_create_announcements) {
+        showError('You do not have permission to create announcements');
+        setTimeout(() => {
+            window.location.href = '/announcements/';
+        }, 2000);
+    }
+</script>
+{% endblock %}

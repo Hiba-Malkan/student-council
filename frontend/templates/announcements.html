@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+
+{% block title %}Announcements - CouncilApp{% endblock %}
+
+{% block nav_announcements %}text-primary bg-primary-light dark:bg-primary/20{% endblock %}
+
+{% block page_title %}Announcements{% endblock %}
+{% block page_subtitle %}Stay updated with the latest council news and events{% endblock %}
+
+{% block content %}
+<div class="mt-6">
+    <!-- Search and Actions Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div class="relative flex-1 max-w-md">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="material-icons-round text-gray-400 text-lg">search</span>
+            </div>
+            <input 
+                id="searchInput"
+                class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-text-main-light dark:text-text-main-dark placeholder-text-sub-light dark:placeholder-text-sub-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors" 
+                placeholder="Search announcements..." 
+                type="text"
+            />
+        </div>
+        <button 
+            id="newAnnouncementBtn"
+            class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+            style="display: none;"
+        >
+            <span class="material-icons-round text-lg mr-2">add</span>
+            New Announcement
+        </button>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="flex flex-wrap items-center gap-3 mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
+        <button class="filter-btn active px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="all">
+            All
+        </button>
+        <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="GENERAL">
+            General
+        </button>
+        <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="EVENT">
+            Events
+        </button>
+        <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="URGENT">
+            Urgent
+        </button>
+        <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="CULTURAL">
+            Cultural
+        </button>
+        <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="IH_SCHEDULE">
+            Inter-House
+        </button>
+        
+        <div class="ml-auto flex items-center text-sm text-text-sub-light dark:text-text-sub-dark">
+            <span class="mr-2">Sort by:</span>
+            <select id="sortSelect" class="bg-transparent border-none p-0 pr-6 text-sm font-medium text-text-main-light dark:text-text-main-dark focus:ring-0 cursor-pointer">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="pinned">Pinned First</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="text-center py-12">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p class="mt-2 text-sm text-text-sub-light dark:text-text-sub-dark">Loading announcements...</p>
+    </div>
+
+    <!-- Announcements List -->
+    <div id="announcementsList" class="space-y-4" style="display: none;"></div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="text-center py-12" style="display: none;">
+        <span class="material-icons-round text-6xl text-gray-300 dark:text-gray-600 mb-4">campaign</span>
+        <p class="text-text-sub-light dark:text-text-sub-dark">No announcements found</p>
+    </div>
+
+    <!-- Pagination -->
+    <div id="paginationContainer" class="mt-8 flex items-center justify-center" style="display: none;">
+        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+            <button id="prevPage" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-card-light dark:bg-card-dark text-sm font-medium text-text-sub-light hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                <span class="material-icons-round text-sm">chevron_left</span>
+            </button>
+            <span id="pageInfo" class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-card-light dark:bg-card-dark text-sm font-medium text-text-main-light dark:text-text-main-dark">
+                Page 1
+            </span>
+            <button id="nextPage" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-card-light dark:bg-card-dark text-sm font-medium text-text-sub-light hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                <span class="material-icons-round text-sm">chevron_right</span>
+            </button>
+        </nav>
+    </div>
+</div>
+
+<style>
+    .filter-btn {
+        @apply text-text-sub-light dark:text-text-sub-dark bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700;
+    }
+    .filter-btn.active {
+        @apply text-primary bg-primary-light dark:bg-primary/20;
+    }
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let allAnnouncements = [];
+    let filteredAnnouncements = [];
+    let currentFilter = 'all';
+    let currentPage = 1;
+    const itemsPerPage = 10;
+
+    // Type badge colors
+    const typeBadges = {
+        'URGENT': { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-800 dark:text-red-300', border: 'border-l-red-500' },
+        'EVENT': { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-800 dark:text-blue-300', border: 'border-l-blue-500' },
+        'GENERAL': { bg: 'bg-gray-100 dark:bg-gray-700', text: 'text-gray-800 dark:text-gray-300', border: 'border-l-gray-500' },
+        'CULTURAL': { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-800 dark:text-purple-300', border: 'border-l-purple-500' },
+        'IH_SCHEDULE': { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-800 dark:text-green-300', border: 'border-l-green-500' },
+    };
+
+    async function loadAnnouncements() {
+        try {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('announcementsList').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+
+            const response = await apiCall('/announcements/');
+            if (!response || !response.ok) {
+                throw new Error('Failed to load announcements');
+            }
+
+            const data = await response.json();
+            // Handle both paginated and non-paginated responses
+            allAnnouncements = data.results || data;
+            applyFilters();
+        } catch (error) {
+            console.error('Error loading announcements:', error);
+            showError('Failed to load announcements');
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+        }
+    }
+
+    function applyFilters() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        
+        filteredAnnouncements = allAnnouncements.filter(announcement => {
+            const matchesType = currentFilter === 'all' || announcement.announcement_type === currentFilter;
+            const matchesSearch = !searchTerm || 
+                announcement.title.toLowerCase().includes(searchTerm) || 
+                announcement.content.toLowerCase().includes(searchTerm);
+            return matchesType && matchesSearch;
+        });
+
+        applySorting();
+        currentPage = 1;
+        renderAnnouncements();
+    }
+
+    function applySorting() {
+        const sortBy = document.getElementById('sortSelect').value;
+        
+        filteredAnnouncements.sort((a, b) => {
+            if (sortBy === 'pinned') {
+                if (a.is_pinned && !b.is_pinned) return -1;
+                if (!a.is_pinned && b.is_pinned) return 1;
+            }
+            
+            const dateA = new Date(a.created_at);
+            const dateB = new Date(b.created_at);
+            
+            return sortBy === 'oldest' ? dateA - dateB : dateB - dateA;
+        });
+    }
+
+    function renderAnnouncements() {
+        const container = document.getElementById('announcementsList');
+        const loadingState = document.getElementById('loadingState');
+        const emptyState = document.getElementById('emptyState');
+
+        loadingState.style.display = 'none';
+
+        if (filteredAnnouncements.length === 0) {
+            container.style.display = 'none';
+            emptyState.style.display = 'block';
+            document.getElementById('paginationContainer').style.display = 'none';
+            return;
+        }
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageAnnouncements = filteredAnnouncements.slice(startIndex, endIndex);
+
+        container.innerHTML = pageAnnouncements.map(announcement => renderAnnouncementCard(announcement)).join('');
+        container.style.display = 'block';
+        emptyState.style.display = 'none';
+
+        updatePagination();
+        attachCardListeners();
+    }
+
+    function renderAnnouncementCard(announcement) {
+        const badge = typeBadges[announcement.announcement_type] || typeBadges['GENERAL'];
+        const formattedDate = new Date(announcement.created_at).toLocaleDateString('en-US', { 
+            year: 'numeric', month: 'short', day: 'numeric' 
+        });
+        const creatorName = announcement.created_by_detail?.first_name || announcement.created_by_detail?.username || 'Unknown';
+        
+        return `
+            <div class="bg-card-light dark:bg-card-dark ${announcement.is_pinned ? 'border-l-4 ' + badge.border : ''} rounded-lg shadow-sm hover:shadow-md transition-shadow p-5 border border-gray-200 dark:border-gray-700 cursor-pointer announcement-card" data-id="${announcement.id}">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.bg} ${badge.text}">
+                            ${announcement.announcement_type_display}
+                        </span>
+                        ${announcement.is_pinned ? `
+                            <span class="text-xs text-text-sub-light dark:text-text-sub-dark flex items-center">
+                                <span class="material-icons-round text-sm mr-1">push_pin</span> Pinned
+                            </span>
+                        ` : ''}
+                        ${!announcement.is_read_by_user ? `
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                New
+                            </span>
+                        ` : ''}
+                    </div>
+                    ${userData.role_detail?.can_create_announcements ? `
+                        <div class="relative">
+                            <button class="text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark more-btn" data-id="${announcement.id}">
+                                <span class="material-icons-round">more_vert</span>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+                <h3 class="text-lg font-semibold text-text-main-light dark:text-text-main-dark mb-2">${announcement.title}</h3>
+                <p class="text-text-sub-light dark:text-text-sub-dark text-sm mb-4 line-clamp-2">
+                    ${announcement.content}
+                </p>
+                <div class="flex items-center justify-between text-xs text-text-sub-light dark:text-text-sub-dark pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-4 flex-wrap">
+                        <span class="flex items-center">
+                            <span class="material-icons-round text-sm mr-1">calendar_today</span> ${formattedDate}
+                        </span>
+                        <span class="flex items-center">
+                            <span class="material-icons-round text-sm mr-1">person</span> By ${creatorName}
+                        </span>
+                        ${announcement.attachments ? `
+                            <span class="flex items-center text-primary">
+                                <span class="material-icons-round text-sm mr-1">attach_file</span> Attachment
+                            </span>
+                        ` : ''}
+                        ${announcement.announcement_type === 'EVENT' && announcement.participant_count !== null ? `
+                            <span class="flex items-center text-primary">
+                                <span class="material-icons-round text-sm mr-1">people</span> ${announcement.participant_count} participants
+                            </span>
+                        ` : ''}
+                    </div>
+                    <span class="text-primary hover:text-primary-hover font-medium">View Details →</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function attachCardListeners() {
+        document.querySelectorAll('.announcement-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (!e.target.closest('.more-btn')) {
+                    const id = card.dataset.id;
+                    window.location.href = `/announcements/detail/${id}/`;
+                }
+            });
+        });
+
+        document.querySelectorAll('.more-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = btn.dataset.id;
+                showAnnouncementMenu(id, btn);
+            });
+        });
+    }
+
+    function showAnnouncementMenu(id, button) {
+        // Simple menu implementation - in production, use a proper dropdown component
+        const announcement = allAnnouncements.find(a => a.id == id);
+        const actions = [];
+        
+        if (userData.is_c_suite || (userData.role_detail?.can_edit_announcements && announcement.created_by === userData.id)) {
+            actions.push('Edit');
+        }
+        if (userData.is_c_suite) {
+            actions.push(announcement.is_pinned ? 'Unpin' : 'Pin');
+            actions.push('Delete');
+        }
+        
+        if (actions.length === 0) return;
+        
+        const action = prompt('Choose action: ' + actions.join(', '));
+        if (!action) return;
+        
+        if (action.toLowerCase() === 'edit') {
+            window.location.href = `/announcements/edit/${id}/`;
+        } else if (action.toLowerCase() === 'pin' || action.toLowerCase() === 'unpin') {
+            togglePin(id);
+        } else if (action.toLowerCase() === 'delete') {
+            deleteAnnouncement(id);
+        }
+    }
+
+    async function togglePin(id) {
+        try {
+            const response = await apiCall(`/announcements/${id}/pin/`, { method: 'POST' });
+            if (response && response.ok) {
+                showSuccess('Announcement pin status updated');
+                loadAnnouncements();
+            }
+        } catch (error) {
+            showError('Failed to update pin status');
+        }
+    }
+
+    async function deleteAnnouncement(id) {
+        if (!confirm('Are you sure you want to delete this announcement?')) return;
+        
+        try {
+            const response = await apiCall(`/announcements/${id}/`, { method: 'DELETE' });
+            if (response && response.ok) {
+                showSuccess('Announcement deleted successfully');
+                loadAnnouncements();
+            }
+        } catch (error) {
+            showError('Failed to delete announcement');
+        }
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(filteredAnnouncements.length / itemsPerPage);
+        const paginationContainer = document.getElementById('paginationContainer');
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        const pageInfo = document.getElementById('pageInfo');
+
+        if (totalPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+        }
+
+        paginationContainer.style.display = 'flex';
+        pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+    }
+
+    // Event Listeners
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('sortSelect').addEventListener('change', () => {
+        applySorting();
+        renderAnnouncements();
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.type;
+            applyFilters();
+        });
+    });
+
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderAnnouncements();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const totalPages = Math.ceil(filteredAnnouncements.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderAnnouncements();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
+
+    document.getElementById('newAnnouncementBtn').addEventListener('click', () => {
+        window.location.href = '/announcements/new/';
+    });
+
+    // Check permissions and show create button
+    if (userData.role_detail?.can_create_announcements) {
+        document.getElementById('newAnnouncementBtn').style.display = 'inline-flex';
+    }
+
+    // Load announcements on page load
+    loadAnnouncements();
+</script>
+{% endblock %}

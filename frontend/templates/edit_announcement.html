@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Announcement - CouncilApp{% endblock %}
+
+{% block nav_announcements %}text-primary bg-primary-light dark:bg-primary/20{% endblock %}
+
+{% block page_title %}Edit Announcement{% endblock %}
+{% block page_subtitle %}Update announcement details{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-6">
+    <!-- Loading State -->
+    <div id="loadingState" class="text-center py-12">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p class="mt-2 text-sm text-text-sub-light dark:text-text-sub-dark">Loading announcement...</p>
+    </div>
+
+    <div id="editForm" style="display: none;" class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-xl font-bold text-text-main-light dark:text-white">Edit Announcement</h2>
+                <p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-1">Update the announcement details below.</p>
+            </div>
+            <div class="flex-shrink-0">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                    <span class="material-icons-round text-sm mr-1">edit</span>
+                    Editing
+                </span>
+            </div>
+        </div>
+
+        <!-- Form (same structure as new_announcement.html) -->
+        <form id="announcementForm" class="p-6 space-y-6">
+            <input type="hidden" id="announcement_id" name="announcement_id" />
+            
+            <!-- Title -->
+            <div>
+                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="title">
+                    Title <span class="text-red-500">*</span>
+                </label>
+                <input 
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400 dark:placeholder-gray-500 py-2.5" 
+                    id="title" 
+                    name="title" 
+                    type="text"
+                    required
+                />
+            </div>
+
+            <!-- Announcement Type -->
+            <div>
+                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="announcement_type">
+                    Announcement Type <span class="text-red-500">*</span>
+                </label>
+                <select 
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
+                    id="announcement_type" 
+                    name="announcement_type"
+                    required
+                >
+                    <option value="GENERAL">General</option>
+                    <option value="EVENT">Event</option>
+                    <option value="URGENT">Urgent</option>
+                    <option value="IH_SCHEDULE">Inter-House Schedule</option>
+                    <option value="CULTURAL">Cultural Event</option>
+                </select>
+            </div>
+
+            <!-- Content -->
+            <div>
+                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="content">
+                    Content <span class="text-red-500">*</span>
+                </label>
+                <textarea 
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400 dark:placeholder-gray-500 resize-y" 
+                    id="content" 
+                    name="content" 
+                    rows="8"
+                    required
+                ></textarea>
+                <div class="flex justify-end mt-1.5">
+                    <span class="text-xs text-text-sub-light dark:text-gray-400" id="charCount">0/5000 characters</span>
+                </div>
+            </div>
+
+            <!-- Event Details -->
+            <div id="eventDetails" style="display: none;" class="space-y-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <h3 class="text-sm font-semibold text-text-main-light dark:text-white flex items-center">
+                    <span class="material-icons-round text-lg mr-2">event</span>
+                    Event Information
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="event_date">Event Date</label>
+                        <input class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="event_date" name="event_date" type="date"/>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="event_time">Event Time</label>
+                        <input class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="event_time" name="event_time" type="time"/>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="event_location">Event Location</label>
+                    <input class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="event_location" name="event_location" type="text"/>
+                </div>
+
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="registration_required" name="registration_required" class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"/>
+                    <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Registration Required</span>
+                </label>
+
+                <div id="registrationDeadlineField" style="display: none;">
+                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="registration_deadline">Registration Deadline</label>
+                    <input class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="registration_deadline" name="registration_deadline" type="date"/>
+                </div>
+            </div>
+
+            <!-- Targeting Options -->
+            <div class="space-y-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 class="text-sm font-semibold text-text-main-light dark:text-white flex items-center">
+                    <span class="material-icons-round text-lg mr-2">groups</span>
+                    Target Audience
+                </h3>
+
+                <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" id="is_public" name="is_public" class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"/>
+                    <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Make this announcement public</span>
+                </label>
+
+                <div id="targetingOptions">
+                    <div>
+                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">Target Houses</label>
+                        <input class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="target_houses" name="target_houses" type="text"/>
+                    </div>
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">Target Grades</label>
+                        <input class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" id="target_grades" name="target_grades" type="text"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Publishing Options -->
+            <div class="space-y-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 class="text-sm font-semibold text-text-main-light dark:text-white flex items-center">
+                    <span class="material-icons-round text-lg mr-2">settings</span>
+                    Publishing Options
+                </h3>
+
+                <div class="flex items-center gap-6">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="is_published" name="is_published" class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"/>
+                        <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Published</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="is_pinned" name="is_pinned" class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"/>
+                        <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Pinned</span>
+                    </label>
+                </div>
+            </div>
+        </form>
+
+        <!-- Footer Actions -->
+        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between gap-3">
+            <button id="cancelBtn" class="px-4 py-2 bg-white dark:bg-gray-700 text-text-main-light dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors" type="button">
+                Cancel
+            </button>
+            <button id="saveBtn" class="inline-flex items-center gap-2 px-4 py-2 bg-primary border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-primary-hover transition-colors" type="button">
+                <span class="material-icons-round text-[18px]">save</span>
+                Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const announcementId = window.location.pathname.split('/')[3];
+    let announcementData = null;
+
+    async function loadAnnouncement() {
+        try {
+            const response = await apiCall(`/announcements/${announcementId}/`);
+            if (!response || !response.ok) {
+                throw new Error('Failed to load announcement');
+            }
+
+            announcementData = await response.json();
+            populateForm(announcementData);
+            
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('editForm').style.display = 'block';
+        } catch (error) {
+            console.error('Error loading announcement:', error);
+            showError('Failed to load announcement');
+            setTimeout(() => window.location.href = '/announcements/', 2000);
+        }
+    }
+
+    function populateForm(data) {
+        document.getElementById('announcement_id').value = data.id;
+        document.getElementById('title').value = data.title;
+        document.getElementById('content').value = data.content;
+        document.getElementById('announcement_type').value = data.announcement_type;
+        document.getElementById('is_public').checked = data.is_public;
+        document.getElementById('is_published').checked = data.is_published;
+        document.getElementById('is_pinned').checked = data.is_pinned;
+        
+        if (data.target_houses) document.getElementById('target_houses').value = data.target_houses;
+        if (data.target_grades) document.getElementById('target_grades').value = data.target_grades;
+        
+        // Event details
+        if (data.announcement_type === 'EVENT') {
+            document.getElementById('eventDetails').style.display = 'block';
+            if (data.event_date) document.getElementById('event_date').value = data.event_date;
+            if (data.event_time) document.getElementById('event_time').value = data.event_time;
+            if (data.event_location) document.getElementById('event_location').value = data.event_location;
+            document.getElementById('registration_required').checked = data.registration_required;
+            if (data.registration_deadline) {
+                document.getElementById('registration_deadline').value = data.registration_deadline;
+                document.getElementById('registrationDeadlineField').style.display = 'block';
+            }
+        }
+        
+        updateCharCount();
+    }
+
+    function updateCharCount() {
+        const content = document.getElementById('content').value;
+        document.getElementById('charCount').textContent = `${content.length}/5000 characters`;
+    }
+
+    document.getElementById('content').addEventListener('input', updateCharCount);
+    
+    document.getElementById('announcement_type').addEventListener('change', function() {
+        document.getElementById('eventDetails').style.display = this.value === 'EVENT' ? 'block' : 'none';
+    });
+    
+    document.getElementById('registration_required').addEventListener('change', function() {
+        document.getElementById('registrationDeadlineField').style.display = this.checked ? 'block' : 'none';
+    });
+    
+    document.getElementById('is_public').addEventListener('change', function() {
+        document.getElementById('targetingOptions').style.display = this.checked ? 'none' : 'block';
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+        window.location.href = '/announcements/';
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', async function() {
+        const formData = new FormData();
+        formData.append('title', document.getElementById('title').value);
+        formData.append('content', document.getElementById('content').value);
+        formData.append('announcement_type', document.getElementById('announcement_type').value);
+        formData.append('is_public', document.getElementById('is_public').checked);
+        formData.append('is_published', document.getElementById('is_published').checked);
+        formData.append('is_pinned', document.getElementById('is_pinned').checked);
+        
+        if (document.getElementById('announcement_type').value === 'EVENT') {
+            const eventDate = document.getElementById('event_date').value;
+            const eventTime = document.getElementById('event_time').value;
+            const eventLocation = document.getElementById('event_location').value;
+            if (eventDate) formData.append('event_date', eventDate);
+            if (eventTime) formData.append('event_time', eventTime);
+            if (eventLocation) formData.append('event_location', eventLocation);
+            formData.append('registration_required', document.getElementById('registration_required').checked);
+            const regDeadline = document.getElementById('registration_deadline').value;
+            if (regDeadline) formData.append('registration_deadline', regDeadline);
+        }
+        
+        const targetHouses = document.getElementById('target_houses').value.trim();
+        const targetGrades = document.getElementById('target_grades').value.trim();
+        if (targetHouses) formData.append('target_houses', targetHouses);
+        if (targetGrades) formData.append('target_grades', targetGrades);
+
+        try {
+            this.disabled = true;
+            this.innerHTML = '<span class="material-icons-round text-[18px] animate-spin">refresh</span> Saving...';
+            
+            const response = await fetch(`${API_BASE}/announcements/${announcementId}/`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${accessToken}` },
+                body: formData
+            });
+
+            if (response.ok) {
+                showSuccess('Announcement updated successfully!');
+                setTimeout(() => window.location.href = '/announcements/', 1500);
+            } else {
+                const errorData = await response.json();
+                showError(errorData.error || 'Failed to update announcement');
+                this.disabled = false;
+                this.innerHTML = '<span class="material-icons-round text-[18px]">save</span> Save Changes';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showError('An error occurred');
+            this.disabled = false;
+            this.innerHTML = '<span class="material-icons-round text-[18px]">save</span> Save Changes';
+        }
+    });
+
+    loadAnnouncement();
+</script>
+{% endblock %}

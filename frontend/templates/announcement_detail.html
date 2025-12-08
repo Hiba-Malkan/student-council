@@ -1,0 +1,586 @@
+{% extends "base.html" %}
+
+{% block title %}Announcement Details - CouncilApp{% endblock %}
+
+{% block nav_announcements %}text-primary bg-primary-light dark:bg-primary/20{% endblock %}
+
+{% block page_title %}Announcement Details{% endblock %}
+{% block page_subtitle %}View full announcement information{% endblock %}
+
+{% block content %}
+<div class="mt-6 max-w-5xl mx-auto">
+    <!-- Loading State -->
+    <div id="loadingState" class="text-center py-12">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <p class="mt-2 text-sm text-text-sub-light dark:text-text-sub-dark">Loading announcement...</p>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" style="display: none;">
+        <!-- Back Button -->
+        <div class="mb-4">
+            <button onclick="window.location.href='/announcements/'" class="inline-flex items-center text-sm text-text-sub-light dark:text-text-sub-dark hover:text-primary dark:hover:text-primary transition-colors">
+                <span class="material-icons-round text-lg mr-1">arrow_back</span>
+                Back to Announcements
+            </button>
+        </div>
+
+        <!-- Announcement Card -->
+        <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <!-- Header -->
+            <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 flex-wrap mb-3">
+                            <span id="typeBadge" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"></span>
+                            <span id="pinnedBadge" style="display: none;" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300">
+                                <span class="material-icons-round text-sm mr-1">push_pin</span> Pinned
+                            </span>
+                            <span id="newBadge" style="display: none;" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                New
+                            </span>
+                        </div>
+                        <h1 id="announcementTitle" class="text-2xl font-bold text-text-main-light dark:text-white mb-2"></h1>
+                        <div class="flex items-center gap-4 flex-wrap text-sm text-text-sub-light dark:text-text-sub-dark">
+                            <span class="flex items-center">
+                                <span class="material-icons-round text-sm mr-1">person</span>
+                                <span id="creatorName"></span>
+                            </span>
+                            <span class="flex items-center">
+                                <span class="material-icons-round text-sm mr-1">calendar_today</span>
+                                <span id="createdDate"></span>
+                            </span>
+                            <span id="publishedDate" class="flex items-center">
+                                <span class="material-icons-round text-sm mr-1">public</span>
+                                Published <span id="publishedDateValue" class="ml-1"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0 flex gap-2">
+                        <button id="editBtn" style="display: none;" onclick="editAnnouncement()" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-text-main-light dark:text-white bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                            <span class="material-icons-round text-lg mr-1">edit</span>
+                            Edit
+                        </button>
+                        <button id="pinBtn" style="display: none;" onclick="togglePin()" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-text-main-light dark:text-white bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                            <span class="material-icons-round text-lg mr-1" id="pinIcon">push_pin</span>
+                            <span id="pinText">Pin</span>
+                        </button>
+                        <button id="deleteBtn" style="display: none;" onclick="deleteAnnouncement()" class="inline-flex items-center px-3 py-2 border border-red-300 dark:border-red-600 rounded-lg shadow-sm text-sm font-medium text-red-600 dark:text-red-400 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                            <span class="material-icons-round text-lg mr-1">delete</span>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="px-6 py-6">
+                <div id="announcementContent" class="prose prose-sm dark:prose-invert max-w-none text-text-main-light dark:text-text-main-dark whitespace-pre-wrap"></div>
+            </div>
+
+            <!-- Event Details Section -->
+            <div id="eventDetailsSection" style="display: none;" class="px-6 py-5 bg-blue-50 dark:bg-blue-900/20 border-t border-blue-200 dark:border-blue-800">
+                <h3 class="text-lg font-semibold text-text-main-light dark:text-white mb-4 flex items-center">
+                    <span class="material-icons-round text-xl mr-2">event</span>
+                    Event Information
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div id="eventDateField" style="display: none;" class="flex items-start">
+                        <span class="material-icons-round text-primary mr-2 mt-0.5">calendar_today</span>
+                        <div>
+                            <p class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium uppercase">Date</p>
+                            <p id="eventDate" class="text-sm text-text-main-light dark:text-white font-semibold"></p>
+                        </div>
+                    </div>
+                    <div id="eventTimeField" style="display: none;" class="flex items-start">
+                        <span class="material-icons-round text-primary mr-2 mt-0.5">schedule</span>
+                        <div>
+                            <p class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium uppercase">Time</p>
+                            <p id="eventTime" class="text-sm text-text-main-light dark:text-white font-semibold"></p>
+                        </div>
+                    </div>
+                    <div id="eventLocationField" style="display: none;" class="flex items-start">
+                        <span class="material-icons-round text-primary mr-2 mt-0.5">place</span>
+                        <div>
+                            <p class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium uppercase">Location</p>
+                            <p id="eventLocation" class="text-sm text-text-main-light dark:text-white font-semibold"></p>
+                        </div>
+                    </div>
+                    <div id="registrationRequiredField" style="display: none;" class="flex items-start">
+                        <span class="material-icons-round text-primary mr-2 mt-0.5">how_to_reg</span>
+                        <div>
+                            <p class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium uppercase">Registration</p>
+                            <p class="text-sm text-text-main-light dark:text-white font-semibold">Required</p>
+                        </div>
+                    </div>
+                    <div id="registrationDeadlineField" style="display: none;" class="flex items-start">
+                        <span class="material-icons-round text-primary mr-2 mt-0.5">event_busy</span>
+                        <div>
+                            <p class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium uppercase">Registration Deadline</p>
+                            <p id="registrationDeadline" class="text-sm text-text-main-light dark:text-white font-semibold"></p>
+                        </div>
+                    </div>
+                    <div id="participantCountField" style="display: none;" class="flex items-start">
+                        <span class="material-icons-round text-primary mr-2 mt-0.5">people</span>
+                        <div>
+                            <p class="text-xs text-text-sub-light dark:text-text-sub-dark font-medium uppercase">Participants</p>
+                            <p id="participantCount" class="text-sm text-text-main-light dark:text-white font-semibold"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registration Actions -->
+                <div id="registrationActions" style="display: none;" class="mt-6 flex gap-3">
+                    <button id="registerBtn" onclick="registerForEvent()" class="inline-flex items-center px-4 py-2 bg-primary border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-primary-hover transition-colors">
+                        <span class="material-icons-round text-lg mr-2">how_to_reg</span>
+                        Register for Event
+                    </button>
+                    <button id="unregisterBtn" style="display: none;" onclick="unregisterFromEvent()" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-text-main-light dark:text-white bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        <span class="material-icons-round text-lg mr-2">cancel</span>
+                        Unregister
+                    </button>
+                    <button id="viewParticipantsBtn" style="display: none;" onclick="viewParticipants()" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-text-main-light dark:text-white bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        <span class="material-icons-round text-lg mr-2">people</span>
+                        View Participants
+                    </button>
+                </div>
+            </div>
+
+            <!-- Participants List -->
+            <div id="participantsList" style="display: none;" class="px-6 py-5 border-t border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-text-main-light dark:text-white mb-4 flex items-center justify-between">
+                    <span class="flex items-center">
+                        <span class="material-icons-round text-xl mr-2">people</span>
+                        Event Participants
+                    </span>
+                    <button onclick="toggleParticipantsList()" class="text-sm text-text-sub-light dark:text-text-sub-dark hover:text-primary">
+                        <span class="material-icons-round text-lg">expand_less</span>
+                    </button>
+                </h3>
+                <div id="participantsContent" class="space-y-2"></div>
+            </div>
+
+            <!-- Targeting Information -->
+            <div id="targetingSection" class="px-6 py-5 border-t border-gray-200 dark:border-gray-700">
+                <h3 class="text-sm font-semibold text-text-main-light dark:text-white mb-3 flex items-center">
+                    <span class="material-icons-round text-lg mr-2">groups</span>
+                    Target Audience
+                </h3>
+                <div class="flex flex-wrap gap-2" id="targetingInfo">
+                    <span id="publicBadge" style="display: none;" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                        <span class="material-icons-round text-sm mr-1">public</span>
+                        Public
+                    </span>
+                </div>
+            </div>
+
+            <!-- Attachments -->
+            <div id="attachmentsSection" style="display: none;" class="px-6 py-5 border-t border-gray-200 dark:border-gray-700">
+                <h3 class="text-sm font-semibold text-text-main-light dark:text-white mb-3 flex items-center">
+                    <span class="material-icons-round text-lg mr-2">attach_file</span>
+                    Attachments
+                </h3>
+                <a id="attachmentLink" href="#" target="_blank" class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium text-text-main-light dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    <span class="material-icons-round text-lg mr-2">download</span>
+                    <span id="attachmentName">Download Attachment</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" style="display: none;" class="text-center py-12">
+        <span class="material-icons-round text-6xl text-red-300 dark:text-red-600 mb-4">error_outline</span>
+        <p class="text-text-sub-light dark:text-text-sub-dark mb-4">Failed to load announcement</p>
+        <button onclick="window.location.href='/announcements/'" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors">
+            <span class="material-icons-round text-lg mr-2">arrow_back</span>
+            Back to Announcements
+        </button>
+    </div>
+</div>
+
+<style>
+    .prose p {
+        margin-bottom: 1rem;
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const announcementId = window.location.pathname.split('/')[3];
+    let announcementData = null;
+    let userParticipation = null;
+
+    const typeBadges = {
+        'URGENT': { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-800 dark:text-red-300', icon: 'priority_high' },
+        'EVENT': { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-800 dark:text-blue-300', icon: 'event' },
+        'GENERAL': { bg: 'bg-gray-100 dark:bg-gray-700', text: 'text-gray-800 dark:text-gray-300', icon: 'info' },
+        'CULTURAL': { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-800 dark:text-purple-300', icon: 'theater_comedy' },
+        'IH_SCHEDULE': { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-800 dark:text-green-300', icon: 'sports' },
+    };
+
+    async function loadAnnouncement() {
+        try {
+            const response = await apiCall(`/announcements/${announcementId}/`);
+            if (!response || !response.ok) {
+                throw new Error('Failed to load announcement');
+            }
+
+            announcementData = await response.json();
+            await markAsRead();
+            displayAnnouncement();
+            checkPermissions();
+
+            if (announcementData.announcement_type === 'EVENT') {
+                await loadUserParticipation();
+            }
+
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        } catch (error) {
+            console.error('Error loading announcement:', error);
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'block';
+        }
+    }
+
+    async function markAsRead() {
+        try {
+            await apiCall(`/announcements/${announcementId}/mark_read/`, { method: 'POST' });
+        } catch (error) {
+            console.error('Error marking as read:', error);
+        }
+    }
+
+    function displayAnnouncement() {
+        // Title and basic info
+        document.getElementById('announcementTitle').textContent = announcementData.title;
+        document.getElementById('announcementContent').textContent = announcementData.content;
+
+        // Type badge
+        const badge = typeBadges[announcementData.announcement_type] || typeBadges['GENERAL'];
+        const typeBadge = document.getElementById('typeBadge');
+        typeBadge.className = `inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${badge.bg} ${badge.text}`;
+        typeBadge.innerHTML = `<span class="material-icons-round text-sm mr-1">${badge.icon}</span>${announcementData.announcement_type_display}`;
+
+        // Pinned badge
+        if (announcementData.is_pinned) {
+            document.getElementById('pinnedBadge').style.display = 'inline-flex';
+        }
+
+        // New badge
+        if (!announcementData.is_read_by_user) {
+            document.getElementById('newBadge').style.display = 'inline-flex';
+        }
+
+        // Creator and dates
+        const creatorName = announcementData.created_by_detail?.first_name || announcementData.created_by_detail?.username || 'Unknown';
+        document.getElementById('creatorName').textContent = creatorName;
+
+        const createdDate = new Date(announcementData.created_at).toLocaleDateString('en-US', { 
+            year: 'numeric', month: 'long', day: 'numeric' 
+        });
+        document.getElementById('createdDate').textContent = createdDate;
+
+        if (announcementData.published_at) {
+            const publishedDate = new Date(announcementData.published_at).toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+            });
+            document.getElementById('publishedDateValue').textContent = publishedDate;
+            document.getElementById('publishedDate').style.display = 'flex';
+        }
+
+        // Event details
+        if (announcementData.announcement_type === 'EVENT') {
+            document.getElementById('eventDetailsSection').style.display = 'block';
+
+            if (announcementData.event_date) {
+                const eventDate = new Date(announcementData.event_date).toLocaleDateString('en-US', { 
+                    year: 'numeric', month: 'long', day: 'numeric' 
+                });
+                document.getElementById('eventDate').textContent = eventDate;
+                document.getElementById('eventDateField').style.display = 'flex';
+            }
+
+            if (announcementData.event_time) {
+                const eventTime = new Date('1970-01-01T' + announcementData.event_time).toLocaleTimeString('en-US', {
+                    hour: 'numeric', minute: '2-digit', hour12: true
+                });
+                document.getElementById('eventTime').textContent = eventTime;
+                document.getElementById('eventTimeField').style.display = 'flex';
+            }
+
+            if (announcementData.event_location) {
+                document.getElementById('eventLocation').textContent = announcementData.event_location;
+                document.getElementById('eventLocationField').style.display = 'flex';
+            }
+
+            if (announcementData.registration_required) {
+                document.getElementById('registrationRequiredField').style.display = 'flex';
+                document.getElementById('registrationActions').style.display = 'flex';
+
+                if (announcementData.registration_deadline) {
+                    const deadline = new Date(announcementData.registration_deadline).toLocaleDateString('en-US', { 
+                        year: 'numeric', month: 'long', day: 'numeric' 
+                    });
+                    document.getElementById('registrationDeadline').textContent = deadline;
+                    document.getElementById('registrationDeadlineField').style.display = 'flex';
+                }
+            }
+
+            if (announcementData.participant_count !== null) {
+                document.getElementById('participantCount').textContent = announcementData.participant_count;
+                document.getElementById('participantCountField').style.display = 'flex';
+            }
+        }
+
+        // Targeting
+        displayTargeting();
+
+        // Attachments
+        if (announcementData.attachments) {
+            const filename = announcementData.attachments.split('/').pop();
+            document.getElementById('attachmentName').textContent = filename;
+            document.getElementById('attachmentLink').href = announcementData.attachments;
+            document.getElementById('attachmentsSection').style.display = 'block';
+        }
+    }
+
+    function displayTargeting() {
+        const targetingInfo = document.getElementById('targetingInfo');
+
+        if (announcementData.is_public) {
+            document.getElementById('publicBadge').style.display = 'inline-flex';
+        }
+
+        if (announcementData.target_roles_detail && announcementData.target_roles_detail.length > 0) {
+            announcementData.target_roles_detail.forEach(role => {
+                const badge = document.createElement('span');
+                badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300';
+                badge.innerHTML = `<span class="material-icons-round text-sm mr-1">badge</span>${role.name}`;
+                targetingInfo.appendChild(badge);
+            });
+        }
+
+        if (announcementData.target_houses) {
+            const houses = announcementData.target_houses.split(',');
+            houses.forEach(house => {
+                const badge = document.createElement('span');
+                badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300';
+                badge.innerHTML = `<span class="material-icons-round text-sm mr-1">home</span>House ${house.trim()}`;
+                targetingInfo.appendChild(badge);
+            });
+        }
+
+        if (announcementData.target_grades) {
+            const grades = announcementData.target_grades.split(',');
+            grades.forEach(grade => {
+                const badge = document.createElement('span');
+                badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300';
+                badge.innerHTML = `<span class="material-icons-round text-sm mr-1">school</span>Grade ${grade.trim()}`;
+                targetingInfo.appendChild(badge);
+            });
+        }
+    }
+
+    function checkPermissions() {
+        // Show edit button if user can edit
+        if (userData.is_c_suite || 
+            (userData.role_detail?.can_edit_announcements && announcementData.created_by === userData.id)) {
+            document.getElementById('editBtn').style.display = 'inline-flex';
+        }
+
+        // Show pin/delete buttons for C-Suite
+        if (userData.is_c_suite) {
+            document.getElementById('pinBtn').style.display = 'inline-flex';
+            document.getElementById('deleteBtn').style.display = 'inline-flex';
+
+            if (announcementData.is_pinned) {
+                document.getElementById('pinIcon').textContent = 'push_pin';
+                document.getElementById('pinText').textContent = 'Unpin';
+            } else {
+                document.getElementById('pinIcon').textContent = 'push_pin';
+                document.getElementById('pinText').textContent = 'Pin';
+            }
+        }
+
+        // Show participants view button for captains
+        if (announcementData.announcement_type === 'EVENT' && 
+            (userData.is_c_suite || userData.role_detail?.can_manage_events)) {
+            document.getElementById('viewParticipantsBtn').style.display = 'inline-flex';
+        }
+    }
+
+    async function loadUserParticipation() {
+        try {
+            const response = await apiCall(`/announcements/participants/?announcement=${announcementId}&user=${userData.id}`);
+            if (response && response.ok) {
+                const participations = await response.json();
+                if (participations.length > 0) {
+                    userParticipation = participations[0];
+                    document.getElementById('unregisterBtn').style.display = 'inline-flex';
+                    document.getElementById('registerBtn').style.display = 'none';
+                } else {
+                    document.getElementById('registerBtn').style.display = 'inline-flex';
+                    document.getElementById('unregisterBtn').style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error loading participation:', error);
+        }
+    }
+
+    async function registerForEvent() {
+        try {
+            const btn = document.getElementById('registerBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-icons-round text-lg mr-2 animate-spin">refresh</span>Registering...';
+
+            const response = await apiCall(`/announcements/participants/`, {
+                method: 'POST',
+                body: JSON.stringify({
+                    announcement: announcementId,
+                    user: userData.id,
+                    status: 'REGISTERED'
+                })
+            });
+
+            if (response && response.ok) {
+                showSuccess('Successfully registered for event!');
+                await loadAnnouncement();
+            } else {
+                const error = await response.json();
+                showError(error.error || 'Failed to register');
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-icons-round text-lg mr-2">how_to_reg</span>Register for Event';
+            }
+        } catch (error) {
+            console.error('Error registering:', error);
+            showError('An error occurred while registering');
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-icons-round text-lg mr-2">how_to_reg</span>Register for Event';
+        }
+    }
+
+    async function unregisterFromEvent() {
+        if (!confirm('Are you sure you want to unregister from this event?')) return;
+
+        try {
+            const response = await apiCall(`/announcements/participants/${userParticipation.id}/`, {
+                method: 'DELETE'
+            });
+
+            if (response && response.ok) {
+                showSuccess('Successfully unregistered from event');
+                await loadAnnouncement();
+            } else {
+                showError('Failed to unregister');
+            }
+        } catch (error) {
+            console.error('Error unregistering:', error);
+            showError('An error occurred while unregistering');
+        }
+    }
+
+    async function viewParticipants() {
+        try {
+            const response = await apiCall(`/announcements/participants/?announcement=${announcementId}`);
+            if (response && response.ok) {
+                const participants = await response.json();
+                displayParticipants(participants);
+                document.getElementById('participantsList').style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Error loading participants:', error);
+            showError('Failed to load participants');
+        }
+    }
+
+    function displayParticipants(participants) {
+        const container = document.getElementById('participantsContent');
+        
+        if (participants.length === 0) {
+            container.innerHTML = '<p class="text-sm text-text-sub-light dark:text-text-sub-dark">No participants yet</p>';
+            return;
+        }
+
+        container.innerHTML = participants.map(p => `
+            <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
+                        ${(p.user_detail?.first_name || p.user_detail?.username || 'U').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-text-main-light dark:text-white">
+                            ${p.user_detail?.first_name || p.user_detail?.username || 'Unknown'}
+                        </p>
+                        <p class="text-xs text-text-sub-light dark:text-text-sub-dark">
+                            ${p.status_display}${p.role_in_event ? ` • ${p.role_in_event}` : ''}
+                        </p>
+                    </div>
+                </div>
+                <span class="px-2 py-1 rounded text-xs font-medium ${getStatusBadge(p.status)}">
+                    ${p.status_display}
+                </span>
+            </div>
+        `).join('');
+    }
+
+    function getStatusBadge(status) {
+        const badges = {
+            'REGISTERED': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+            'CONFIRMED': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+            'ATTENDED': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+            'ABSENT': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+            'CANCELLED': 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+        };
+        return badges[status] || badges['REGISTERED'];
+    }
+
+    function toggleParticipantsList() {
+        const list = document.getElementById('participantsList');
+        list.style.display = 'none';
+    }
+
+    function editAnnouncement() {
+        window.location.href = `/announcements/edit/${announcementId}/`;
+    }
+
+    async function togglePin() {
+        try {
+            const response = await apiCall(`/announcements/${announcementId}/pin/`, { method: 'POST' });
+            if (response && response.ok) {
+                showSuccess('Pin status updated');
+                await loadAnnouncement();
+            }
+        } catch (error) {
+            console.error('Error toggling pin:', error);
+            showError('Failed to update pin status');
+        }
+    }
+
+    async function deleteAnnouncement() {
+        if (!confirm('Are you sure you want to delete this announcement? This action cannot be undone.')) return;
+
+        try {
+            const response = await apiCall(`/announcements/${announcementId}/`, { method: 'DELETE' });
+            if (response && response.ok) {
+                showSuccess('Announcement deleted successfully');
+                setTimeout(() => {
+                    window.location.href = '/announcements/';
+                }, 1500);
+            } else {
+                showError('Failed to delete announcement');
+            }
+        } catch (error) {
+            console.error('Error deleting announcement:', error);
+            showError('An error occurred while deleting');
+        }
+    }
+
+    // Load announcement on page load
+    loadAnnouncement();
+</script>
+{% endblock %}

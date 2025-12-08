@@ -13,15 +13,15 @@
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h2 class="text-xl font-semibold text-text-main-light dark:text-white" id="greetingTitle">Hello!</h2>
-                <p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-1">Here's your duty information for today.</p>
+                <h2 class="text-xl font-semibold text-lbg-main-light dark:text-white" id="greetingTitle">Hello!</h2>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">Here's your duty information for today.</p>
             </div>
             <span class="bg-primary-light dark:bg-primary/20 text-primary dark:text-green-300 text-xs font-medium px-2.5 py-1 rounded-full" id="userRoleBadge">
                 Member
             </span>
         </div>
 
-        <div id="dutyContent" class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">
+        <div id="dutyContent" class="text-center py-8 text-lbg-sub-light dark:text-text-sub-dark">
             Loading your duty information...
         </div>
     </div>
@@ -32,8 +32,8 @@
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200">
         <div class="flex justify-between items-start mb-6">
             <div>
-                <h2 class="text-lg font-semibold text-text-main-light dark:text-white">Assign New Duty</h2>
-                <p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-1">Allocate tasks to council members for upcoming events or daily routines.</p>
+                <h2 class="text-lg font-semibold text-lbg-main-light dark:text-white">Assign New Duty</h2>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">Allocate tasks to council members for upcoming events or daily routines.</p>
             </div>
             <span class="bg-[#F3F4F6] dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-600">
                 Admin Access
@@ -43,67 +43,67 @@
         <form id="assignDutyForm" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">Assignee</label>
+                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Assignee</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">person</span>
                         </div>
-                        <select class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-white transition-colors" name="assigned_to" id="assigneeSelect" required>
+                        <select class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="assigned_to" id="assigneeSelect" required>
                             <option value="">Select a member</option>
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">Duty Type</label>
+                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Duty Type</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">work</span>
                         </div>
-                        <input type="text" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="duty_type" id="dutyTypeInput" placeholder="e.g., Security, Gate Duty, Event Management" required>
+                        <input type="text" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="duty_type" id="dutyTypeInput" placeholder="e.g., Security, Gate Duty, Event Management" required>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
-                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">Date</label>
+                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Date</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">event</span>
                         </div>
-                        <input type="date" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-white transition-colors" name="date" required>
+                        <input type="date" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="date" required>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">Location</label>
+                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Location</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">place</span>
                         </div>
-                        <input type="text" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="location" placeholder="e.g. Block A">
+                        <input type="text" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="location" placeholder="e.g. Block A">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">Subsidiary Area/Floor</label>
+                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Subsidiary Area/Floor</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">layers</span>
                         </div>
-                        <input type="text" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="subsidiary_area" placeholder="e.g. Ground Floor, Wing B">
+                        <input type="text" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="subsidiary_area" placeholder="e.g. Ground Floor, Wing B">
                     </div>
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">Instructions (Optional)</label>
+                <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Instructions (Optional)</label>
                 <div class="relative">
                     <div class="absolute top-3 left-3 pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">notes</span>
                     </div>
-                    <textarea class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-white placeholder-gray-400 dark:placeholder-gray-500 transition-colors resize-none" name="instructions" placeholder="Any special instructions for this duty" rows="3"></textarea>
+                    <textarea class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors resize-none" name="instructions" placeholder="Any special instructions for this duty" rows="3"></textarea>
                 </div>
             </div>
 
@@ -125,17 +125,17 @@
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200">
         <div class="flex justify-between items-center mb-6">
             <div>
-                <h2 class="text-lg font-semibold text-text-main-light dark:text-white">All Duties</h2>
-                <p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-1">View and manage all assigned duties.</p>
+                <h2 class="text-lg font-semibold text-lbg-main-light dark:text-white">All Duties</h2>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">View and manage all assigned duties.</p>
             </div>
             <div class="flex items-center gap-3">
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">search</span>
                     </div>
-                    <input type="text" id="searchDuties" class="pl-10 pr-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-main-light dark:text-white placeholder-gray-400 dark:placeholder-gray-500 w-64" placeholder="Search duties...">
+                    <input type="text" id="searchDuties" class="pl-10 pr-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 w-64" placeholder="Search duties...">
                 </div>
-                <select id="filterDate" class="px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-main-light dark:text-white">
+                <select id="filterDate" class="px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
                     <option value="all">All Dates</option>
                     <option value="today">Today</option>
                     <option value="tomorrow">Tomorrow</option>
@@ -175,14 +175,14 @@
         </div>
         
         <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6 mt-6">
-            <div class="flex items-center text-sm text-gray-700 dark:text-gray-300">
+            <div class="flex items-center text-sm text-lbg-main-light dark:text-lbg-main-dark">
                 <span id="dutyCount">Loading...</span>
             </div>
             <div class="flex gap-2">
                 <button id="prevPage" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                     Previous
                 </button>
-                <span class="px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300">
+                <span class="px-3 py-1.5 text-sm text-text-main-light dark:text-text-main-dark">
                     Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
                 </span>
                 <button id="nextPage" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
@@ -227,10 +227,10 @@ async function loadTodayDuty() {
                 const initial = firstName.charAt(0).toUpperCase();
                 
                 dutyContent.innerHTML = `
-                    <div class="bg-background-light dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <div>
                         <div class="flex justify-between items-center mb-4">
                             <div class="flex items-center gap-3">
-                                <span class="material-icons-round text-primary dark:text-green-400 text-2xl">event_available</span>
+                                <span class="material-icons-round text-sym-logo dark:text-green-400 text-2xl">event_available</span>
                                 <h3 class="text-lg font-semibold text-text-main-light dark:text-white">Your Assigned Duty</h3>
                             </div>
                             <span class="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs font-medium px-3 py-1 rounded-full">ACTIVE</span>
@@ -267,10 +267,6 @@ async function loadTodayDuty() {
                             </div>
                         </div>
                         
-                        <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                            <span class="block text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide mb-2">Date</span>
-                            <p class="text-sm text-text-main-light dark:text-white">${formatDate(duty.date)}</p>
-                        </div>
                         
                         ${duty.instructions ? `
                             <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
@@ -282,11 +278,11 @@ async function loadTodayDuty() {
                 `;
             } else {
                 dutyContent.innerHTML = `
-                    <div class="bg-background-light dark:bg-gray-800/50 p-12 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
+                    <div class="bg-card-light dark:bg-gray-800/50 p-12 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
                         <div class="text-center">
-                            <span class="material-icons-round text-gray-400 dark:text-gray-600 text-5xl mb-4 block">event_busy</span>
-                            <h3 class="text-lg font-semibold text-text-main-light dark:text-white mb-2">No Duty Assigned</h3>
-                            <p class="text-sm text-text-sub-light dark:text-text-sub-dark">You don't have any duties assigned for today. Enjoy your day!</p>
+                            <span class="material-icons-round text-lbg-main-light dark:text-gray-600 text-5xl mb-4 block">event_busy</span>
+                            <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white mb-2">No Duty Assigned</h3>
+                            <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark">You don't have any duties assigned for today. Enjoy your day!</p>
                         </div>
                     </div>
                 `;
@@ -501,7 +497,7 @@ function updateDutiesTable(duties) {
                             <span class="material-icons-round text-sm">work</span>
                         </div>
                         <div>
-                            <div class="text-sm font-medium text-text-main-light dark:text-white">${duty.duty_type_name}</div>
+                            <div class="text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark">${duty.duty_type_name}</div>
                             ${duty.instructions ? `<div class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">${duty.instructions}</div>` : ''}
                         </div>
                     </div>
@@ -512,24 +508,24 @@ function updateDutiesTable(duties) {
                             ${assigneeName.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                            <div class="text-sm font-medium text-text-main-light dark:text-white">${assigneeName}</div>
+                            <div class="text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark">${assigneeName}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400">${duty.assigned_to_detail?.role_detail?.name || 'Member'}</div>
                         </div>
                     </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-text-main-light dark:text-white">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
                     ${formatDate(duty.date)}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-text-main-light dark:text-white">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
                     ${duty.location || '-'}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-text-main-light dark:text-white">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
                     ${duty.subsidiary_area || '-'}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     ${status}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-text-main-light dark:text-white">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
                     ${assignerName}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
