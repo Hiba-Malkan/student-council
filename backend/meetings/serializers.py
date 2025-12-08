@@ -24,7 +24,7 @@ class MinutesOfMeetingSerializer(serializers.ModelSerializer):
             'emailed_to_phase_heads', 'email_sent_at',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['uploaded_by', 'uploaded_at', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'meeting', 'uploaded_by', 'uploaded_at', 'created_at', 'updated_at']
 
 
 class MeetingSerializer(serializers.ModelSerializer):
