@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 
 from .models import Club
@@ -108,16 +107,14 @@ class ClubViewSet(viewsets.ModelViewSet):
 
 # HTML Template Views
 
-class ClubsOverviewView(LoginRequiredMixin, TemplateView):
+class ClubsOverviewView(TemplateView):
     """Display clubs overview page"""
     template_name = 'clubs.html'
-    login_url = '/'
 
 
-class ClubFormView(LoginRequiredMixin, TemplateView):
+class ClubFormView(TemplateView):
     """Display club create/edit form"""
     template_name = 'clubs_form.html'
-    login_url = '/'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

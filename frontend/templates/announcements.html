@@ -34,28 +34,28 @@
 
     <!-- Filter Tabs -->
     <div class="flex flex-wrap items-center gap-3 mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-        <button class="filter-btn active px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="all">
+        <button class="filter-btn active px-4 py-2 text-sm text-lbg-main-light dark:text-lbg-main-dark rounded-full transition-colors" data-type="all">
             All
         </button>
-        <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="GENERAL">
+        <button class="filter-btn px-4 py-2 text-sm text-lbg-main-light dark:text-lbg-main-dark font-medium rounded-full transition-colors" data-type="GENERAL">
             General
         </button>
-        <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="EVENT">
+        <button class="filter-btn px-4 py-2 text-sm text-lbg-main-light dark:text-lbg-main-dark font-medium rounded-full transition-colors" data-type="EVENT">
             Events
         </button>
-        <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="URGENT">
+        <button class="filter-btn px-4 py-2 text-sm text-lbg-main-light dark:text-lbg-main-dark font-medium rounded-full transition-colors" data-type="URGENT">
             Urgent
         </button>
-        <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="CULTURAL">
+        <button class="filter-btn px-4 py-2 text-sm text-lbg-main-light dark:text-lbg-main-dark font-medium rounded-full transition-colors" data-type="CULTURAL">
             Cultural
         </button>
-        <button class="filter-btn px-4 py-2 text-sm font-medium rounded-full transition-colors" data-type="IH_SCHEDULE">
+        <button class="filter-btn px-4 py-2 text-sm text-lbg-main-light dark:text-lbg-main-dark font-medium rounded-full transition-colors" data-type="IH_SCHEDULE">
             Inter-House
         </button>
         
-        <div class="ml-auto flex items-center text-sm text-text-sub-light dark:text-text-sub-dark">
+        <div class="ml-auto flex items-center text-sm text-lbg-main-light dark:text-lbg-main-dark">
             <span class="mr-2">Sort by:</span>
-            <select id="sortSelect" class="bg-transparent border-none p-0 pr-6 text-sm font-medium text-text-main-light dark:text-text-main-dark focus:ring-0 cursor-pointer">
+            <select id="sortSelect" class="bg-transparent border-none p-0 pr-6 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark focus:ring-0 cursor-pointer">
                 <option value="newest">Newest First</option>
                 <option value="oldest">Oldest First</option>
                 <option value="pinned">Pinned First</option>
@@ -95,18 +95,39 @@
 </div>
 
 <style>
-    .filter-btn {
-        @apply text-text-sub-light dark:text-text-sub-dark bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700;
-    }
-    .filter-btn.active {
-        @apply text-primary bg-primary-light dark:bg-primary/20;
-    }
-    .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
+.filter-btn {
+  color: var(--text-sub-light);
+  background: transparent;
+}
+
+.dark .filter-btn {
+  color: var(--text-sub-dark);
+}
+
+.filter-btn:hover {
+  background-color: #f3f4f6; /* gray-100 */
+}
+
+.dark .filter-btn:hover {
+  background-color: #374151; /* gray-700 */
+}
+
+.filter-btn.active {
+  color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+.dark .filter-btn.active {
+  background-color: rgba(var(--primary), 0.2);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 </style>
 {% endblock %}
 
@@ -223,48 +244,48 @@
                             ${announcement.announcement_type_display}
                         </span>
                         ${announcement.is_pinned ? `
-                            <span class="text-xs text-text-sub-light dark:text-text-sub-dark flex items-center">
-                                <span class="material-icons-round text-sm mr-1">push_pin</span> Pinned
+                            <span class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark flex items-center">
+                                <span class="material-icons-round text-sm text-lbg-main-light dark:text-lbg-main-darkmr-1">push_pin</span> Pinned
                             </span>
                         ` : ''}
                         ${!announcement.is_read_by_user ? `
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs text-lbg-main-light dark:text-lbg-main-darkfont-medium bg-primary/10 text-primary">
                                 New
                             </span>
                         ` : ''}
                     </div>
                     ${userData.role_detail?.can_create_announcements ? `
                         <div class="relative">
-                            <button class="text-text-sub-light dark:text-text-sub-dark hover:text-text-main-light dark:hover:text-text-main-dark more-btn" data-id="${announcement.id}">
+                            <button class="text-lbg-sub-light dark:text-lbg-sub-dark hover:text-lbg-main-light dark:hover:text-lbg-main-dark more-btn" data-id="${announcement.id}">
                                 <span class="material-icons-round">more_vert</span>
                             </button>
                         </div>
                     ` : ''}
                 </div>
-                <h3 class="text-lg font-semibold text-text-main-light dark:text-text-main-dark mb-2">${announcement.title}</h3>
-                <p class="text-text-sub-light dark:text-text-sub-dark text-sm mb-4 line-clamp-2">
+                <h3 class="text-lg font-semibold text-lbg-main-light dark:text-lbg-main-dark mb-2">${announcement.title}</h3>
+                <p class="text-lbg-sub-light dark:text-lbg-sub-dark text-sm mb-4 line-clamp-2">
                     ${announcement.content}
                 </p>
-                <div class="flex items-center justify-between text-xs text-text-sub-light dark:text-text-sub-dark pt-3 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between text-xs text-lbg-sub-light dark:text-lbg-sub-dark pt-3 border-t border-gray-200 dark:border-gray-700">
                     <div class="flex items-center gap-4 flex-wrap">
                         <span class="flex items-center">
-                            <span class="material-icons-round text-sm mr-1">calendar_today</span> ${formattedDate}
+                            <span class="material-icons-round text-sm text-lbg-main-light dark:text-lbg-main-dark mr-1">calendar_today</span> ${formattedDate}
                         </span>
                         <span class="flex items-center">
-                            <span class="material-icons-round text-sm mr-1">person</span> By ${creatorName}
+                            <span class="material-icons-round text-sm text-lbg-main-light dark:text-lbg-main-dark mr-1">person</span> By ${creatorName}
                         </span>
                         ${announcement.attachments ? `
                             <span class="flex items-center text-primary">
-                                <span class="material-icons-round text-sm mr-1">attach_file</span> Attachment
+                                <span class="material-icons-round text-sm text-lbg-main-light dark:text-lbg-main-dark mr-1">attach_file</span> Attachment
                             </span>
                         ` : ''}
                         ${announcement.announcement_type === 'EVENT' && announcement.participant_count !== null ? `
                             <span class="flex items-center text-primary">
-                                <span class="material-icons-round text-sm mr-1">people</span> ${announcement.participant_count} participants
+                                <span class="material-icons-round text-sm text-lbg-main-light dark:text-lbg-main-dark mr-1">people</span> ${announcement.participant_count} participants
                             </span>
                         ` : ''}
                     </div>
-                    <span class="text-primary hover:text-primary-hover font-medium">View Details →</span>
+                    <span class="text-lbg-main-light dark:text-lbg-main-dark hover:text-primary-hover font-medium">View Details →</span>
                 </div>
             </div>
         `;

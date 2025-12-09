@@ -12,6 +12,7 @@
             darkMode: "class",
             theme: {
                 extend: {
+                    
                     colors: {
                         // Main brand colors
                         primary: "#1F4D3C",  // Main green - used for buttons, icons, highlights
@@ -103,6 +104,10 @@
                         <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">campaign</span>
                         Announcements
                     </a>
+                    <a class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_clubs %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/clubs/">
+                        <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">school</span>
+                        Clubs
+                    </a>
                     <a class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_admin %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/admin/" id="adminPanelLink" style="display: none;">
                         <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">admin_panel_settings</span>
                         Admin Panel
@@ -167,6 +172,10 @@
             const container = document.getElementById('successContainer');
             container.innerHTML = `<div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg mb-4">${message}</div>`;
             setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        function getAccessToken() {
+            return localStorage.getItem('access_token');
         }
 
         async function apiCall(endpoint, options = {}) {

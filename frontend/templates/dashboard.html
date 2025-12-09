@@ -1,639 +1,315 @@
 {% extends "base.html" %}
+{% block title %}Dashboard - CouncilApp{% endblock %}
 
-{% block title %}Duty Roster - CouncilApp{% endblock %}
+{% block nav_dashboard %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
 
-{% block nav_duty %}bg-primary-light dark:bg-primary/20 text-primary dark:text-green-400{% endblock %}
-
-{% block page_title %}Duty Roster{% endblock %}
-{% block page_subtitle %}Manage your schedule and assign tasks to the council.{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Welcome back! Here's your council overview.{% endblock %}
 
 {% block content %}
-<!-- Your Assigned Duty -->
-<section class="mt-4">
-    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h2 class="text-xl font-semibold text-lbg-main-light dark:text-white" id="greetingTitle">Hello!</h2>
-                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">Here's your duty information for today.</p>
-            </div>
-            <span class="bg-primary-light dark:bg-primary/20 text-primary dark:text-green-300 text-xs font-medium px-2.5 py-1 rounded-full" id="userRoleBadge">
-                Member
-            </span>
-        </div>
 
-        <div id="dutyContent" class="text-center py-8 text-lbg-sub-light dark:text-text-sub-dark">
-            Loading your duty information...
+<!-- Welcome Card -->
+<div class="max-w-5xl mx-auto mt-8">
+    <div class="bg-card-light dark:bg-card-dark rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-800">
+        <div class="flex flex-col sm:flex-row items-center gap-8 text-center sm:text-left">
+            <div class="relative">
+                <div class="h-28 w-28 rounded-full bg-primary flex items-center justify-center text-white text-5xl font-bold shadow-2xl ring-8 ring-primary-light dark:ring-primary-hover/20">
+                    <span id="dashboardAvatar">U</span>
+                </div>
+                <div class="absolute bottom-0 right-0 h-10 w-10 bg-green-500 rounded-full border-4 border-card-light dark:border-card-dark flex items-center justify-center shadow-lg">
+                    <span class="material-icons-round text-white text-xl">check</span>
+                </div>
+            </div>
+
+            <div class="flex-1">
+                <h1 class="text-3xl font-bold text-text-main-light dark:text-text-main-dark" id="dashboardUserName">Loading...</h1>
+                <p class="text-xl text-primary font-semibold mt-1" id="dashboardUserRole">Member</p>
+                <p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-2">Student Council • Active Member</p>
+            </div>
         </div>
     </div>
-</section>
+</div>
 
-<!-- Assign New Duty -->
-<section class="mt-8" id="assignDutyCard" style="display: none;">
-    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200">
-        <div class="flex justify-between items-start mb-6">
-            <div>
-                <h2 class="text-lg font-semibold text-lbg-main-light dark:text-white">Assign New Duty</h2>
-                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">Allocate tasks to council members for upcoming events or daily routines.</p>
-            </div>
-            <span class="bg-[#F3F4F6] dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-600">
-                Admin Access
-            </span>
-        </div>
-
-        <form id="assignDutyForm" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Stats Cards - Perfectly Equal Height -->
+<div class="max-w-5xl mx-auto mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Upcoming Meetings -->
+    <a href="/meetings/" class="block group">
+        <div class="bg-card-light dark:bg-card-dark rounded-2xl p-7 shadow-lg border border-gray-100 dark:border-gray-800 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col justify-between">
+            <div class="flex items-start justify-between">
                 <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Assignee</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="material-icons-round text-gray-400 text-lg">person</span>
-                        </div>
-                        <select class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="assigned_to" id="assigneeSelect" required>
-                            <option value="">Select a member</option>
-                        </select>
-                    </div>
+                    <p class="text-4xl font-bold text-primary" id="meetingsCount">0</p>
+                    <p class="text-lg text-text-sub-light dark:text-text-sub-dark mt-3">Upcoming Meetings</p>
                 </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Duty Type</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="material-icons-round text-gray-400 text-lg">work</span>
-                        </div>
-                        <input type="text" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="duty_type" id="dutyTypeInput" placeholder="e.g., Security, Gate Duty, Event Management" required>
-                    </div>
+                <div class="w-16 h-16 rounded-2xl bg-primary/10 dark:bg-primary-hover/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-icons-round text-primary text-3xl">calendar_month</span>
                 </div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Date</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="material-icons-round text-gray-400 text-lg">event</span>
-                        </div>
-                        <input type="date" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="date" required>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Location</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="material-icons-round text-gray-400 text-lg">place</span>
-                        </div>
-                        <input type="text" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="location" placeholder="e.g. Block A">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Subsidiary Area/Floor</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="material-icons-round text-gray-400 text-lg">layers</span>
-                        </div>
-                        <input type="text" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="subsidiary_area" placeholder="e.g. Ground Floor, Wing B">
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">Instructions (Optional)</label>
-                <div class="relative">
-                    <div class="absolute top-3 left-3 pointer-events-none">
-                        <span class="material-icons-round text-gray-400 text-lg">notes</span>
-                    </div>
-                    <textarea class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors resize-none" name="instructions" placeholder="Any special instructions for this duty" rows="3"></textarea>
-                </div>
-            </div>
-
-            <div class="flex justify-end gap-3 pt-2">
-                <button type="button" class="px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors" onclick="this.form.reset()">
-                    Cancel
-                </button>
-                <button type="submit" class="flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-sm transition-colors" id="submitBtn">
-                    <span class="material-icons-round text-sm mr-2">check</span>
-                    Assign Duty
-                </button>
-            </div>
-        </form>
-    </div>
-</section>
-
-<!-- All Duties List -->
-<section class="mt-8">
-    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h2 class="text-lg font-semibold text-lbg-main-light dark:text-white">All Duties</h2>
-                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">View and manage all assigned duties.</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span class="material-icons-round text-gray-400 text-lg">search</span>
-                    </div>
-                    <input type="text" id="searchDuties" class="pl-10 pr-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 w-64" placeholder="Search duties...">
-                </div>
-                <select id="filterDate" class="px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
-                    <option value="all">All Dates</option>
-                    <option value="today">Today</option>
-                    <option value="tomorrow">Tomorrow</option>
-                    <option value="week">This Week</option>
-                    <option value="future">Upcoming</option>
-                    <option value="past">Past</option>
-                </select>
+            <div class="mt-6 text-sm font-medium text-primary ">
+                View all meetings →
             </div>
         </div>
+    </a>
 
-        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-50 dark:bg-gray-800">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Duty Type</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Assignee</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Location</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Subsidiary Area</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Assigned By</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="dutiesTableBody" class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-                    <!-- Duties will be loaded here -->
-                    <tr>
-                        <td colspan="8" class="px-6 py-12 text-center">
-                            <div class="flex flex-col items-center">
-                                <span class="material-icons-round text-gray-400 dark:text-gray-600 text-4xl mb-3">event_note</span>
-                                <p class="text-gray-500 dark:text-gray-400">Loading duties...</p>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6 mt-6">
-            <div class="flex items-center text-sm text-lbg-main-light dark:text-lbg-main-dark">
-                <span id="dutyCount">Loading...</span>
+    <!-- Today's Duty -->
+    <a href="/duty-roster/" class="block group">
+        <div class="bg-card-light dark:bg-card-dark rounded-2xl p-7 shadow-lg border border-gray-100 dark:border-gray-800 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col justify-between">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-4xl font-bold text-green-600 dark:text-green-400" id="todayDutyStatus">No Duty</p>
+                    <p class="text-lg text-text-sub-light dark:text-text-sub-dark mt-3">Today's Assignment</p>
+                </div>
+                <div class="w-16 h-16 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-icons-round text-green-600 dark:text-green-400 text-3xl">assignment_ind</span>
+                </div>
             </div>
-            <div class="flex gap-2">
-                <button id="prevPage" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    Previous
+            <div class="mt-6 text-sm font-medium text-green-600 dark:text-green-400 ">
+                View duty roster →
+            </div>
+        </div>
+    </a>
+
+    <!-- Announcements -->
+    <a href="/announcements/" class="block group">
+        <div class="bg-card-light dark:bg-card-dark rounded-2xl p-7 shadow-lg border border-gray-100 dark:border-gray-800 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col justify-between">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-4xl font-bold text-purple-600 dark:text-purple-400" id="announcementsCount">0</p>
+                    <p class="text-lg text-text-sub-light dark:text-text-sub-dark mt-3">Active Announcements</p>
+                </div>
+                <div class="w-16 h-16 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <span class="material-icons-round text-purple-600 dark:text-purple-400 text-3xl">campaign</span>
+                </div>
+            </div>
+            <div class="mt-6 text-sm font-medium text-purple-600 dark:text-purple-400 ">
+                View all →
+            </div>
+        </div>
+    </a>
+</div>
+
+<!-- Recent Activity with Beautiful lbg Background -->
+<div class="max-w-5xl mx-auto mt-12">
+    <div class="bg-card-light dark:bg-card-dark rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+        <div class="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-text-main-light dark:text-text-main-dark flex items-center gap-3">
+                <span class="material-icons-round text-primary">update</span>
+                Recent Activity
+            </h2>
+            <span class="text-sm text-text-sub-light dark:text-text-sub-dark" id="lastUpdated">Just now</span>
+        </div>
+
+        <div class="p-6" id="activityContainer">
+            <div id="activityFeed" class="space-y-4">
+                <div class="text-center py-16 text-text-sub-light dark:text-text-sub-dark">
+                    <span class="material-icons-round text-7xl mb-4 block animate-spin">sync</span>
+                    <p>Loading activity...</p>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center items-center gap-4 mt-8" id="paginationControls" style="display: none;">
+                <button id="prevPage" class="p-2.5 rounded-xl bg-input-bg-light dark:bg-input-bg-dark hover:bg-primary-light dark:hover:bg-primary-hover/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                    <span class="material-icons-round">chevron_left</span>
                 </button>
-                <span class="px-3 py-1.5 text-sm text-text-main-light dark:text-text-main-dark">
-                    Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
+                <span class="text-sm font-medium text-text-sub-light dark:text-text-sub-dark">
+                    Page <span id="currentPageNum">1</span> of <span id="totalPagesNum">1</span>
                 </span>
-                <button id="nextPage" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                    Next
+                <button id="nextPage" class="p-2.5 rounded-xl bg-input-bg-light dark:bg-input-bg-dark hover:bg-primary-light dark:hover:bg-primary-hover/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                    <span class="material-icons-round">chevron_right</span>
                 </button>
             </div>
         </div>
     </div>
-</section>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Remove time formatting functions as they're no longer needed
-function formatDate(date) {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
+let allActivities = [];
+let currentPage = 1;
+const itemsPerPage = 4;
+const maxPages = 7;
+
+function timeAgo(dateString) {
+    const now = new Date();
+    const past = new Date(dateString);
+    const diffMs = now - past;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHrs = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHrs < 24) return `${diffHrs}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return past.toLocaleDateString();
 }
 
-// Load today's duty for current user
-async function loadTodayDuty() {
-    try {
-        const today = new Date().toISOString().split('T')[0];
-        const response = await apiCall(`/duty-roster/duties/?assigned_to=${userData.id}&date=${today}`);
-        
-        if (response && response.ok) {
-            const data = await response.json();
-            const duties = data.results || data;
-            
-            const dutyContent = document.getElementById('dutyContent');
-            
-            if (duties.length > 0) {
-                const duty = duties[0];
-                const location = duty.location || 'Not specified';
-                const subsidiaryArea = duty.subsidiary_area || 'Not specified';
-                const firstName = userData.first_name || userData.username;
-                const initial = firstName.charAt(0).toUpperCase();
-                
-                dutyContent.innerHTML = `
-                    <div>
-                        <div class="flex justify-between items-center mb-4">
-                            <div class="flex items-center gap-3">
-                                <span class="material-icons-round text-sym-logo dark:text-green-400 text-2xl">event_available</span>
-                                <h3 class="text-lg font-semibold text-text-main-light dark:text-white">Your Assigned Duty</h3>
-                            </div>
-                            <span class="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs font-medium px-3 py-1 rounded-full">ACTIVE</span>
-                        </div>
+async function loadDashboardData() {
+    await loadUserProfile();
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-                            <div class="text-center">
-                                <span class="block text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide mb-2">Assignee</span>
-                                <div class="flex items-center justify-center gap-2">
-                                    <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-sm">${initial}</div>
-                                    <span class="text-sm font-medium text-text-main-light dark:text-white">${firstName}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="text-center">
-                                <span class="block text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide mb-2">Duty Type</span>
-                                <span class="text-sm font-medium text-text-main-light dark:text-white">${duty.duty_type_name || 'General Duty'}</span>
-                            </div>
-                            
-                            <div class="text-center">
-                                <span class="block text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide mb-2">Location</span>
-                                <div class="flex items-center justify-center gap-1">
-                                    <span class="material-icons-round text-text-sub-light dark:text-text-sub-dark text-base">place</span>
-                                    <span class="text-sm font-medium text-text-main-light dark:text-white">${location}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="text-center">
-                                <span class="block text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide mb-2">Subsidiary Area</span>
-                                <div class="flex items-center justify-center gap-1">
-                                    <span class="material-icons-round text-text-sub-light dark:text-text-sub-dark text-base">layers</span>
-                                    <span class="text-sm font-medium text-text-main-light dark:text-white">${subsidiaryArea}</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        
-                        ${duty.instructions ? `
-                            <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                                <span class="block text-xs font-semibold text-text-sub-light dark:text-text-sub-dark uppercase tracking-wide mb-2">Instructions</span>
-                                <p class="text-sm text-text-main-light dark:text-white">${duty.instructions}</p>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            } else {
-                dutyContent.innerHTML = `
-                    <div class="bg-card-light dark:bg-gray-800/50 p-12 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
-                        <div class="text-center">
-                            <span class="material-icons-round text-lbg-main-light dark:text-gray-600 text-5xl mb-4 block">event_busy</span>
-                            <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white mb-2">No Duty Assigned</h3>
-                            <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark">You don't have any duties assigned for today. Enjoy your day!</p>
-                        </div>
-                    </div>
-                `;
-            }
-        } else {
-            throw new Error('Failed to load duties');
-        }
-    } catch (error) {
-        console.error('Error loading duty:', error);
-        document.getElementById('dutyContent').innerHTML = `
-            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg">
-                Failed to load your duty information. Please try refreshing the page.
-            </div>
-        `;
+    const user = userData;
+    const name = user.first_name ? `${user.first_name} ${user.last_name || ''}`.trim() : user.username || 'User';
+    const initial = name.charAt(0).toUpperCase();
+
+    const avatarEl = document.querySelector('#dashboardAvatar').parentElement;
+    if (user.avatar) {
+        avatarEl.innerHTML = `<img src="${user.avatar}" alt="${name}" class="w-full h-full rounded-full object-cover">`;
+    } else {
+        document.getElementById('dashboardAvatar').textContent = initial;
     }
+
+    document.getElementById('dashboardUserName').textContent = name;
+    document.getElementById('dashboardUserRole').textContent = user.role_detail?.name || 'Member';
+
+    const today = new Date().toISOString().split('T')[0];
+
+    // Meetings
+    const mRes = await apiCall(`/meetings/?date__gte=${today}&ordering=date`);
+    if (mRes?.ok) {
+        const data = await mRes.json();
+        document.getElementById('meetingsCount').textContent = (data.results || data).length;
+    }
+
+    // Duty
+    const dRes = await apiCall(`/duty-roster/duties/?assigned_to=${user.id}&date=${today}`);
+    if (dRes?.ok) {
+        const data = await dRes.json();
+        const duty = (data.results || data)[0];
+        document.getElementById('todayDutyStatus').textContent = duty ? (duty.duty_type_name || 'Assigned') : 'No Duty Today';
+    }
+
+    // Announcements
+    const aRes = await apiCall('/announcements/?active=true');
+    if (aRes?.ok) {
+        const data = await aRes.json();
+        document.getElementById('announcementsCount').textContent = (data.results || data).length;
+    }
+
+    loadRecentActivity();
 }
 
-// Load users for dropdown
-async function loadUsers() {
+async function loadRecentActivity() {
+    const activities = [];
+
     try {
-        const response = await apiCall('/accounts/users/');
-        if (response && response.ok) {
-            const data = await response.json();
-            const users = data.results || data;
-            
-            const select = document.getElementById('assigneeSelect');
-            users.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.id;
-                const displayName = user.first_name && user.last_name 
-                    ? `${user.first_name} ${user.last_name}` 
-                    : user.username;
-                option.textContent = `${displayName} (${user.role_detail?.name || 'No Role'})`;
-                select.appendChild(option);
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const since = sevenDaysAgo.toISOString().split('T')[0];
+
+        const [mRes, dRes, aRes] = await Promise.all([
+            apiCall(`/meetings/?date__gte=${since}&ordering=-date`),
+            apiCall(`/duty-roster/duties/?date__gte=${since}&ordering=-created_at`),
+            apiCall('/announcements/?ordering=-created_at')
+        ]);
+
+        if (mRes?.ok) {
+            const data = await mRes.json();
+            (data.results || data).forEach(m => {
+                activities.push({
+                    icon: "event",
+                    color: "text-primary",
+                    text: `Meeting: <strong>${m.title}</strong>`,
+                    date: m.created_at || m.date
+                });
             });
         }
-    } catch (error) {
-        console.error('Error loading users:', error);
+
+        if (dRes?.ok) {
+            const data = await dRes.json();
+            (data.results || data).forEach(d => {
+                const isMe = d.assigned_to === userData.id;
+                activities.push({
+                    icon: isMe ? "assignment_turned_in" : "assignment_ind",
+                    color: isMe ? "text-green-600 dark:text-green-400" : "text-blue-600 dark:text-blue-400",
+                    text: isMe 
+                        ? `You were assigned <strong>${d.duty_type_name || 'duty'}</strong>`
+                        : `<strong>${d.assigned_to_detail?.first_name || 'Member'}</strong> got duty`,
+                    date: d.created_at || d.date
+                });
+            });
+        }
+
+        if (aRes?.ok) {
+            const data = await aRes.json();
+            (data.results || data).forEach(a => {
+                activities.push({
+                    icon: "campaign",
+                    color: "text-purple-600 dark:text-purple-400",
+                    text: `New announcement: <strong>${a.title}</strong>`,
+                    date: a.created_at || new Date().toISOString()
+                });
+            });
+        }
+
+        activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+        allActivities = activities.slice(0, maxPages * itemsPerPage); // Max 28 items
+
+        renderPage(1);
+        document.getElementById('lastUpdated').textContent = "Updated just now";
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('activityFeed').innerHTML = `<div class="text-center py-10 text-red-600 dark:text-red-400">Failed to load activity</div>`;
     }
 }
 
-// Handle assign duty form submission
-document.getElementById('assignDutyForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-    const submitBtn = document.getElementById('submitBtn');
-    
-    const data = {
-        duty_type_name: formData.get('duty_type'),
-        assigned_to: parseInt(formData.get('assigned_to')),
-        date: formData.get('date'),
-        location: formData.get('location') || '',
-        subsidiary_area: formData.get('subsidiary_area') || '',
-        instructions: formData.get('instructions') || ''
-    };
+function renderPage(page) {
+    const start = (page - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageItems = allActivities.slice(start, end);
 
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="material-icons-round text-sm mr-2 animate-spin">sync</span><span>Assigning...</span>';
-
-    try {
-        const response = await apiCall('/duty-roster/duties/', {
-            method: 'POST',
-            body: JSON.stringify(data)
-        });
-
-        if (response && response.ok) {
-            showSuccess('Duty assigned successfully!');
-            e.target.reset();
-            
-            // Reload duty if assigned to current user and for today
-            const today = new Date().toISOString().split('T')[0];
-            if (data.assigned_to === userData.id && data.date === today) {
-                loadTodayDuty();
-            }
-            // Reload duties list
-            loadAllDuties();
-        } else {
-            const error = await response.json();
-            showError(error.detail || error.message || 'Failed to assign duty');
-        }
-    } catch (error) {
-        console.error('Error assigning duty:', error);
-        showError('An error occurred while assigning duty');
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `
-            <span class="material-icons-round text-sm mr-2">check</span>
-            Assign Duty
-        `;
+    if (pageItems.length === 0 && allActivities.length === 0) {
+        document.getElementById('activityFeed').innerHTML = `
+            <div class="text-center py-16 text-text-sub-light dark:text-text-sub-dark">
+                <span class="material-icons-round text-7xl mb-4 opacity-30">inbox</span>
+                <p>No recent activity</p>
+            </div>`;
+        document.getElementById('paginationControls').style.display = 'none';
+        return;
     }
+
+    const html = pageItems.map(act => `
+        <div class="p-5 rounded-2xl bg-primary-light/30 dark:bg-primary-hover/10 border border-primary-light/50 dark:border-primary-hover/20 transition-all hover:shadow-md">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-primary-light dark:bg-primary-hover/20 flex-shrink-0 flex items-center justify-center">
+                    <span class="material-icons-round ${act.color} text-2xl">${act.icon}</span>
+                </div>
+                <div class="flex-1">
+                    <p class="text-text-main-light dark:text-text-main-dark font-medium">${act.text}</p>
+                    <p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-1">${timeAgo(act.date)}</p>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    document.getElementById('activityFeed').innerHTML = html;
+
+    const totalPages = Math.ceil(allActivities.length / itemsPerPage);
+    document.getElementById('currentPageNum').textContent = page;
+    document.getElementById('totalPagesNum').textContent = totalPages || 1;
+    document.getElementById('prevPage').disabled = page === 1;
+    document.getElementById('nextPage').disabled = page === totalPages;
+    document.getElementById('paginationControls').style.display = totalPages > 1 ? 'flex' : 'none';
+
+    currentPage = page;
+}
+
+// Pagination
+document.getElementById('prevPage').addEventListener('click', () => {
+    if (currentPage > 1) renderPage(currentPage - 1);
+});
+document.getElementById('nextPage').addEventListener('click', () => {
+    const totalPages = Math.ceil(allActivities.length / itemsPerPage);
+    if (currentPage < totalPages) renderPage(currentPage + 1);
 });
 
-// Variables for duties list pagination
-let currentPage = 1;
-const pageSize = 10;
-let totalDuties = 0;
-let allDuties = [];
+// Auto refresh every minute
+setInterval(loadRecentActivity, 60000);
 
-// Load all duties with pagination
-async function loadAllDuties(page = 1, search = '', dateFilter = 'all') {
-    try {
-        // Build query parameters
-        let url = `/duty-roster/duties/?page=${page}&page_size=${pageSize}`;
-        
-        if (search) {
-            url += `&search=${encodeURIComponent(search)}`;
-        }
-        
-        if (dateFilter !== 'all') {
-            const today = new Date();
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            
-            if (dateFilter === 'today') {
-                url += `&date=${today.toISOString().split('T')[0]}`;
-            } else if (dateFilter === 'tomorrow') {
-                url += `&date=${tomorrow.toISOString().split('T')[0]}`;
-            } else if (dateFilter === 'week') {
-                const weekStart = today.toISOString().split('T')[0];
-                const weekEnd = new Date(today);
-                weekEnd.setDate(weekEnd.getDate() + 7);
-                url += `&start_date=${weekStart}&end_date=${weekEnd.toISOString().split('T')[0]}`;
-            } else if (dateFilter === 'future') {
-                url += `&start_date=${today.toISOString().split('T')[0]}`;
-            } else if (dateFilter === 'past') {
-                const yesterday = new Date(today);
-                yesterday.setDate(yesterday.getDate() - 1);
-                url += `&end_date=${yesterday.toISOString().split('T')[0]}`;
-            }
-        }
-        
-        const response = await apiCall(url);
-        
-        if (response && response.ok) {
-            const data = await response.json();
-            allDuties = data.results || data;
-            totalDuties = data.count || allDuties.length;
-            
-            updateDutiesTable(allDuties);
-            updatePaginationControls(page, Math.ceil(totalDuties / pageSize));
-        } else {
-            throw new Error('Failed to load duties');
-        }
-    } catch (error) {
-        console.error('Error loading duties:', error);
-        document.getElementById('dutiesTableBody').innerHTML = `
-            <tr>
-                <td colspan="8" class="px-6 py-12 text-center">
-                    <div class="flex flex-col items-center">
-                        <span class="material-icons-round text-red-400 text-4xl mb-3">error</span>
-                        <p class="text-red-500">Failed to load duties. Please try again.</p>
-                    </div>
-                </td>
-            </tr>
-        `;
-    }
-}
-
-// Update duties table with data
-function updateDutiesTable(duties) {
-    const tableBody = document.getElementById('dutiesTableBody');
-    
-    if (duties.length === 0) {
-        tableBody.innerHTML = `
-            <tr>
-                <td colspan="8" class="px-6 py-12 text-center">
-                    <div class="flex flex-col items-center">
-                        <span class="material-icons-round text-gray-400 dark:text-gray-600 text-4xl mb-3">event_available</span>
-                        <p class="text-gray-500 dark:text-gray-400">No duties found</p>
-                    </div>
-                </td>
-            </tr>
-        `;
-        return;
-    }
-    
-    let html = '';
-    duties.forEach(duty => {
-        const assigneeName = duty.assigned_to_detail?.first_name && duty.assigned_to_detail?.last_name 
-            ? `${duty.assigned_to_detail.first_name} ${duty.assigned_to_detail.last_name}`
-            : duty.assigned_to_detail?.username || 'Unknown';
-        
-        const assignerName = duty.assigned_by_detail?.first_name && duty.assigned_by_detail?.last_name 
-            ? `${duty.assigned_by_detail.first_name} ${duty.assigned_by_detail.last_name}`
-            : duty.assigned_by_detail?.username || 'System';
-        
-        const today = new Date().toISOString().split('T')[0];
-        const dutyDate = new Date(duty.date);
-        const now = new Date();
-        
-        let status = '';
-        if (duty.is_completed) {
-            status = `<span class="px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full">Completed</span>`;
-        } else if (duty.date < today) {
-            status = `<span class="px-2 py-1 text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 rounded-full">Overdue</span>`;
-        } else if (duty.date === today) {
-            status = `<span class="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full">Today</span>`;
-        } else {
-            status = `<span class="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded-full">Upcoming</span>`;
-        }
-        
-        // Check if user can delete this duty
-        const canDelete = (userData.role_detail?.can_edit_duty_roster || userData.is_staff) && 
-                         (duty.assigned_by === userData.id || userData.is_c_suite);
-        
-        html += `
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                        <div class="h-8 w-8 rounded-full flex items-center justify-center text-white text-sm mr-3" style="background-color: ${duty.duty_type_detail?.color || '#3B82F6'}">
-                            <span class="material-icons-round text-sm">work</span>
-                        </div>
-                        <div>
-                            <div class="text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark">${duty.duty_type_name}</div>
-                            ${duty.instructions ? `<div class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">${duty.instructions}</div>` : ''}
-                        </div>
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                        <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-sm mr-3">
-                            ${assigneeName.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                            <div class="text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark">${assigneeName}</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400">${duty.assigned_to_detail?.role_detail?.name || 'Member'}</div>
-                        </div>
-                    </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
-                    ${formatDate(duty.date)}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
-                    ${duty.location || '-'}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
-                    ${duty.subsidiary_area || '-'}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    ${status}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
-                    ${assignerName}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    ${canDelete ? `
-                        <button onclick="deleteDuty(${duty.id})" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors">
-                            <span class="material-icons-round text-lg">delete</span>
-                        </button>
-                    ` : `
-                        <span class="text-gray-400 dark:text-gray-600">
-                            <span class="material-icons-round text-lg">lock</span>
-                        </span>
-                    `}
-                </td>
-            </tr>
-        `;
-    });
-    
-    tableBody.innerHTML = html;
-}
-
-// Update pagination controls
-function updatePaginationControls(current, total) {
-    document.getElementById('currentPage').textContent = current;
-    document.getElementById('totalPages').textContent = total;
-    document.getElementById('dutyCount').textContent = `Showing ${allDuties.length} of ${totalDuties} duties`;
-    
-    document.getElementById('prevPage').disabled = current === 1;
-    document.getElementById('nextPage').disabled = current === total || total === 0;
-}
-
-// Delete duty function
-async function deleteDuty(dutyId) {
-    if (!confirm('Are you sure you want to delete this duty? This action cannot be undone.')) {
-        return;
-    }
-    
-    try {
-        const response = await apiCall(`/duty-roster/duties/${dutyId}/`, {
-            method: 'DELETE'
-        });
-        
-        if (response && response.ok) {
-            showSuccess('Duty deleted successfully!');
-            // Reload duties list
-            loadAllDuties(currentPage);
-            // Reload today's duty if it was the deleted one
-            loadTodayDuty();
-        } else {
-            const error = await response.json();
-            showError(error.detail || error.message || 'Failed to delete duty');
-        }
-    } catch (error) {
-        console.error('Error deleting duty:', error);
-        showError('An error occurred while deleting duty');
-    }
-}
-
-// Initialize page
-async function initDutyRoster() {
-    await loadUserProfile();
-    
-    // Update greeting and role badge
-    const firstName = userData.first_name || userData.username || 'User';
-    document.getElementById('greetingTitle').textContent = `Hello, ${firstName}!`;
-    document.getElementById('userRoleBadge').textContent = userData.role_detail?.name || 'Member';
-    
-    // Show assign duty form if user has permission
-    if (userData.role_detail?.can_edit_duty_roster || userData.is_staff) {
-        document.getElementById('assignDutyCard').style.display = 'block';
-        loadUsers();
-    }
-    
-    // Load today's duty
-    await loadTodayDuty();
-    
-    // Load all duties
-    await loadAllDuties();
-    
-    // Set up search functionality
-    document.getElementById('searchDuties').addEventListener('input', (e) => {
-        clearTimeout(window.searchTimeout);
-        window.searchTimeout = setTimeout(() => {
-            loadAllDuties(1, e.target.value, document.getElementById('filterDate').value);
-        }, 300);
-    });
-    
-    // Set up date filter
-    document.getElementById('filterDate').addEventListener('change', (e) => {
-        loadAllDuties(1, document.getElementById('searchDuties').value, e.target.value);
-    });
-    
-    // Set up pagination buttons
-    document.getElementById('prevPage').addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            loadAllDuties(currentPage, document.getElementById('searchDuties').value, document.getElementById('filterDate').value);
-        }
-    });
-    
-    document.getElementById('nextPage').addEventListener('click', () => {
-        const totalPages = Math.ceil(totalDuties / pageSize);
-        if (currentPage < totalPages) {
-            currentPage++;
-            loadAllDuties(currentPage, document.getElementById('searchDuties').value, document.getElementById('filterDate').value);
-        }
-    });
-}
-
-initDutyRoster();
+document.addEventListener('DOMContentLoaded', () => {
+    loadDashboardData();
+});
 </script>
 {% endblock %}
