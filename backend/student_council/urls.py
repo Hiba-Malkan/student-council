@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from clubs.urls import html_urlpatterns as clubs_html_urls
 
 urlpatterns = [
     # ============================================
@@ -18,8 +19,8 @@ urlpatterns = [
     path('api/', include('meetings.urls')),
     path('api/announcements/', include('announcements.urls')),
     path('api/discipline/', include('discipline.urls')),
-    path('api/projects/', include('projects.urls')),
     path('api/notifications/', include('notifications.urls')),
+    path('api/clubs/', include('clubs.urls')),  # ← Clubs API
     
     # ============================================
     # HTML PAGES (All CSS/JS inline in templates)
@@ -36,6 +37,9 @@ urlpatterns = [
     path('announcements/new/', TemplateView.as_view(template_name='new_announcement.html'), name='new_announcement'),
     path('announcements/edit/<int:pk>/', TemplateView.as_view(template_name='edit_announcement.html'), name='edit_announcement'),
     path('announcements/detail/<int:pk>/', TemplateView.as_view(template_name='announcement_detail.html'), name='announcement_detail'),
+    
+    # Clubs HTML pages
+    path('clubs/', include(clubs_html_urls)),
     
     # Duties
     path('duties/', TemplateView.as_view(template_name='duty-roster.html'), name='duty-roster'),

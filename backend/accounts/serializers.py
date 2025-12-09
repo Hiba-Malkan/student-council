@@ -3,19 +3,17 @@ from .models import User, Role, UserSession
 
 
 class RoleSerializer(serializers.ModelSerializer):
-    category_display = serializers.CharField(source='get_category_display', read_only=True)
     user_count = serializers.SerializerMethodField()
     
     class Meta:
         model = Role
         fields = [
-            'id', 'name', 'category', 'category_display', 'description',
+            'id', 'name',
             'can_edit_duty_roster', 'can_schedule_meetings',
             'can_create_announcements', 'can_edit_announcements',
-            'can_manage_events', 'can_record_discipline',
-            'can_view_discipline', 'can_create_projects',
-            'can_approve_projects', 'level', 'user_count',
-            'created_at', 'updated_at'
+            'can_record_discipline', 'can_view_discipline',
+            'can_add_clubs',
+            'user_count', 'created_at', 'updated_at'
         ]
         read_only_fields = ['created_at', 'updated_at']
     
@@ -35,8 +33,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name',
             'full_name', 'role', 'role_detail', 'phone', 'grade',
-            'section', 'house', 'phase', 'is_phase_head', 'avatar',
-            'bio', 'is_active', 'is_staff', 'is_c_suite', 'is_captain',
+            'section', 'house', 'is_phase_head', 'avatar',
+            'bio', 'is_active', 'is_staff', 'is_superuser', 'is_c_suite', 'is_captain',
             'is_class_rep', 'date_joined', 'created_at', 'updated_at'
         ]
         read_only_fields = ['date_joined', 'created_at', 'updated_at']

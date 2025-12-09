@@ -12,9 +12,6 @@ class Notification(models.Model):
         ('ANNOUNCEMENT', 'New Announcement'),
         ('DUTY_ASSIGNED', 'Duty Assigned'),
         ('DUTY_REMINDER', 'Duty Reminder'),
-        ('DISCIPLINE_ALERT', 'Discipline Alert'),
-        ('PROJECT_DEADLINE', 'Project Deadline'),
-        ('PROJECT_APPROVAL', 'Project Approval'),
         ('EVENT_REGISTRATION', 'Event Registration'),
         ('GENERAL', 'General'),
     ]

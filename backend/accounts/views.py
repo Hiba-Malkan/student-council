@@ -74,7 +74,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ['role', 'grade', 'section', 'house', 'phase']
+    filterset_fields = ['role', 'grade', 'section', 'house']
     search_fields = ['username', 'email', 'first_name', 'last_name']
     
     def get_queryset(self):

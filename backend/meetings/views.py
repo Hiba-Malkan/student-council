@@ -14,7 +14,7 @@ class MeetingViewSet(viewsets.ModelViewSet):
     filterset_fields = ['date', 'is_cancelled', 'organized_by']
     search_fields = ['title', 'description', 'location']
     ordering_fields = ['date', 'created_at']
-    ordering = ['date']
+    ordering = ['date'] 
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy', 'mom']:

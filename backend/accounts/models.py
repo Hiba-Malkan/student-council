@@ -2,42 +2,23 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class Role(models.Model):
-    """Role model with hierarchy and permissions"""
-    ROLE_CATEGORIES = [
-        ('C_SUITE', 'C-Suite'),
-        ('CAPTAIN', 'Captain'),
-        ('COORDINATOR', 'Coordinator'),
-        ('CLASS_REP', 'Class Rep'),
-        ('STUDENT', 'Student'),
-    ]
-    
     name = models.CharField(max_length=100, unique=True)
-    category = models.CharField(max_length=20, choices=ROLE_CATEGORIES)
-    description = models.TextField(blank=True)
     
     # Permissions
     can_edit_duty_roster = models.BooleanField(default=False)
     can_schedule_meetings = models.BooleanField(default=False)
     can_create_announcements = models.BooleanField(default=False)
     can_edit_announcements = models.BooleanField(default=False)
-    can_manage_events = models.BooleanField(default=False)
     can_record_discipline = models.BooleanField(default=False)
     can_view_discipline = models.BooleanField(default=False)
-    can_create_projects = models.BooleanField(default=False)
-    can_approve_projects = models.BooleanField(default=False)
+    can_add_clubs = models.BooleanField(default=False) 
     
-    # Hierarchy
-    level = models.IntegerField(default=5)  # 1=highest (C-Suite), 5=lowest (Student)
-    
+    # Hierarchy    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
-    class Meta:
-        ordering = ['level', 'name']
-    
     def __str__(self):
-        return f"{self.name} ({self.get_category_display()})"
-
+        return self.name
 
 class User(AbstractUser):
     """Custom user model with role-based access"""
@@ -49,9 +30,6 @@ class User(AbstractUser):
     grade = models.CharField(max_length=10, blank=True)
     section = models.CharField(max_length=10, blank=True)
     house = models.CharField(max_length=50, blank=True)  # House A/B/C/D
-    
-    # Phase for discipline tracking
-    phase = models.CharField(max_length=20, blank=True)  # e.g., "Phase 1", "Phase 2"
     
     is_phase_head = models.BooleanField(default=False)
     
@@ -70,15 +48,21 @@ class User(AbstractUser):
     
     @property
     def is_c_suite(self):
-        return self.role and self.role.category == 'C_SUITE'
+        """Check if user is in C-Suite (President, Vice President, Secretary, Treasurer)"""
+        if not self.role:
+            return False
+        c_suite_roles = ['President', 'Vice President', 'Secretary', 'Treasurer']
+        return self.role.name in c_suite_roles
     
     @property
     def is_captain(self):
-        return self.role and self.role.category == 'CAPTAIN'
+        """Check if user is a Captain"""
+        return self.role and 'Captain' in self.role.name
     
     @property
     def is_class_rep(self):
-        return self.role and self.role.category == 'CLASS_REP'
+        """Check if user is a Class Representative"""
+        return self.role and 'Class Rep' in self.role.name
 
 
 class UserSession(models.Model):
@@ -95,3 +79,4 @@ class UserSession(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.created_at}"
+

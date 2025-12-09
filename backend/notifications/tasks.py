@@ -34,8 +34,6 @@ def send_email_notification(notification_id):
                 'DUTY_ASSIGNED': prefs.email_for_duties,
                 'DUTY_REMINDER': prefs.email_for_duties,
                 'DISCIPLINE_ALERT': prefs.email_for_discipline,
-                'PROJECT_DEADLINE': prefs.email_for_projects,
-                'PROJECT_APPROVAL': prefs.email_for_projects,
             }
             
             if not type_mapping.get(notification.notification_type, True):
