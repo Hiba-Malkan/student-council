@@ -1,3 +1,4 @@
+# discipline/models.py
 from django.db import models
 from django.core.validators import RegexValidator
 from accounts.models import User
@@ -46,3 +47,44 @@ class DisciplineRecord(models.Model):
 
     def __str__(self):
         return f"{self.student_name} ({self.dno}) - {self.offense_count} offense(s)"
+
+
+class OffenseLog(models.Model):
+    """
+    Individual offense log for each discipline record
+    """
+    record = models.ForeignKey(
+        DisciplineRecord,
+        on_delete=models.CASCADE,
+        related_name='offense_logs'
+    )
+    
+    CATEGORY_CHOICES = [
+        ('UNIFORM', 'Uniform Violation'),
+        ('LATE', 'Late Arrival / Submission'),
+        ('BEHAVIOR', 'Misbehavior'),
+        ('ACADEMIC', 'Academic Misconduct'),
+        ('ABSENCE', 'Unauthorized Absence'),
+        ('SUBSTANCES', 'Substances'),
+        ('OTHER', 'Other'),
+    ]
+    
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default='OTHER'
+    )
+    
+    reason = models.TextField(
+        blank=True,
+        help_text="Detailed reason for this offense"
+    )
+    
+    # Use created_at for offense date
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.record.dno} - {self.get_category_display()} on {self.created_at.date()}"

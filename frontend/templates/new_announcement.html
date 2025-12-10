@@ -382,6 +382,9 @@
     });
 
     async function submitForm() {
+        await loadUserProfile();
+
+        const user = userData;
         const form = document.getElementById('announcementForm');
         
         // Validate required fields
@@ -407,6 +410,7 @@
         formData.append('is_published', document.getElementById('is_published').checked);
         formData.append('send_email', document.getElementById('send_email').checked);
         formData.append('is_pinned', document.getElementById('is_pinned').checked);
+        formData.append('created_by', user);
 
         // Add event details if applicable
         if (announcementTypeSelect.value === 'EVENT') {

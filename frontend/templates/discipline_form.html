@@ -25,7 +25,7 @@
         <form id="disciplineForm">
             <!-- Student Name -->
             <div class="mb-6">
-                <label for="studentName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label for="studentName" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
                     Student Name *
                 </label>
                 <input 
@@ -34,13 +34,13 @@
                     name="student_name"
                     required
                     placeholder="Enter student's full name"
-                    class="w-full px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
             </div>
 
             <!-- Class & Section -->
             <div class="mb-6">
-                <label for="classSection" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label for="classSection" class="block text-sm font-medium  text-lbg-main-light dark:text-lbg-main-dark mb-2">
                     Class & Section *
                 </label>
                 <input 
@@ -49,14 +49,14 @@
                     name="class_section"
                     required
                     placeholder="e.g., 10A, 11B, 12C"
-                    class="w-full px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Format: Grade + Section (e.g., 10A)</p>
+                <p class="mt-1 text-xs text-lbg-main-light dark:text-lbg-main-dark">Format: Grade + Section (e.g., 10A)</p>
             </div>
 
             <!-- Dno -->
             <div class="mb-6">
-                <label for="dno" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label for="dno" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
                     D.No *
                 </label>
                 <input 
@@ -68,27 +68,55 @@
                     pattern="[Dd]\d{4,8}"
                     minlength="5"
                     maxlength="9"
-                    class="w-full px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent font-mono"
+                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent font-mono"
                 >
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Format: D followed by 4-8 digits (e.g., D1234 to D12345678)</p>
+                <p class="mt-1 text-xs text-lbg-main-light dark:text-lbg-main-dark">Format: D followed by 4-8 digits (e.g., D1234 to D12345678)</p>
             </div>
 
-            <!-- Offense Count -->
+            <!-- Category -->
             <div class="mb-6">
-                <label for="offenseCount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Number of Offenses *
+                <label for="category" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
+                    Category *
                 </label>
-                <input 
-                    type="number" 
-                    id="offenseCount" 
-                    name="offense_count"
+                <select 
+                    id="category" 
+                    name="category"
                     required
-                    min="1"
-                    value="1"
-                    class="w-full px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Enter the number of times the offense occurred</p>
+                    <option value="">Select category</option>
+                    <option value="UNIFORM">Uniform Violation</option>
+                    <option value="LATE">Late Arrival / Submission</option>
+                    <option value="BEHAVIOR">Misbehavior</option>
+                    <option value="ACADEMIC">Academic Misconduct</option>
+                    <option value="ABSENCE">Unauthorized Absence</option>
+                    <option value="SUBSTANCES">Substances</option>
+                    <option value="OTHER">Other</option>
+                </select>
             </div>
+
+            <!-- Reason -->
+            <div class="mb-6">
+                <label for="reason" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
+                    Reason *
+                </label>
+                <textarea 
+                    id="reason" 
+                    name="reason"
+                    required
+                    placeholder="Provide details about the offense"
+                    rows="4"
+                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-y"
+                ></textarea>
+            </div>
+
+            <!-- Offense Count --> <!-- NEW: Hidden since we always add +1; no need for user input on create/add -->
+            <input 
+                type="hidden" 
+                id="offenseCount" 
+                name="offense_count"
+                value="1"
+            >
 
             <!-- Form Actions -->
             <div class="flex gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
@@ -116,17 +144,37 @@
 <script>
     const form = document.getElementById('disciplineForm');
     const dnoInput = document.getElementById('dno');
+    const submitBtn = form.querySelector('button[type="submit"]');
 
-    // Auto-format Dno input
+    // Auto-format Dno
     dnoInput.addEventListener('input', (e) => {
         let value = e.target.value.toUpperCase().replace(/[^D0-9]/g, '');
-        if (value && !value.startsWith('D')) {
-            value = 'D' + value;
-        }
-        if (value.length > 9) {
-            value = value.substring(0, 9);
-        }
+        if (value && !value.startsWith('D')) value = 'D' + value;
+        if (value.length > 9) value = value.substring(0, 9);
         e.target.value = value;
+    });
+
+    // NEW: Auto-fill if D.No exists (on blur)
+    dnoInput.addEventListener('blur', async () => {
+        const dno = dnoInput.value.trim();
+        if (!/^D\d{4,8}$/.test(dno)) return;
+
+        try {
+            const checkResp = await apiCall(`/discipline/?dno=${dno}`);
+            if (!checkResp.ok) return;
+
+            const checkData = await checkResp.json();
+            if (checkData.length > 0) {
+                const rec = checkData[0];
+                document.getElementById('studentName').value = rec.student_name;
+                document.getElementById('classSection').value = rec.class_section;
+                submitBtn.innerHTML = '<span class="material-icons-round text-xl">add</span> Add Offense';  // Change button text
+            } else {
+                submitBtn.innerHTML = '<span class="material-icons-round text-xl">save</span> Save Record';  // Reset
+            }
+        } catch (err) {
+            console.error('Auto-fill error:', err);
+        }
     });
 
     form.addEventListener('submit', async (e) => {
@@ -136,44 +184,55 @@
             student_name: document.getElementById('studentName').value.trim(),
             class_section: document.getElementById('classSection').value.trim().toUpperCase(),
             dno: document.getElementById('dno').value.trim().toUpperCase(),
-            offense_count: parseInt(document.getElementById('offenseCount').value)
+            offense_count: parseInt(document.getElementById('offenseCount').value),  // Always 1
+            category: document.getElementById('category').value || 'OTHER',
+            reason: document.getElementById('reason').value.trim() || 'No reason provided'
         };
 
-        // Validate Dno format
-        const dnoPattern = /^D\d{4,8}$/;
-        if (!dnoPattern.test(formData.dno)) {
-            showError('D.No must be in format D followed by 4-8 digits (e.g., D1234 to D12345678)');
-            return;
-        }
-
-        // Validate offense count
-        if (formData.offense_count < 1) {
-            showError('Offense count must be at least 1');
+        // Validate Dno
+        if (!/^D\d{4,8}$/.test(formData.dno)) {
+            showError('Invalid D.No format');
             return;
         }
 
         try {
-            const response = await apiCall('/discipline/', {
-                method: 'POST',
-                body: JSON.stringify(formData)
-            });
+            // NEW: Check if exists, update if so (increment offense_count + add log via backend)
+            const checkResp = await apiCall(`/discipline/?dno=${formData.dno}`);
+            if (!checkResp.ok) throw new Error('Check failed');
 
-            if (response && response.ok) {
-                showSuccess('Discipline record created successfully');
-                setTimeout(() => {
-                    window.location.href = '/discipline/';
-                }, 1500);
+            const checkData = await checkResp.json();
+            let response;
+
+            if (checkData.length > 0) {
+                const existing = checkData[0];
+                const updateData = {
+                    student_name: formData.student_name || existing.student_name,  // Use new if provided
+                    class_section: formData.class_section || existing.class_section,
+                    dno: formData.dno,
+                    offense_count: existing.offense_count + formData.offense_count,  // Increment by 1
+                    category: formData.category,
+                    reason: formData.reason
+                };
+                response = await apiCall(`/discipline/${existing.id}/`, {
+                    method: 'PUT',
+                    body: JSON.stringify(updateData)
+                });
             } else {
-                const errorData = await response.json();
-                console.error('Error response:', errorData);
-                const errorMessage = Object.entries(errorData)
-                    .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`)
-                    .join('; ') || 'Failed to create record';
-                showError(errorMessage);
+                response = await apiCall('/discipline/', {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
             }
-        } catch (error) {
-            console.error('Error creating record:', error);
-            showError('Failed to create record. Please try again.');
+
+            if (response.ok) {
+                showSuccess('Record created/updated successfully!');
+                setTimeout(() => window.location.href = '/discipline/', 1000);
+            } else {
+                const err = await response.json();
+                showError(Object.values(err).flat().join(', '));
+            }
+        } catch (err) {
+            showError('Network error');
         }
     });
 </script>

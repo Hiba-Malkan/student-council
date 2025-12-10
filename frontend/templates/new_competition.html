@@ -38,34 +38,6 @@
                     </div>
                 </div>
 
-                <!-- Participants -->
-                <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">
-                        Participants
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="material-icons-round text-gray-400 text-lg">people</span>
-                        </div>
-                        <input type="text" name="participants" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="Separate participant names with a comma">
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Event Link -->
-                <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">
-                        Event Link
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span class="material-icons-round text-gray-400 text-lg">link</span>
-                        </div>
-                        <input type="url" name="event_link" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="https://example.com">
-                    </div>
-                </div>
-
                 <!-- Participant Count -->
                 <div>
                     <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">
@@ -79,6 +51,32 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Participants -->
+                <div style="display:none">
+                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">
+                        Participants
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 text-lg">people</span>
+                        </div>
+                        <input type="text" name="participants" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="Separate participant names with a comma">
+                    </div>
+                </div>
+
+            <!-- Event Link -->
+                <div>
+                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">
+                        Event Link
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 text-lg">link</span>
+                        </div>
+                        <input type="url" name="event_link" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="https://example.com">
+                    </div>
+                </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Event Date -->

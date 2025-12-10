@@ -54,10 +54,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         
         # Handle both JSON and form data
         data = request.data.copy()
-        
-        # Set created_by to current user
-        data['created_by'] = request.user.id
-        
+
         # Set published_at if is_published is True
         is_published = data.get('is_published', 'true')
         if isinstance(is_published, str):
@@ -68,7 +65,8 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            # Ensure the created_by is set server-side (serializer marks it read-only)
+            serializer.save(created_by=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

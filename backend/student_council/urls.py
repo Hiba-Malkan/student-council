@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from clubs.urls import html_urlpatterns as clubs_html_urls
 from competitions.urls import html_urlpatterns as competitions_html_urls
+from discipline import views as discipline_views
 
 urlpatterns = [
     # ============================================
@@ -57,6 +58,8 @@ urlpatterns = [
     path('discipline/', TemplateView.as_view(template_name='discipline.html'), name='discipline'),
     path('discipline/new/', TemplateView.as_view(template_name='discipline_form.html'), name='new_discipline'),
     path('discipline/edit/<int:pk>/', TemplateView.as_view(template_name='discipline_edit.html'), name='edit_discipline'),
+    path('discipline/detail/<int:pk>/', TemplateView.as_view(template_name='discipline_details.html'), 
+         name='discipline-detail'),
     
     # Projects
     path('projects/', TemplateView.as_view(template_name='projects.html'), name='projects'),

@@ -9,9 +9,17 @@
 
 {% block content %}
 <!-- Add New Competition Button -->
-<section class="mb-6" id="addCompetitionSection" style="display: none;">
-    <div class="flex justify-end">
-        <a href="/competitions/new/" class="inline-flex items-center px-4 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors shadow-sm">
+<section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+        <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="material-icons-round text-gray-400 text-lg">search</span>
+            </div>
+            <input type="text" id="searchCompetitions" class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-lbg-main-light dark:text-lbg-main-dark placeholder-text-gray-700 dark:placeholder-text-sub-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors" placeholder="Search competitions...">
+        </div>
+    </div>
+    <div class="flex justify-end" id="addCompetitionSection" style="display: none;">
+        <a href="/competitions/new/" class="nline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
             <span class="material-icons-round text-sm mr-2">add</span>
             Add New Competition
         </a>
@@ -20,22 +28,7 @@
 
 <!-- Competitions List -->
 <section class="mt-4">
-    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200">
-        <div class="flex justify-between items-center mb-6">
-            <div>
-                <h2 class="text-lg font-semibold text-lbg-main-light dark:text-white">All Competitions</h2>
-                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">Browse and register for upcoming competitions.</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span class="material-icons-round text-gray-400 text-lg">search</span>
-                    </div>
-                    <input type="text" id="searchCompetitions" class="pl-10 pr-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 w-64" placeholder="Search competitions...">
-                </div>
-            </div>
-        </div>
-
+    <div>
         <div id="competitionsContainer" class="space-y-4">
             <!-- Loading state -->
             <div class="text-center py-12">
@@ -117,8 +110,8 @@ function renderCompetitions(competitions) {
     if (competitions.length === 0) {
         container.innerHTML = `
             <div class="text-center py-12">
-                <span class="material-icons-round text-gray-400 dark:text-gray-600 text-5xl mb-3">emoji_events</span>
-                <p class="text-gray-500 dark:text-gray-400">No competitions found.</p>
+                <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-5xl mb-3">emoji_events</span>
+                <p class="text-lbg-main-light dark:text-lbg-main-dark">No competitions found.</p>
             </div>
         `;
         return;
@@ -132,7 +125,7 @@ function renderCompetitions(competitions) {
         const remainingCount = Math.max(0, participants.length - 3);
         
         html += `
-            <div class="bg-white dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
+            <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
                 <div class="flex flex-col">
                     <!-- Header -->
                     <div class="flex justify-between items-start mb-4">
@@ -149,7 +142,7 @@ function renderCompetitions(competitions) {
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto pt-4 pb-4 border-t border-gray-200 dark:border-gray-700">
                         ${comp.event_date ? `
                         <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">event</span>
+                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">event</span>
                             <div>
                                 <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Date</p>
                                 <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${formatDate(comp.event_date)}</p>
@@ -159,7 +152,7 @@ function renderCompetitions(competitions) {
                         
                         ${comp.event_time ? `
                         <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">schedule</span>
+                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">schedule</span>
                             <div>
                                 <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Time</p>
                                 <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${comp.event_time}</p>
@@ -169,7 +162,7 @@ function renderCompetitions(competitions) {
                         
                         ${comp.location ? `
                         <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">location_on</span>
+                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">location_on</span>
                             <div>
                                 <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Location</p>
                                 <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${comp.location}</p>
@@ -179,7 +172,7 @@ function renderCompetitions(competitions) {
                         
                         ${comp.team_size ? `
                         <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">groups</span>
+                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">groups</span>
                             <div>
                                 <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Team Size</p>
                                 <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${comp.team_size}</p>
@@ -188,7 +181,7 @@ function renderCompetitions(competitions) {
                         ` : ''}
                         
                         <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">corporate_fare</span>
+                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">corporate_fare</span>
                             <div>
                                 <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Hosted By</p>
                                 <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${hosts}</p>
@@ -196,8 +189,8 @@ function renderCompetitions(competitions) {
                         </div>
                         
                         ${participants.length > 0 ? `
-                        <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">people</span>
+                        <div style="display:none" class="flex items-start gap-2">
+                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">people</span>
                             <div>
                                 <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Participants</p>
                                 <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${displayParticipants.join(', ')}${remainingCount > 0 ? ` +${remainingCount}` : ''}</p>
@@ -315,7 +308,7 @@ function displayCompetitionModal(comp) {
             ` : ''}
             
             ${comp.participants_list && comp.participants_list.length > 0 ? `
-            <div>
+            <div style="display:none">
                 <h4 class="text-sm font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wider mb-2">Participants (${comp.participants_list.length} total)</h4>
                 <div class="flex flex-wrap gap-2">
                     ${comp.participants_list.map(name => `

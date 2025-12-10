@@ -8,9 +8,6 @@
 {% block page_subtitle %}Manage and view all registered student organizations.{% endblock %}
 
 {% block content %}
-<!-- Create New Club Button (Only for authorized users) -->
-
-
 <!-- Search and Filter -->
 <section class="mb-6">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
@@ -44,8 +41,8 @@
     <div id="clubsContainer" class="space-y-6">
         <!-- Loading state -->
         <div class="text-center py-12">
-            <span class="material-icons-round text-gray-400 dark:text-gray-600 text-4xl mb-3 animate-spin">sync</span>
-            <p class="text-gray-500 dark:text-gray-400">Loading clubs...</p>
+            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-4xl mb-3 animate-spin">sync</span>
+            <p class="text-lbg-main-light dark:text-lbg-main-dark">Loading clubs...</p>
         </div>
     </div>
     
@@ -55,13 +52,13 @@
             <span id="clubCount">Showing 0 clubs</span>
         </div>
         <div class="flex gap-2">
-            <button id="prevPage" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <button id="prevPage" class="px-3 py-1.5 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                 Previous
             </button>
             <span class="px-3 py-1.5 text-sm text-lbg-main-light dark:text-lbg-main-dark">
                 Page <span id="currentPage">1</span>
             </span>
-            <button id="nextPage" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <button id="nextPage" class="px-3 py-1.5 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                 Next
             </button>
         </div>
@@ -132,8 +129,8 @@ function displayClubs(clubs) {
     if (clubs.length === 0) {
         container.innerHTML = `
             <div class="text-center py-12">
-                <span class="material-icons-round text-gray-400 dark:text-gray-600 text-4xl mb-3">school</span>
-                <p class="text-gray-500 dark:text-gray-400">No clubs found</p>
+                <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-4xl mb-3">school</span>
+                <p class="text-lbg-main-light dark:text-lbg-main-dark">No clubs found</p>
             </div>
         `;
         return;
