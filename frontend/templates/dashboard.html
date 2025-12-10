@@ -180,11 +180,13 @@ async function loadDashboardData() {
         document.getElementById('todayDutyStatus').textContent = duty ? (duty.duty_type_name || 'Assigned') : 'No Duty Today';
     }
 
-    // Announcements
+    // Announcements - Only count unread ones
     const aRes = await apiCall('/announcements/?active=true');
     if (aRes?.ok) {
         const data = await aRes.json();
-        document.getElementById('announcementsCount').textContent = (data.results || data).length;
+        const announcements = data.results || data;
+        const unreadCount = announcements.filter(a => !a.is_read_by_user).length;
+        document.getElementById('announcementsCount').textContent = unreadCount;
     }
 
     loadRecentActivity();

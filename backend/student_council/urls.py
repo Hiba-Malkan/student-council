@@ -55,6 +55,8 @@ urlpatterns = [
     
     # Discipline
     path('discipline/', TemplateView.as_view(template_name='discipline.html'), name='discipline'),
+    path('discipline/new/', TemplateView.as_view(template_name='discipline_form.html'), name='new_discipline'),
+    path('discipline/edit/<int:pk>/', TemplateView.as_view(template_name='discipline_edit.html'), name='edit_discipline'),
     
     # Projects
     path('projects/', TemplateView.as_view(template_name='projects.html'), name='projects'),

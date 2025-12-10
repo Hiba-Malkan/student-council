@@ -9,32 +9,32 @@ class DisciplineRecord(models.Model):
     """
     student_name = models.CharField(max_length=200)
     class_section = models.CharField(
-        max_length=50,
-        help_text="e.g., '10-A', '12-B'"
+        max_length=10,
+        help_text="Format: e.g., 10A, 11B, 12C"
     )
     dno = models.CharField(
-        max_length=7,
+        max_length=9,
         unique=True,
         validators=[
             RegexValidator(
-                regex=r'^D\d{6}$',
-                message='DNO must be in format Dxxxxxx (e.g., D123456)',
+                regex=r'^D\d{4,8}$',
+                message='Dno must be in format D followed by 4-8 digits (e.g., D1234 to D12345678)',
                 code='invalid_dno'
             )
         ],
-        help_text="Format: Dxxxxxx (e.g., D123456)"
+        help_text="Format: D followed by 4-8 digits (e.g., D1234 to D12345678)"
     )
     offense_count = models.PositiveIntegerField(
         default=1,
         help_text="Number of times offense occurred"
     )
     
-    # Tracking fields
+    # Metadata
     created_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='created_discipline_records'
+        related_name='discipline_records_created'
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

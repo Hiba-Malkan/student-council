@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Discipline Record - CouncilApp{% endblock %}
+
+{% block nav_discipline %}bg-gray-100 dark:bg-gray-800 text-primary dark:text-white{% endblock %}
+
+{% block page_title %}Edit Discipline Record{% endblock %}
+{% block page_subtitle %}Update existing discipline record{% endblock %}
+
+{% block content %}
+<div class="mt-6">
+    <!-- Back Button -->
+    <div class="mb-6">
+        <button 
+            onclick="window.location.href='/discipline/'"
+            class="text-primary hover:text-primary-hover dark:text-white dark:hover:text-gray-300 flex items-center gap-2 transition-colors"
+        >
+            <span class="material-icons-round">arrow_back</span>
+            Back to Records
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="bg-card-light dark:bg-card-dark rounded-lg shadow-sm p-12 text-center">
+        <span class="material-icons-round text-4xl text-gray-400 dark:text-gray-500 animate-spin">refresh</span>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">Loading record...</p>
+    </div>
+
+    <!-- Form Card (hidden until loaded) -->
+    <div id="formCard" class="hidden bg-card-light dark:bg-card-dark rounded-lg shadow-sm p-6">
+        <form id="disciplineForm">
+            <input type="hidden" id="recordId">
+
+            <!-- Student Name -->
+            <div class="mb-6">
+                <label for="studentName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Student Name *
+                </label>
+                <input 
+                    type="text" 
+                    id="studentName" 
+                    name="student_name"
+                    required
+                    placeholder="Enter student's full name"
+                    class="w-full px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+            </div>
+
+            <!-- Class & Section -->
+            <div class="mb-6">
+                <label for="classSection" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Class & Section *
+                </label>
+                <input 
+                    type="text" 
+                    id="classSection" 
+                    name="class_section"
+                    required
+                    placeholder="e.g., 10A, 11B, 12C"
+                    class="w-full px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Format: Grade + Section (e.g., 10A)</p>
+            </div>
+
+            <!-- Dno -->
+            <div class="mb-6">
+                <label for="dno" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    D.No *
+                </label>
+                <input 
+                    type="text" 
+                    id="dno" 
+                    name="dno"
+                    required
+                    placeholder="D1234 to D12345678"
+                    pattern="[Dd]\d{4,8}"
+                    minlength="5"
+                    maxlength="9"
+                    class="w-full px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent font-mono"
+                >
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Format: D followed by 4-8 digits (e.g., D1234 to D12345678)</p>
+            </div>
+
+            <!-- Offense Count -->
+            <div class="mb-6">
+                <label for="offenseCount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Number of Offenses *
+                </label>
+                <input 
+                    type="number" 
+                    id="offenseCount" 
+                    name="offense_count"
+                    required
+                    min="1"
+                    class="w-full px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Enter the number of times the offense occurred</p>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <button 
+                    type="submit"
+                    class="flex-1 bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
+                >
+                    <span class="material-icons-round text-xl">save</span>
+                    Update Record
+                </button>
+                <button 
+                    type="button"
+                    onclick="window.location.href='/discipline/'"
+                    class="px-6 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const recordId = window.location.pathname.split('/')[3];
+    const form = document.getElementById('disciplineForm');
+    const dnoInput = document.getElementById('dno');
+
+    // Auto-format Dno input
+    dnoInput.addEventListener('input', (e) => {
+        let value = e.target.value.toUpperCase().replace(/[^D0-9]/g, '');
+        if (value && !value.startsWith('D')) {
+            value = 'D' + value;
+        }
+        if (value.length > 9) {
+            value = value.substring(0, 9);
+        }
+        e.target.value = value;
+    });
+
+    // Load existing record
+    async function loadRecord() {
+        try {
+            const response = await apiCall(`/discipline/${recordId}/`);
+            if (response && response.ok) {
+                const record = await response.json();
+                
+                document.getElementById('recordId').value = record.id;
+                document.getElementById('studentName').value = record.student_name;
+                document.getElementById('classSection').value = record.class_section;
+                document.getElementById('dno').value = record.dno;
+                document.getElementById('offenseCount').value = record.offense_count;
+
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('formCard').classList.remove('hidden');
+            } else {
+                showError('Failed to load record');
+                setTimeout(() => window.location.href = '/discipline/', 2000);
+            }
+        } catch (error) {
+            console.error('Error loading record:', error);
+            showError('Failed to load record');
+            setTimeout(() => window.location.href = '/discipline/', 2000);
+        }
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            student_name: document.getElementById('studentName').value.trim(),
+            class_section: document.getElementById('classSection').value.trim().toUpperCase(),
+            dno: document.getElementById('dno').value.trim().toUpperCase(),
+            offense_count: parseInt(document.getElementById('offenseCount').value)
+        };
+
+        // Validate Dno format
+        const dnoPattern = /^D\d{4,8}$/;
+        if (!dnoPattern.test(formData.dno)) {
+            showError('D.No must be in format D followed by 4-8 digits (e.g., D1234 to D12345678)');
+            return;
+        }
+
+        // Validate offense count
+        if (formData.offense_count < 1) {
+            showError('Offense count must be at least 1');
+            return;
+        }
+
+        try {
+            const response = await apiCall(`/discipline/${recordId}/`, {
+                method: 'PUT',
+                body: JSON.stringify(formData)
+            });
+
+            if (response && response.ok) {
+                showSuccess('Discipline record updated successfully');
+                setTimeout(() => {
+                    window.location.href = '/discipline/';
+                }, 1500);
+            } else {
+                const errorData = await response.json();
+                const errorMessage = Object.values(errorData).flat().join(', ') || 'Failed to update record';
+                showError(errorMessage);
+            }
+        } catch (error) {
+            console.error('Error updating record:', error);
+            showError('Failed to update record. Please try again.');
+        }
+    });
+
+    // Load record on page load
+    loadRecord();
+</script>
+{% endblock %}
