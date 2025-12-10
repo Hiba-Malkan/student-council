@@ -32,25 +32,75 @@
         </button>
     </div>
 
-    <!-- Filter Tabs & Sort -->
-    <div class="flex flex-wrap items-center gap-3 mb-6">
-        <button class="filter-btn active px-4 py-2 bg-white text-sm text-lbg-main-light dark:text-lbg-main-dark rounded-full transition-colors" data-type="all">All</button>
-        <button class="filter-btn px-4 py-2 bg-white text-sm text-lbg-main-light dark:text-lbg-main-dark font-medium rounded-full transition-colors" data-type="GENERAL">General</button>
-        <button class="filter-btn px-4 py-2 bg-white text-sm text-lbg-main-light dark:text-lbg-main-dark font-medium rounded-full transition-colors" data-type="EVENT">Events</button>
-        <button class="filter-btn px-4 py-2 bg-white text-sm text-lbg-main-light dark:text-lbg-main-dark font-medium rounded-full transition-colors" data-type="URGENT">Urgent</button>
-        <button class="filter-btn px-4 py-2 bg-white text-sm text-lbg-main-light dark:text-lbg-main-dark font-medium rounded-full transition-colors" data-type="CULTURAL">Cultural</button>
-        <button class="filter-btn px-4 py-2 bg-white text-sm text-lbg-main-light dark:text-lbg-main-dark font-medium rounded-full transition-colors" data-type="IH_SCHEDULE">Inter-House</button>
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-8 bg-card-light dark:bg-card-dark p-2 rounded-xl border border-gray-200 dark:border-gray-700">
+  <!-- Filter Buttons -->
+ <div class="flex flex-wrap items-center gap-2">
+    <button 
+      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
+      data-type="all"
+    >
+      All
+    </button>
 
-        <div class="ml-auto flex items-center text-sm text-lbg-main-light dark:text-lbg-main-dark">
-            <span class="mr-2">Sort by:</span>
-            <select id="sortSelect" class="bg-transparent border-none p-0 pr-8 text-sm font-medium focus:ring-0 cursor-pointer">
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-                <option value="pinned">Pinned First</option>
-            </select>
+    <button 
+      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
+      data-type="GENERAL"
+    >
+      General
+    </button>
+
+    <button 
+      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
+      data-type="EVENT"
+    >
+      Events
+    </button>
+
+    <button 
+      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
+      data-type="URGENT"
+    >
+      Urgent
+    </button>
+
+    <button 
+      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
+      data-type="CULTURAL"
+    >
+      Cultural
+    </button>
+
+    <button 
+      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
+      data-type="IH_SCHEDULE"
+    >
+      Inter-House
+    </button>
+  </div>
+
+  <!-- Sort Dropdown -->
+        <div class="flex items-center gap-3 text-sm">
+        <span class="text-gray-600 dark:text-gray-400 font-medium">Sort by:</span>
+        <div class="relative">
+        <select 
+            id="sortSelect" 
+            class="appearance-none bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
+                rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-800 dark:text-gray-100
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                cursor-pointer transition-all">
+            <option value="pinned">Pinned First</option>
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+        </select>
+        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
         </div>
-    </div>
-
+        </div>
+  </div>
+</div>
     <!-- Loading State -->
     <div id="loadingState" class="text-center py-12">
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -62,7 +112,7 @@
 
     <!-- Empty State -->
     <div id="emptyState" class="text-center py-12" style="display: none;">
-        <span class="material-icons-round text-6xl text-gray-300 dark:text-gray-600 mb-4">campaign</span>
+        <span class="material-icons-round text-6xl text-black dark:text-gray-600 mb-4">campaign</span>
         <p class="text-lbg-sub-light dark:text-lbg-sub-dark">No announcements found</p>
     </div>
 
@@ -79,14 +129,12 @@
         </nav>
     </div>
 </div>
-
-<!-- Dropdown Menu Template -->
 <template id="dropdownTemplate">
-    <div class="dropdown-menu hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
-        <button class="edit-option w-full text-left px-4 py-3 text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary-light dark:hover:bg-primary-hover/20 flex items-center gap-3 transition-colors">
+    <div class="dropdown-menu hidden absolute right-0 top-0 mt-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+        <button class="edit-option w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors">
             <span class="material-icons-round text-lg">edit</span> Edit
         </button>
-        <button class="pin-option w-full text-left px-4 py-3 text-sm text-text-main-light dark:text-text-main-dark hover:bg-primary-light dark:hover:bg-primary-hover/20 flex items-center gap-3 transition-colors">
+        <button class="pin-option w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors">
             <span class="material-icons-round text-lg">push_pin</span> <span class="pin-text">Pin</span>
         </button>
         <button class="delete-option w-full text-left px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center gap-3 transition-colors">
@@ -96,19 +144,53 @@
 </template>
 
 <style>
+  .filter-btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    border-radius: 0.75rem;
+    transition: all 200ms;
+    color: #6b7280;
+    background-color: white;
+    border: 1px solid transparent;
+  }
+
+  .filter-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .filter-btn.active {
+    background-color: #1F4D3C;
+    color: #ffffff;
+    font-weight: 600;
+    border-color: #1F4D3C;
+  }
+
+  .filter-btn.active:hover {
+    background-color: #163d2f;
+  }
+
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
     .filter-btn {
-        @apply text-text-sub-light dark:text-text-sub-dark bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700;
+      color: black;
     }
+
+    .filter-btn:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
     .filter-btn.active {
-        @apply text-primary bg-primary-light dark:bg-primary/20 font-semibold;
+      background-color: #1F4D3C;
+      color: #ffffff;
+      border-color: #1F4D3C;
     }
-    .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+
+    .filter-btn.active:hover {
+      background-color: #163d2f;
     }
+  }
 </style>
 {% endblock %}
 
@@ -128,13 +210,11 @@
         'IH_SCHEDULE': { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-800 dark:text-green-300', border: 'border-l-green-500' },
     };
 
-    // Close all dropdowns when clicking outside
     document.addEventListener('click', () => {
         document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.add('hidden'));
     });
 
     function showDropdown(button, announcement) {
-        // Remove any existing dropdown
         document.querySelectorAll('.dropdown-menu').forEach(m => m.remove());
 
         const template = document.getElementById('dropdownTemplate').content.cloneNode(true);
@@ -145,46 +225,45 @@
         const pinText = menu.querySelector('.pin-text');
         const deleteBtn = menu.querySelector('.delete-option');
 
-        const canEdit = userData.is_c_suite || (userData.role_detail?.can_edit_announcements && announcement.created_by === userData.id);
-        const canManage = userData.is_c_suite;
+        const canEdit = userData.is_c_suite || userData.is_superuser || 
+                        (userData.role_detail?.can_edit_announcements && announcement.created_by === userData.id);
+        const canManage = userData.is_c_suite || userData.is_superuser;
 
-        if (!canEdit) editBtn.remove();
+        if (!canEdit) editBtn?.remove();
         if (!canManage) {
-            pinBtn.remove();
-            deleteBtn.remove();
+            pinBtn?.remove();
+            deleteBtn?.remove();
         } else {
             pinText.textContent = announcement.is_pinned ? 'Unpin' : 'Pin';
         }
 
         if (menu.children.length === 0) return;
 
-        // Attach actions
-        if (canEdit) {
-            editBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                window.location.href = `/announcements/edit/${announcement.id}/`;
-            });
-        }
-        if (canManage) {
-            pinBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                togglePin(announcement.id);
-            });
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (confirm('Delete this announcement permanently?')) {
-                    deleteAnnouncement(announcement.id);
-                }
-            });
-        }
+        editBtn?.addEventListener('click', e => {
+            e.stopPropagation();
+            window.location.href = `/announcements/edit/${announcement.id}/`;
+        });
+
+        pinBtn?.addEventListener('click', e => {
+            e.stopPropagation();
+            togglePin(announcement.id);
+        });
+
+        deleteBtn?.addEventListener('click', e => {
+            e.stopPropagation();
+            if (confirm('Delete this announcement permanently?')) {
+                deleteAnnouncement(announcement.id);
+            }
+        });
 
         button.parentElement.appendChild(menu);
         menu.classList.remove('hidden');
-        button.addEventListener('click', (e) => e.stopPropagation());
     }
 
     async function loadAnnouncements() {
         try {
+            await loadUserProfile();
+
             document.getElementById('loadingState').style.display = 'block';
             document.getElementById('announcementsList').style.display = 'none';
             document.getElementById('emptyState').style.display = 'none';
@@ -195,12 +274,13 @@
             const data = await response.json();
             allAnnouncements = data.results || data;
 
-            if (userData.role_detail?.can_create_announcements) {
+            if (userData.role_detail?.can_create_announcements || userData.is_staff) {
                 document.getElementById('newAnnouncementBtn').style.display = 'inline-flex';
             }
 
             applyFilters();
         } catch (error) {
+            console.error('Error:', error);
             showError('Failed to load announcements');
             document.getElementById('loadingState').style.display = 'none';
             document.getElementById('emptyState').style.display = 'block';
@@ -211,7 +291,9 @@
         const term = document.getElementById('searchInput').value.toLowerCase();
         filteredAnnouncements = allAnnouncements.filter(a => {
             const typeMatch = currentFilter === 'all' || a.announcement_type === currentFilter;
-            const searchMatch = !term || a.title.toLowerCase().includes(term) || a.content.toLowerCase().includes(term);
+            const searchMatch = !term || 
+                a.title.toLowerCase().includes(term) || 
+                a.content.toLowerCase().includes(term);
             return typeMatch && searchMatch;
         });
         applySorting();
@@ -251,11 +333,12 @@
             const badge = typeBadges[a.announcement_type] || typeBadges['GENERAL'];
             const date = new Date(a.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
             const creator = a.created_by_detail?.first_name || a.created_by_detail?.username || 'Unknown';
-            const canManage = userData.is_c_suite || (userData.role_detail?.can_edit_announcements && a.created_by === userData.id);
+            const canManage = userData.is_c_suite || userData.is_superuser || 
+                              (userData.role_detail?.can_edit_announcements && a.created_by === userData.id);
 
             return `
                 <div class="bg-card-light dark:bg-card-dark ${a.is_pinned ? 'border-l-4 ' + badge.border : ''} rounded-xl shadow-sm hover:shadow-lg transition-all p-6 border border-gray-200 dark:border-gray-700 cursor-pointer announcement-card group relative" data-id="${a.id}">
-                    <div class="flex justify-between items-start mb-3">
+                    <div class="flex justify-between items-start">
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text}">
                                 ${a.announcement_type_display || a.announcement_type}
@@ -265,8 +348,8 @@
                         </div>
 
                         ${canManage ? `
-                            <button class="opacity-0 group-hover:opacity-100 transition-opacity p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 more-btn" data-id="${a.id}">
-                                <span class="material-icons-round text-xl text-text-sub-light dark:text-text-sub-dark">more_vert</span>
+                            <button class="p-2 more-btn" data-id="${a.id}" onclick="event.stopPropagation(); showDropdown(this, ${JSON.stringify(a).replace(/"/g, '&quot;')})">
+                                <span class="material-icons-round text-xl text-lbg-main-light dark:text-gray-500">more_vert</span>
                             </button>
                         ` : ''}
                     </div>
@@ -280,7 +363,7 @@
                             <span class="flex items-center gap-1"><span class="material-icons-round text-sm">person</span> ${creator}</span>
                             ${a.attachments?.length ? `<span class="flex items-center gap-1 text-primary"><span class="material-icons-round text-sm">attach_file</span> Attachment</span>` : ''}
                         </div>
-                        <span class="font-medium text-lbg-main-light dark: text-lbg-main-dark hover:underline">View Details</span>
+                        <span class="font-medium text-primary hover:underline">View Details</span>
                     </div>
                 </div>
             `;
@@ -300,14 +383,6 @@
                 }
             });
         });
-
-        document.querySelectorAll('.more-btn').forEach(btn => {
-            btn.addEventListener('click', e => {
-                e.stopPropagation();
-                const ann = allAnnouncements.find(a => a.id == btn.dataset.id);
-                showDropdown(btn, ann);
-            });
-        });
     }
 
     async function togglePin(id) {
@@ -317,17 +392,18 @@
                 showSuccess('Pin status updated');
                 loadAnnouncements();
             }
-        } catch { showError('Failed to update pin'); }
+        } catch { showError('Failed'); }
     }
 
     async function deleteAnnouncement(id) {
+        if (!confirm('Delete this announcement permanently?')) return;
         try {
             const res = await apiCall(`/announcements/${id}/`, { method: 'DELETE' });
             if (res?.ok) {
-                showSuccess('Announcement deleted');
+                showSuccess('Deleted');
                 loadAnnouncements();
             }
-        } catch { showError('Failed to delete'); }
+        } catch { showError('Failed'); }
     }
 
     function updatePagination() {
@@ -347,7 +423,7 @@
         next.disabled = currentPage === total;
     }
 
-    // Event Listeners
+
     document.getElementById('searchInput').addEventListener('input', applyFilters);
     document.getElementById('sortSelect').addEventListener('change', () => { applySorting(); renderAnnouncements(); });
     document.getElementById('newAnnouncementBtn').addEventListener('click', () => window.location.href = '/announcements/new/');
@@ -369,7 +445,9 @@
         if (currentPage < total) { currentPage++; renderAnnouncements(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     });
 
-    // Initial load
+    // Initialize: Set "All" filter as active by default
+    document.querySelector('.filter-btn[data-type="all"]')?.classList.add('active');
+
     loadAnnouncements();
 </script>
 {% endblock %}

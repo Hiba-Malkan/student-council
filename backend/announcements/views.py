@@ -46,7 +46,7 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def create(self, request, *args, **kwargs):
-        if not request.user.role.can_create_announcements:
+        if not (request.user.is_superuser or (request.user.role and request.user.role.can_create_announcements)):
             return Response(
                 {'error': 'You do not have permission to create announcements'},
                 status=status.HTTP_403_FORBIDDEN
@@ -76,9 +76,10 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         announcement = self.get_object()
         
-        # Captains can edit announcements for their groups
-        if not (request.user.is_c_suite or 
-                (request.user.role.can_edit_announcements and announcement.created_by == request.user)):
+        # Superuser, C-Suite, or announcement creator with edit permissions can update
+        if not (request.user.is_superuser or 
+                request.user.is_c_suite or 
+                (request.user.role and request.user.role.can_edit_announcements and announcement.created_by == request.user)):
             return Response(
                 {'error': 'You do not have permission to update this announcement'},
                 status=status.HTTP_403_FORBIDDEN
@@ -87,9 +88,9 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         return super().update(request, *args, **kwargs)
     
     def destroy(self, request, *args, **kwargs):
-        if not request.user.is_c_suite:
+        if not (request.user.is_superuser or request.user.is_c_suite):
             return Response(
-                {'error': 'Only C-Suite can delete announcements'},
+                {'error': 'Only superuser or C-Suite can delete announcements'},
                 status=status.HTTP_403_FORBIDDEN
             )
         return super().destroy(request, *args, **kwargs)
@@ -114,10 +115,10 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'])
     def pin(self, request, pk=None):
-        """Pin/unpin announcement (C-Suite only)"""
-        if not request.user.is_c_suite:
+        """Pin/unpin announcement (Superuser or C-Suite only)"""
+        if not (request.user.is_superuser or request.user.is_c_suite):
             return Response(
-                {'error': 'Only C-Suite can pin announcements'},
+                {'error': 'Only superuser or C-Suite can pin announcements'},
                 status=status.HTTP_403_FORBIDDEN
             )
         

@@ -9,12 +9,20 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto mt-6">
+    <!-- Back Button -->
+    <div class="mb-4">
+        <button type="button" onclick="window.location.href='/announcements/'" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <span class="material-icons-round text-lg">arrow_back</span>
+            Back to Announcements
+        </button>
+    </div>
+
     <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <!-- Header -->
         <div class="px-6 py-5 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h2 class="text-xl font-bold text-text-main-light dark:text-white">Announcement Details</h2>
-                <p class="text-sm text-text-sub-light dark:text-text-sub-dark mt-1">Fill in the details below to publish a new update.</p>
+                <h2 class="text-xl font-bold text-lbg-main-light dark:text-white">Announcement Details</h2>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">Fill in the details below to publish a new update.</p>
             </div>
             <div class="flex-shrink-0">
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300 border border-green-200 dark:border-green-800">
@@ -28,11 +36,11 @@
         <form id="announcementForm" class="p-6 space-y-6">
             <!-- Title -->
             <div>
-                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="title">
+                <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2" for="title">
                     Title <span class="text-red-500">*</span>
                 </label>
                 <input 
-                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400 dark:placeholder-gray-500 py-2.5" 
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-lbg-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400 dark:placeholder-gray-500 py-2.5" 
                     id="title" 
                     name="title" 
                     placeholder="e.g., Upcoming Sports Day Schedule Changes" 
@@ -43,11 +51,11 @@
 
             <!-- Announcement Type -->
             <div>
-                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="announcement_type">
+                <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2" for="announcement_type">
                     Announcement Type <span class="text-red-500">*</span>
                 </label>
                 <select 
-                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
+                    class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-lbg-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
                     id="announcement_type" 
                     name="announcement_type"
                     required
@@ -62,12 +70,12 @@
 
             <!-- Content -->
             <div>
-                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="content">
+                <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2" for="content">
                     Content <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
                     <textarea 
-                        class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400 dark:placeholder-gray-500 resize-y" 
+                        class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-lbg-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400 dark:placeholder-gray-500 resize-y" 
                         id="content" 
                         name="content" 
                         placeholder="Type your announcement content here..." 
@@ -79,24 +87,24 @@
                     </div>
                 </div>
                 <div class="flex justify-end mt-1.5">
-                    <span class="text-xs text-text-sub-light dark:text-gray-400" id="charCount">0/5000 characters</span>
+                    <span class="text-xs text-lbg-sub-light dark:text-gray-400" id="charCount">0/5000 characters</span>
                 </div>
             </div>
 
             <!-- Event Details (shown when type is EVENT) -->
             <div id="eventDetails" style="display: none;" class="space-y-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <h3 class="text-sm font-semibold text-text-main-light dark:text-white flex items-center">
+                <h3 class="text-sm font-semibold text-lbg-main-light dark:text-white flex items-center">
                     <span class="material-icons-round text-lg mr-2">event</span>
                     Event Information
                 </h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="event_date">
+                        <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2" for="event_date">
                             Event Date
                         </label>
                         <input 
-                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
+                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-lbg-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
                             id="event_date" 
                             name="event_date" 
                             type="date"
@@ -104,11 +112,11 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="event_time">
+                        <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2" for="event_time">
                             Event Time
                         </label>
                         <input 
-                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
+                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-lbg-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
                             id="event_time" 
                             name="event_time" 
                             type="time"
@@ -117,11 +125,11 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="event_location">
+                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2" for="event_location">
                         Event Location
                     </label>
                     <input 
-                        class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400" 
+                        class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-lbg-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400" 
                         id="event_location" 
                         name="event_location" 
                         placeholder="e.g., School Auditorium"
@@ -137,16 +145,16 @@
                             name="registration_required"
                             class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
                         />
-                        <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Registration Required</span>
+                        <span class="ml-2 text-sm text-lbg-main-light dark:text-gray-300">Registration Required</span>
                     </label>
                 </div>
 
                 <div id="registrationDeadlineField" style="display: none;">
-                    <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2" for="registration_deadline">
+                    <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2" for="registration_deadline">
                         Registration Deadline
                     </label>
                     <input 
-                        class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
+                        class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-lbg-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm" 
                         id="registration_deadline" 
                         name="registration_deadline" 
                         type="date"
@@ -155,8 +163,8 @@
             </div>
 
             <!-- Targeting Options -->
-            <div class="space-y-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
-                <h3 class="text-sm font-semibold text-text-main-light dark:text-white flex items-center">
+            <div style="display:none" class="space-y-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                <h3 class="text-sm font-semibold text-lbg-main-light dark:text-white flex items-center">
                     <span class="material-icons-round text-lg mr-2">groups</span>
                     Target Audience
                 </h3>
@@ -168,16 +176,16 @@
                         name="is_public"
                         class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
                     />
-                    <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Make this announcement public (visible to all users)</span>
+                    <span class="ml-2 text-sm text-lbg-main-light dark:text-gray-300">Make this announcement public (visible to all users)</span>
                 </label>
 
                 <div id="targetingOptions">
                     <div>
-                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">
+                        <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">
                             Target Houses (comma-separated, e.g., A,B,C)
                         </label>
                         <input 
-                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400" 
+                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-lbg-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400" 
                             id="target_houses" 
                             name="target_houses" 
                             placeholder="e.g., Red,Blue,Green"
@@ -186,11 +194,11 @@
                     </div>
 
                     <div class="mt-4">
-                        <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">
+                        <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">
                             Target Grades (comma-separated, e.g., 9,10,11)
                         </label>
                         <input 
-                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-text-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400" 
+                            class="block w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-lbg-main-light dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400" 
                             id="target_grades" 
                             name="target_grades" 
                             placeholder="e.g., 9,10,11,12"
@@ -202,22 +210,22 @@
 
             <!-- Attachments -->
             <div>
-                <label class="block text-sm font-medium text-text-main-light dark:text-gray-300 mb-2">
+                <label class="block text-sm font-medium text-lbg-main-light dark:text-gray-300 mb-2">
                     Attachments
                 </label>
-                <div class="mt-1 flex justify-center px-6 pt-10 pb-10 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer group">
+                <div class="mt-1 flex justify-center px-6 pt-10 pb-10 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:text-primary-hover transition-colors cursor-pointer group">
                     <div class="space-y-2 text-center">
                         <div class="mx-auto h-12 w-12 text-gray-400 group-hover:text-primary transition-colors bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
                             <span class="material-icons-round text-2xl">cloud_upload</span>
                         </div>
-                        <div class="flex flex-col text-sm text-text-sub-light dark:text-gray-400">
+                        <div class="flex flex-col text-sm text-lbg-sub-light dark:text-gray-400">
                             <label class="relative cursor-pointer bg-transparent rounded-md font-medium text-primary hover:text-primary-hover focus-within:outline-none" for="attachments">
                                 <span>Upload a file</span>
                                 <input class="sr-only" id="attachments" name="attachments" type="file"/>
                             </label>
                             <p class="pl-1">or drag and drop</p>
                         </div>
-                        <p class="text-xs text-text-sub-light dark:text-gray-500">
+                        <p class="text-xs text-lbg-sub-light dark:text-gray-500">
                             PDF, PNG, JPG up to 10MB
                         </p>
                         <div id="fileNameDisplay" class="text-sm text-primary font-medium mt-2" style="display: none;"></div>
@@ -227,7 +235,7 @@
 
             <!-- Publishing Options -->
             <div class="space-y-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
-                <h3 class="text-sm font-semibold text-text-main-light dark:text-white flex items-center">
+                <h3 class="text-sm font-semibold text-lbg-main-light dark:text-white flex items-center">
                     <span class="material-icons-round text-lg mr-2">settings</span>
                     Publishing Options
                 </h3>
@@ -241,7 +249,7 @@
                             class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
                             checked
                         />
-                        <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Publish immediately</span>
+                        <span class="ml-2 text-sm text-lbg-main-light dark:text-gray-300">Publish immediately</span>
                     </label>
 
                     <label class="flex items-center cursor-pointer">
@@ -252,7 +260,7 @@
                             class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
                             checked
                         />
-                        <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Send email notification</span>
+                        <span class="ml-2 text-sm text-lbg-main-light dark:text-gray-300">Send email notification</span>
                     </label>
 
                     <label class="flex items-center cursor-pointer">
@@ -262,7 +270,7 @@
                             name="is_pinned"
                             class="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"
                         />
-                        <span class="ml-2 text-sm text-text-main-light dark:text-gray-300">Pin announcement</span>
+                        <span class="ml-2 text-sm text-lbg-main-light dark:text-gray-300">Pin announcement</span>
                     </label>
                 </div>
             </div>
@@ -272,7 +280,7 @@
         <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between gap-3">
             <button 
                 id="cancelBtn"
-                class="px-4 py-2 bg-white dark:bg-gray-700 text-text-main-light dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" 
+                class="px-4 py-2 bg-white dark:bg-gray-700 text-lbg-main-light dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" 
                 type="button"
             >
                 Cancel
@@ -280,7 +288,7 @@
             <div class="flex gap-3">
                 <button 
                     id="saveDraftBtn"
-                    class="px-4 py-2 bg-white dark:bg-gray-700 text-text-main-light dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" 
+                    class="px-4 py-2 bg-white dark:bg-gray-700 text-lbg-main-light dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" 
                     type="button"
                 >
                     <span class="material-icons-round text-[18px] mr-1 align-middle">save</span>

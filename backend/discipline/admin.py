@@ -91,5 +91,5 @@ class DisciplineActionAdmin(admin.ModelAdmin):
             'fields': ('assigned_by',)
         }),
     )
-    
+
     readonly_fields = ['created_at', 'updated_at']
