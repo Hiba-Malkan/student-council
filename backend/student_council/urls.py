@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 from clubs.urls import html_urlpatterns as clubs_html_urls
+from competitions.urls import html_urlpatterns as competitions_html_urls
 
 urlpatterns = [
     # ============================================
@@ -21,6 +22,7 @@ urlpatterns = [
     path('api/discipline/', include('discipline.urls')),
     path('api/notifications/', include('notifications.urls')),
     path('api/clubs/', include('clubs.urls')),  # ← Clubs API
+    path('api/', include('competitions.urls')),  # ← Competitions API
     
     # ============================================
     # HTML PAGES (All CSS/JS inline in templates)
@@ -40,6 +42,9 @@ urlpatterns = [
     
     # Clubs HTML pages
     path('clubs/', include(clubs_html_urls)),
+    
+    # Competitions HTML pages
+    path('', include(competitions_html_urls)),
     
     # Duties
     path('duties/', TemplateView.as_view(template_name='duty-roster.html'), name='duty-roster'),

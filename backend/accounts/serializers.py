@@ -12,7 +12,7 @@ class RoleSerializer(serializers.ModelSerializer):
             'can_edit_duty_roster', 'can_schedule_meetings',
             'can_create_announcements', 'can_edit_announcements',
             'can_record_discipline', 'can_view_discipline',
-            'can_add_clubs',
+            'can_add_clubs', 'can_manage_competitions',
             'user_count', 'created_at', 'updated_at'
         ]
         read_only_fields = ['created_at', 'updated_at']

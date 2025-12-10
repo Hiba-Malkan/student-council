@@ -22,6 +22,7 @@ class RoleAdmin(admin.ModelAdmin):
                 'can_record_discipline',
                 'can_view_discipline',
                 'can_add_clubs',
+                'can_manage_competitions',
             )
         }),
         ('Timestamps', {

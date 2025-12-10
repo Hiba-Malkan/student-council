@@ -65,7 +65,7 @@
                         <label class="block text-sm font-medium text-lbg-main-light dark:text-white mb-2">Established Year *</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons-round text-sym-logo text-lg">calendar_today</span>
+                                <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg">calendar_today</span>
                             </div>
                             <input type="number" id="establishedYear" required min="1900" max="2099" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="YYYY">
                         </div>
@@ -76,7 +76,7 @@
                         <label class="block text-sm font-medium text-lbg-main-light dark:text-white mb-2">Estimated Members *</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons-round text-sym-logo text-lg">group</span>
+                                <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg">group</span>
                             </div>
                             <input type="number" id="memberCount" required min="0" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="0">
                         </div>
@@ -87,7 +87,7 @@
                         <label class="block text-sm font-medium text-lbg-main-light dark:text-white mb-2">Established By (Founders) *</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons-round text-sym-logo text-lg">badge</span>
+                                <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg">badge</span>
                             </div>
                             <input type="text" id="establishedBy" required class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="John Doe, Sarah Connor (comma-separated)">
                         </div>
@@ -98,7 +98,7 @@
                         <label class="block text-sm font-medium text-lbg-main-light dark:text-white mb-2">Tutors / Advisors *</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <span class="material-icons-round text-sym-logo text-lg">school</span>
+                                <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg">school</span>
                             </div>
                             <input type="text" id="tutors" required class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="Mr. Smith, Prof. Johnson (comma-separated)">
                         </div>
@@ -164,8 +164,6 @@ async function loadClubData() {
         console.error('Error loading club:', error);
         showError('An error occurred while loading club data');
         setTimeout(() => window.location.href = '/clubs/', 2000);
-    }
-}
     }
 }
 

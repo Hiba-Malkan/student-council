@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block title %}Competitions - CouncilApp{% endblock %}
+
+{% block nav_competitions %}bg-primary-light dark:bg-primary/20 text-primary dark:text-green-400{% endblock %}
+
+{% block page_title %}Competitions Overview{% endblock %}
+{% block page_subtitle %}View and manage all competitions and events.{% endblock %}
+
+{% block content %}
+<!-- Add New Competition Button -->
+<section class="mb-6" id="addCompetitionSection" style="display: none;">
+    <div class="flex justify-end">
+        <a href="/competitions/new/" class="inline-flex items-center px-4 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors shadow-sm">
+            <span class="material-icons-round text-sm mr-2">add</span>
+            Add New Competition
+        </a>
+    </div>
+</section>
+
+<!-- Competitions List -->
+<section class="mt-4">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200">
+        <div class="flex justify-between items-center mb-6">
+            <div>
+                <h2 class="text-lg font-semibold text-lbg-main-light dark:text-white">All Competitions</h2>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">Browse and register for upcoming competitions.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-gray-400 text-lg">search</span>
+                    </div>
+                    <input type="text" id="searchCompetitions" class="pl-10 pr-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 w-64" placeholder="Search competitions...">
+                </div>
+            </div>
+        </div>
+
+        <div id="competitionsContainer" class="space-y-4">
+            <!-- Loading state -->
+            <div class="text-center py-12">
+                <span class="material-icons-round text-gray-400 dark:text-gray-600 text-5xl mb-3 animate-pulse">emoji_events</span>
+                <p class="text-gray-500 dark:text-gray-400">Loading competitions...</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Competition Detail Modal -->
+<div id="competitionModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeModal()"></div>
+        
+        <div class="inline-block align-bottom bg-white dark:bg-card-dark rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+            <div class="bg-white dark:bg-card-dark px-6 pt-6 pb-4">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-2xl font-bold text-lbg-main-light dark:text-white" id="modalTitle">Competition Title</h3>
+                    <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                        <span class="material-icons-round">close</span>
+                    </button>
+                </div>
+                
+                <div id="modalContent" class="mt-4">
+                    <!-- Content will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 dark:bg-gray-800 px-6 py-4 flex justify-end gap-3">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                    Close
+                </button>
+                <button id="registerBtn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors">
+                    Register Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let allCompetitions = [];
+let currentCompetitionId = null;
+
+// Load all competitions
+async function loadCompetitions() {
+    try {
+        console.log('Loading competitions from: /competitions/');
+        const response = await apiCall('/competitions/');
+        console.log('Response:', response);
+        
+        if (response && response.ok) {
+            const data = await response.json();
+            console.log('Competitions data:', data);
+            allCompetitions = data.results || data;
+            console.log('All competitions:', allCompetitions);
+            renderCompetitions(allCompetitions);
+        } else {
+            throw new Error('Failed to load competitions');
+        }
+    } catch (error) {
+        console.error('Error loading competitions:', error);
+        document.getElementById('competitionsContainer').innerHTML = `
+            <div class="text-center py-12">
+                <span class="material-icons-round text-red-400 text-5xl mb-3">error</span>
+                <p class="text-red-500">Failed to load competitions. Please try again.</p>
+            </div>
+        `;
+    }
+}
+
+// Render competitions
+function renderCompetitions(competitions) {
+    const container = document.getElementById('competitionsContainer');
+    
+    if (competitions.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-12">
+                <span class="material-icons-round text-gray-400 dark:text-gray-600 text-5xl mb-3">emoji_events</span>
+                <p class="text-gray-500 dark:text-gray-400">No competitions found.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    competitions.forEach(comp => {
+        const hosts = comp.hosts_list.join(', ');
+        const participants = comp.participants_list || [];
+        const displayParticipants = participants.slice(0, 3);
+        const remainingCount = Math.max(0, participants.length - 3);
+        
+        html += `
+            <div class="bg-white dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
+                <div class="flex flex-col">
+                    <!-- Header -->
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-3 mb-2">
+                                <h3 class="text-xl font-bold text-lbg-main-light dark:text-white">${comp.name}</h3>
+                                ${comp.is_active ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 uppercase tracking-wide">Active</span>` : ''}
+                            </div>
+                            ${comp.description ? `<p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark leading-relaxed line-clamp-2">${comp.description}</p>` : ''}
+                        </div>
+                    </div>
+                    
+                    <!-- Competition Details Grid -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto pt-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+                        ${comp.event_date ? `
+                        <div class="flex items-start gap-2">
+                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">event</span>
+                            <div>
+                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Date</p>
+                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${formatDate(comp.event_date)}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${comp.event_time ? `
+                        <div class="flex items-start gap-2">
+                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">schedule</span>
+                            <div>
+                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Time</p>
+                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${comp.event_time}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${comp.location ? `
+                        <div class="flex items-start gap-2">
+                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">location_on</span>
+                            <div>
+                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Location</p>
+                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${comp.location}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${comp.team_size ? `
+                        <div class="flex items-start gap-2">
+                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">groups</span>
+                            <div>
+                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Team Size</p>
+                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${comp.team_size}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="flex items-start gap-2">
+                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">corporate_fare</span>
+                            <div>
+                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Hosted By</p>
+                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${hosts}</p>
+                            </div>
+                        </div>
+                        
+                        ${participants.length > 0 ? `
+                        <div class="flex items-start gap-2">
+                            <span class="material-icons-round text-gray-400 text-lg mt-0.5">people</span>
+                            <div>
+                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Participants</p>
+                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${displayParticipants.join(', ')}${remainingCount > 0 ? ` +${remainingCount}` : ''}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-2 border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <div class="flex items-center gap-4">
+                        ${comp.brochure ? `
+                            <a href="${comp.brochure}" target="_blank" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+                                <span class="material-icons-round text-base">picture_as_pdf</span>
+                                Brochure
+                            </a>
+                        ` : ''}
+                        ${comp.event_link ? `
+                            <a href="${comp.event_link}" target="_blank" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+                                <span class="material-icons-round text-base">link</span>
+                                Event Link
+                            </a>
+                        ` : ''}
+                    </div>
+                    <button onclick="viewCompetition(${comp.id})" class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover transition-colors">
+                        View Info
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// View competition details
+async function viewCompetition(id) {
+    currentCompetitionId = id;
+    
+    try {
+        const response = await apiCall(`/competitions/${id}/`);
+        
+        if (response && response.ok) {
+            const comp = await response.json();
+            displayCompetitionModal(comp);
+        } else {
+            throw new Error('Failed to load competition details');
+        }
+    } catch (error) {
+        console.error('Error loading competition:', error);
+        showError('Failed to load competition details');
+    }
+}
+
+// Display competition in modal
+function displayCompetitionModal(comp) {
+    document.getElementById('modalTitle').textContent = comp.name;
+    
+    const modalContent = document.getElementById('modalContent');
+    const hosts = comp.hosts_list.join(', ');
+    
+    modalContent.innerHTML = `
+        <div class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                ${comp.event_date || comp.event_time || comp.location || comp.team_size ? `
+                    <div>
+                        <h4 class="text-sm font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wider mb-2">Details</h4>
+                        <ul class="space-y-2 text-lbg-main-light dark:text-white">
+                            ${comp.event_date ? `
+                                <li class="flex items-start gap-3">
+                                    <span class="material-icons-round text-lg mt-0.5 text-primary">event</span>
+                                    <span><strong>Date:</strong> ${formatDate(comp.event_date)}</span>
+                                </li>
+                            ` : ''}
+                            ${comp.event_time ? `
+                                <li class="flex items-start gap-3">
+                                    <span class="material-icons-round text-lg mt-0.5 text-primary">schedule</span>
+                                    <span><strong>Time:</strong> ${comp.event_time}</span>
+                                </li>
+                            ` : ''}
+                            ${comp.location ? `
+                                <li class="flex items-start gap-3">
+                                    <span class="material-icons-round text-lg mt-0.5 text-primary">location_on</span>
+                                    <span><strong>Location:</strong> ${comp.location}</span>
+                                </li>
+                            ` : ''}
+                            ${comp.team_size ? `
+                                <li class="flex items-start gap-3">
+                                    <span class="material-icons-round text-lg mt-0.5 text-primary">groups</span>
+                                    <span><strong>Team Size:</strong> ${comp.team_size}</span>
+                                </li>
+                            ` : ''}
+                        </ul>
+                    </div>
+                ` : ''}
+                
+                <div>
+                    <h4 class="text-sm font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wider mb-2">Hosted By</h4>
+                    <ul class="space-y-2 text-lbg-main-light dark:text-white">
+                        ${comp.hosts_list.map(host => `
+                            <li class="flex items-center gap-3">
+                                <span class="material-icons-round text-lg text-primary">corporate_fare</span>
+                                <span>${host}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+            
+            ${comp.description ? `
+                <div>
+                    <h4 class="text-sm font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wider mb-2">Description</h4>
+                    <p class="text-lbg-main-light dark:text-white text-base">${comp.description}</p>
+                </div>
+            ` : ''}
+            
+            ${comp.participants_list && comp.participants_list.length > 0 ? `
+            <div>
+                <h4 class="text-sm font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wider mb-2">Participants (${comp.participants_list.length} total)</h4>
+                <div class="flex flex-wrap gap-2">
+                    ${comp.participants_list.map(name => `
+                        <span class="bg-gray-100 dark:bg-gray-700 text-lbg-main-light dark:text-white text-sm font-medium px-3 py-1.5 rounded-lg">${name}</span>
+                    `).join('')}
+                </div>
+            </div>
+            ` : ''}
+            
+            ${comp.brochure || comp.event_link ? `
+            <div>
+                <h4 class="text-sm font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wider mb-2">Links</h4>
+                <div class="flex flex-wrap gap-3">
+                    ${comp.brochure ? `
+                        <a href="${comp.brochure}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+                            <span class="material-icons-round text-lg">picture_as_pdf</span>
+                            <span class="font-medium">Download Brochure</span>
+                        </a>
+                    ` : ''}
+                    ${comp.event_link ? `
+                        <a href="${comp.event_link}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+                            <span class="material-icons-round text-lg">link</span>
+                            <span class="font-medium">Event Link</span>
+                        </a>
+                    ` : ''}
+                </div>
+            </div>
+            ` : ''}
+        </div>
+    `;
+    
+    // Hide the register button since we're not using registration anymore
+    const registerBtn = document.getElementById('registerBtn');
+    registerBtn.style.display = 'none';
+    
+    document.getElementById('competitionModal').classList.remove('hidden');
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById('competitionModal').classList.add('hidden');
+    currentCompetitionId = null;
+}
+
+// Format date
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+// Search functionality
+document.getElementById('searchCompetitions').addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    const filtered = allCompetitions.filter(comp => 
+        comp.name.toLowerCase().includes(searchTerm) ||
+        comp.hosted_by.toLowerCase().includes(searchTerm) ||
+        (comp.additional_info && comp.additional_info.toLowerCase().includes(searchTerm))
+    );
+    renderCompetitions(filtered);
+});
+
+// Check if user can manage competitions
+async function checkManagePermission() {
+    if (userData.is_staff || userData.is_superuser) {
+        document.getElementById('addCompetitionSection').style.display = 'block';
+        return;
+    }
+    
+    if (userData.role_detail && userData.role_detail.can_manage_competitions) {
+        document.getElementById('addCompetitionSection').style.display = 'block';
+    }
+}
+
+// Initialize page
+async function initCompetitions() {
+    await loadUserProfile();
+    checkManagePermission();
+    loadCompetitions();
+}
+
+initCompetitions();
+</script>
+{% endblock %}
