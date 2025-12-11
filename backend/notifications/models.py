@@ -5,15 +5,36 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class Notification(models.Model):
-    """In-app and email notifications"""
+    """In-app and email notifications for important events"""
     NOTIFICATION_TYPES = [
+        # Meeting notifications
+        ('MEETING_TODAY', 'Meeting Today'),
         ('MEETING_MORNING', 'Meeting Morning Reminder'),
         ('MEETING_10MIN', 'Meeting 10 Minute Reminder'),
-        ('ANNOUNCEMENT', 'New Announcement'),
+        ('MEETING_CANCELLED', 'Meeting Cancelled'),
+        ('MEETING_RESCHEDULED', 'Meeting Rescheduled'),
+        
+        # Duty notifications
+        ('DUTY_TODAY', 'Duty Today'),
         ('DUTY_ASSIGNED', 'Duty Assigned'),
-        ('DUTY_REMINDER', 'Duty Reminder'),
-        ('EVENT_REGISTRATION', 'Event Registration'),
-        ('GENERAL', 'General'),
+        ('DUTY_MORNING', 'Duty Morning Reminder'),
+        
+        # Announcement notifications
+        ('ANNOUNCEMENT_NEW', 'New Announcement'),
+        ('ANNOUNCEMENT_IMPORTANT', 'Important Announcement'),
+        
+        # Competition notifications
+        ('COMPETITION_NEW', 'New Competition'),
+        ('COMPETITION_DEADLINE', 'Competition Deadline Approaching'),
+        ('COMPETITION_STARTING', 'Competition Starting Soon'),
+        
+        # Discipline notifications
+        ('DISCIPLINE_WARNING', 'Discipline Warning (3+ Offenses)'),
+        ('DISCIPLINE_DAILY_REPORT', 'Daily Discipline Report'),
+        ('DISCIPLINE_NEW_OFFENSE', 'New Offense Recorded'),
+        
+        # General
+        ('GENERAL', 'General Notification'),
     ]
     
     recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')

@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}{{ record.student_name }} - Details{% endblock %}
+{% block title %}Student Details - CouncilApp{% endblock %}
 {% block nav_discipline %}bg-gray-100 dark:bg-gray-800 text-primary dark:text-white{% endblock %}
 
 {% block content %}
 <div class="mt-6 max-w-6xl mx-auto">
     <!-- Back Button -->
-    <button onclick="history.back()" class="mb-6 flex items-center gap-2 text-primary hover:underline">
+    <button onclick="window.location.href='/discipline/'" class="mb-6 flex items-center gap-2 text-primary hover:text-primary-hover dark:text-white transition-colors">
+        <span class="material-icons-round">arrow_back</span>
         Back to Records
     </button>
 
@@ -13,16 +14,22 @@
     <div class="bg-card-light dark:bg-card-dark rounded-xl shadow p-8 mb-8">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
-                <h1 class="text-3xl font-bold">{{ record.student_name }}</h1>
-                <p class="text-lg text-gray-600 dark:text-gray-400 mt-2">
-                    DNO: <span class="font-mono">{{ record.dno }}</span> • Class: {{ record.class_section }}
+                <h1 id="studentName" class="text-3xl font-bold text-lbg-main-light dark:text-lbg-main-dark">Loading...</h1>
+                <p class="text-lg text-lbg-sub-light dark:text-lbg-sub-dark mt-2">
+                    DNO: <span class="font-mono" id="studentDno">—</span> • Class: <span id="studentClass">—</span>
                 </p>
             </div>
-            <div class="text-center">
-                <div class="text-6xl font-bold text-red-600 dark:text-red-400">{{ record.offense_count }}</div>
-                <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Total Offense{{ record.offense_count|pluralize }}
+            <div class="flex items-center gap-6">
+                <div class="text-center">
+                    <div id="offenseCount" class="text-6xl font-bold text-red-600 dark:text-red-400">0</div>
+                    <div class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">
+                        Total <span id="offenseLabel">Offenses</span>
+                    </div>
                 </div>
+                <button id="addOffenseBtn" onclick="showAddOffenseModal()" class="hidden px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium flex items-center gap-2 transition-colors shadow-sm">
+                    <span class="material-icons-round">add</span>
+                    Add Offense
+                </button>
             </div>
         </div>
     </div>
@@ -30,10 +37,10 @@
     <!-- Offense History -->
     <div class="bg-card-light dark:bg-card-dark rounded-xl shadow overflow-hidden">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-            <h2 class="text-xl font-semibold">Offense History ({{ record.offense_logs|length }})</h2>
+            <h2 class="text-xl font-semibold text-lbg-main-light dark:text-lbg-main-dark">Offense History (<span id="historyCount">0</span>)</h2>
             <div class="flex items-center gap-3">
-                <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Sort by:</span>
-                <select id="sortSelect" class="px-4 py-2 border rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-primary">
+                <span class="text-sm font-medium text-lbg-sub-light dark:text-lbg-sub-dark">Sort by:</span>
+                <select id="sortSelect" class="px-4 py-2 border rounded-lg bg-input-bg-light dark:bg-input-bg-dark text-lbg-main-light dark:text-lbg-main-dark border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary">
                     <option value="newest">Newest First</option>
                     <option value="oldest">Oldest First</option>
                     <option value="category">Category (A–Z)</option>
@@ -42,57 +49,24 @@
         </div>
 
         <div class="divide-y divide-gray-200 dark:divide-gray-700" id="historyContainer">
-            {% for log in record.offense_logs.all %}
-            <div class="offense-row p-6 hover:bg-gray-50 dark:hover:bg-gray-800 transition group"
-                 data-date="{{ log.created_at|date:'c' }}"
-                 data-category="{{ log.get_category_display }}">
-                <div class="flex justify-between items-start gap-6">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-4 mb-2">
-                            <span class="text-sm font-medium text-gray-600 dark:text-gray-400">
-                                {{ log.created_at|date:"M d, Y – H:i" }}
-                            </span>
-                            <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-medium">
-                                {{ log.get_category_display }}
-                            </span>
-                        </div>
-                        <p class="text-lbg-main-light dark:text-lbg-main-dark mt-1">
-                            {{ log.reason|default:"No reason provided" }}
-                        </p>
-                    </div>
-
-                    {% if can_manage_discipline %}
-                    <div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-3">
-                        <button onclick="editOffense('{{ log.id }}')" class="text-primary" title="Edit">
-                            Edit
-                        </button>
-                        <button onclick="deleteOffense('{{ log.id }}')" class="text-red-600" title="Delete">
-                            Delete
-                        </button>
-                    </div>
-                    {% endif %}
-                </div>
+            <div class="p-12 text-center text-lbg-sub-light dark:text-lbg-sub-dark">
+                <span class="material-icons-round text-6xl mb-4 opacity-50">hourglass_empty</span>
+                <p>Loading offense history...</p>
             </div>
-            {% empty %}
-            <div class="p-12 text-center text-gray-500">
-                <span class="material-icons-round text-6xl mb-4 opacity-50">info</span>
-                <p>No offense history recorded yet.</p>
-            </div>
-            {% endfor %}
         </div>
     </div>
 </div>
 
 <!-- Delete Modal -->
 <div id="deleteModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-white dark:bg-card-dark rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-        <h3 class="text-2xl font-bold mb-4">Delete Offense?</h3>
-        <p class="text-lbg-main-light dark:text-lbg-main-dark mb-8">
+    <div class="bg-card-light dark:bg-card-dark rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+        <h3 class="text-2xl font-bold text-lbg-main-light dark:text-lbg-main-dark mb-4">Delete Offense?</h3>
+        <p class="text-lbg-sub-light dark:text-lbg-sub-dark mb-8">
             This will permanently delete this offense and decrease the total count by 1.
         </p>
         <div class="flex justify-end gap-4">
             <button onclick="document.getElementById('deleteModal').classList.add('hidden')"
-                    class="px-6 py-3 bg-gray-200 dark:bg-gray-700 rounded-lg">
+                    class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-lbg-main-light dark:text-lbg-main-dark rounded-lg">
                 Cancel
             </button>
             <button id="confirmDelete" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium">
@@ -102,11 +76,158 @@
     </div>
 </div>
 
+<!-- Add Offense Modal -->
+<div id="addOffenseModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-card-light dark:bg-card-dark rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl">
+        <h3 class="text-2xl font-bold text-lbg-main-light dark:text-lbg-main-dark mb-6">Add New Offense</h3>
+        
+        <form id="addOffenseForm" class="space-y-4">
+            <!-- Category -->
+            <div>
+                <label for="offenseCategory" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
+                    Category *
+                </label>
+                <select id="offenseCategory" required
+                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <option value="">Select category</option>
+                    <option value="UNIFORM">Uniform Violation</option>
+                    <option value="LATE">Late Arrival / Submission</option>
+                    <option value="BEHAVIOR">Misbehavior</option>
+                    <option value="ACADEMIC">Academic Misconduct</option>
+                    <option value="ABSENCE">Unauthorized Absence</option>
+                    <option value="SUBSTANCES">Substances</option>
+                    <option value="OTHER">Other</option>
+                </select>
+            </div>
+
+            <!-- Reason -->
+            <div>
+                <label for="offenseReason" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
+                    Reason
+                </label>
+                <textarea id="offenseReason" rows="4"
+                    placeholder="Provide details about the offense (optional)"
+                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-y"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4">
+                <button type="button" onclick="closeAddOffenseModal()"
+                        class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-lbg-main-light dark:text-lbg-main-dark rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors flex items-center gap-2">
+                    <span class="material-icons-round text-lg">save</span>
+                    Add Offense
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
+let recordData = null;
+let offenseLogs = [];
+let canManageRecords = false;
 let offenseToDelete = null;
 
-function editOffense(id) {
-    window.location.href = `/discipline/offense/${id}/edit/`;
+// Get record ID from URL
+const recordId = window.location.pathname.split('/').filter(Boolean).pop();
+
+async function loadRecord() {
+    try {
+        const response = await apiCall(`/discipline/${recordId}/`);
+        if (!response || !response.ok) {
+            showError('Failed to load record');
+            return;
+        }
+
+        recordData = await response.json();
+        offenseLogs = recordData.offense_logs || [];
+        
+        // Update UI
+        document.getElementById('studentName').textContent = recordData.student_name;
+        document.getElementById('studentDno').textContent = recordData.dno;
+        document.getElementById('studentClass').textContent = recordData.class_section;
+        document.getElementById('offenseCount').textContent = recordData.offense_count;
+        document.getElementById('offenseLabel').textContent = recordData.offense_count === 1 ? 'Offense' : 'Offenses';
+        document.getElementById('historyCount').textContent = offenseLogs.length;
+
+        checkPermissions();
+        renderOffenseLogs();
+    } catch (error) {
+        console.error('Error loading record:', error);
+        showError('Failed to load record');
+    }
+}
+
+function checkPermissions() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    canManageRecords = user.is_staff || user.is_superuser || 
+        (user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name));
+    
+    // Show add offense button if user can manage
+    if (canManageRecords) {
+        document.getElementById('addOffenseBtn').classList.remove('hidden');
+    }
+}
+
+function renderOffenseLogs() {
+    const container = document.getElementById('historyContainer');
+    
+    if (offenseLogs.length === 0) {
+        container.innerHTML = `
+            <div class="p-12 text-center text-lbg-sub-light dark:text-lbg-sub-dark">
+                <span class="material-icons-round text-6xl mb-4 opacity-50">info</span>
+                <p>No offense history recorded yet.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = offenseLogs.map(log => {
+        const date = new Date(log.created_at);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        return `
+            <div class="offense-row p-6 hover:bg-primary-light/10 dark:hover:bg-primary/10 transition group"
+                 data-date="${log.created_at}"
+                 data-category="${log.category_display}">
+                <div class="flex justify-between items-start gap-6">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-4 mb-2">
+                            <span class="text-sm font-medium text-lbg-sub-light dark:text-lbg-sub-dark">
+                                ${formattedDate}
+                            </span>
+                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-xs font-medium text-lbg-main-light dark:text-lbg-main-dark">
+                                ${log.category_display}
+                            </span>
+                        </div>
+                        <p class="text-lbg-main-light dark:text-lbg-main-dark mt-1">
+                            ${log.reason || 'No reason provided'}
+                        </p>
+                    </div>
+                    ${canManageRecords ? `
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-3">
+                            <button onclick="deleteOffense(${log.id})" class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300" title="Delete">
+                                <span class="material-icons-round">delete</span>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    applySorting();
 }
 
 function deleteOffense(id) {
@@ -116,29 +237,27 @@ function deleteOffense(id) {
 
 document.getElementById('confirmDelete').onclick = async () => {
     if (!offenseToDelete) return;
-    const resp = await apiCall(`/offense/${offenseToDelete}/`, {method: 'DELETE'});
-    if (resp.ok) {
-        showSuccess('Offense deleted');
-        setTimeout(() => location.reload(), 800);
-    } else {
-        showError('Failed to delete');
+    
+    try {
+        const response = await apiCall(`/discipline/offense/${offenseToDelete}/`, {
+            method: 'DELETE'
+        });
+        
+        if (response && response.ok) {
+            showSuccess('Offense deleted successfully');
+            document.getElementById('deleteModal').classList.add('hidden');
+            offenseToDelete = null;
+            setTimeout(() => loadRecord(), 800);
+        } else {
+            showError('Failed to delete offense');
+        }
+    } catch (error) {
+        showError('Failed to delete offense');
     }
 };
 
-// DEFAULT: Sort by Category on load
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('historyContainer');
-    const rows = Array.from(container.querySelectorAll('.offense-row'));
-
-    rows.sort((a, b) => a.dataset.category.localeCompare(b.dataset.category));
-    rows.forEach(row => container.appendChild(row));
-
-    // Set dropdown to "Category"
-    document.getElementById('sortSelect').value = 'category';
-});
-
-document.getElementById('sortSelect').onchange = function() {
-    const val = this.value;
+function applySorting() {
+    const val = document.getElementById('sortSelect').value;
     const container = document.getElementById('historyContainer');
     const rows = Array.from(container.querySelectorAll('.offense-row'));
 
@@ -150,6 +269,65 @@ document.getElementById('sortSelect').onchange = function() {
     });
 
     rows.forEach(row => container.appendChild(row));
-};
+}
+
+document.getElementById('sortSelect').onchange = applySorting;
+
+// Show add offense modal
+function showAddOffenseModal() {
+    document.getElementById('addOffenseModal').classList.remove('hidden');
+}
+
+// Close add offense modal
+function closeAddOffenseModal() {
+    document.getElementById('addOffenseModal').classList.add('hidden');
+    document.getElementById('addOffenseForm').reset();
+}
+
+// Handle add offense form submission
+document.getElementById('addOffenseForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const category = document.getElementById('offenseCategory').value;
+    const reason = document.getElementById('offenseReason').value;
+    
+    if (!category) {
+        showError('Please select a category');
+        return;
+    }
+    
+    try {
+        // Update the record with incremented offense count and new log data
+        const updateData = {
+            student_name: recordData.student_name,
+            class_section: recordData.class_section,
+            dno: recordData.dno,
+            offense_count: recordData.offense_count + 1,
+            category: category,
+            reason: reason || ''
+        };
+        
+        const response = await apiCall(`/discipline/${recordId}/`, {
+            method: 'PUT',
+            body: JSON.stringify(updateData)
+        });
+        
+        if (response && response.ok) {
+            showSuccess('Offense added successfully!');
+            closeAddOffenseModal();
+            // Reload the record to show updated data
+            setTimeout(() => loadRecord(), 500);
+        } else {
+            const error = await response.json();
+            showError(Object.values(error).flat().join(', ') || 'Failed to add offense');
+        }
+    } catch (error) {
+        console.error('Error adding offense:', error);
+        showError('Failed to add offense');
+    }
+});
+
+// Load on page load
+loadRecord();
 </script>
 {% endblock %}

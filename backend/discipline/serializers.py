@@ -12,7 +12,14 @@ class OffenseLogSerializer(serializers.ModelSerializer):
 
 
 class DisciplineRecordSerializer(serializers.ModelSerializer):
-    created_by_name = serializers.CharField(source='created_by.get_full_name', read_only=True)
+    created_by_name = serializers.SerializerMethodField(read_only=True)
+    
+    def get_created_by_name(self, obj):
+        """Return full name or username as fallback"""
+        if obj.created_by:
+            full_name = obj.created_by.get_full_name()
+            return full_name if full_name else obj.created_by.username
+        return 'Unknown'
 
     # Full history 
     offense_logs = OffenseLogSerializer(many=True, read_only=True)
@@ -45,7 +52,7 @@ class DisciplineRecordSerializer(serializers.ModelSerializer):
             'latest_category',     
             'last_offense_date',   
         ]
-        read_only_fields = ['id', 'offense_count', 'created_by', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_by', 'created_at', 'updated_at']
 
     def validate_dno(self, value):
         value = value.upper()

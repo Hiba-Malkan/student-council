@@ -15,40 +15,34 @@ app.autodiscover_tasks()
 
 # Periodic tasks schedule
 app.conf.beat_schedule = {
-    # Send morning meeting reminders at 7:00 AM
-    'send-morning-meeting-reminders': {
-        'task': 'notifications.tasks.send_morning_meeting_reminders',
+    # Send all daily notifications at 7:00 AM (meetings, duties, etc.)
+    'send-daily-notifications': {
+        'task': 'notifications.tasks.send_daily_notifications',
         'schedule': crontab(hour=7, minute=0),
     },
     
-    # Check for 10-minute meeting reminders every 5 minutes
-    'send-10min-meeting-reminders': {
-        'task': 'notifications.tasks.send_10min_meeting_reminders',
-        'schedule': crontab(minute='*/5'),
+    # Send pending email notifications every 10 minutes
+    'send-pending-emails': {
+        'task': 'notifications.tasks.send_pending_email_notifications',
+        'schedule': crontab(minute='*/10'),
     },
     
-    # Send daily discipline report at 4:00 PM
-    'send-daily-discipline-report': {
-        'task': 'notifications.tasks.send_daily_discipline_report',
+    # Send discipline reports at 4:00 PM
+    'send-discipline-reports': {
+        'task': 'notifications.tasks.send_discipline_reports',
         'schedule': crontab(hour=16, minute=0),
     },
     
-    # Check project deadlines daily at 8:00 AM
-    'check-project-deadlines': {
-        'task': 'notifications.tasks.check_project_deadlines',
+    # Send competition deadline reminders at 8:00 AM
+    'send-competition-deadline-reminders': {
+        'task': 'notifications.tasks.send_competition_deadline_reminders',
         'schedule': crontab(hour=8, minute=0),
     },
     
-    # Send duty reminders at 6:30 AM
-    'send-duty-reminders': {
-        'task': 'notifications.tasks.send_duty_reminders',
-        'schedule': crontab(hour=6, minute=30),
-    },
-    
-    # Check for defaulters daily at 3:00 PM
-    'check-defaulters': {
-        'task': 'notifications.tasks.check_defaulters',
-        'schedule': crontab(hour=15, minute=0),
+    # Cleanup old notifications weekly on Sunday at 2:00 AM
+    'cleanup-old-notifications': {
+        'task': 'notifications.tasks.cleanup_old_notifications',
+        'schedule': crontab(hour=2, minute=0, day_of_week=0),
     },
 }
 

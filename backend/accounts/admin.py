@@ -15,6 +15,7 @@ class RoleAdmin(admin.ModelAdmin):
         }),
         ('Permissions', {
             'fields': (
+                'is_normal_student',
                 'can_edit_duty_roster',
                 'can_schedule_meetings',
                 'can_create_announcements',

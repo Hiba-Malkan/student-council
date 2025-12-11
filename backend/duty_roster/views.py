@@ -64,25 +64,60 @@ class DutyViewSet(viewsets.ModelViewSet):
         if end_date:
             queryset = queryset.filter(date__lte=end_date)
         
-        # Role-based filtering
-        if not (self.request.user.is_c_suite or self.request.user.is_captain):
+        # Filter by assigned_to if explicitly provided in query params
+        assigned_to_id = self.request.query_params.get('assigned_to')
+        if assigned_to_id:
+            queryset = queryset.filter(assigned_to_id=assigned_to_id)
+            return queryset.order_by('-date', '-created_at')
+        
+        # Role-based filtering (only if assigned_to not explicitly specified)
+        # Show all duties if user is staff, superuser, c-suite, captain, or has duty roster permission
+        can_see_all = (
+            self.request.user.is_staff or 
+            self.request.user.is_superuser or
+            self.request.user.is_c_suite or 
+            self.request.user.is_captain or
+            (self.request.user.role and self.request.user.role.can_edit_duty_roster)
+        )
+        
+        if not can_see_all:
             # Regular users only see their own duties
             queryset = queryset.filter(assigned_to=self.request.user)
         
         return queryset.order_by('-date', '-created_at')
     
     def create(self, request, *args, **kwargs):
-        if not request.user.role.can_edit_duty_roster:
+        # Check permissions - staff, superuser, or role with permission
+        if not (request.user.is_staff or request.user.is_superuser or 
+                (request.user.role and request.user.role.can_edit_duty_roster)):
             return Response(
                 {'error': 'You do not have permission to create duties'},
                 status=status.HTTP_403_FORBIDDEN
             )
         
-        request.data['assigned_by'] = request.user.id
-        return super().create(request, *args, **kwargs)
+        # Create a mutable copy of request data
+        data = request.data.copy()
+        
+        # Validate required fields
+        if not data.get('duty_type_name'):
+            return Response(
+                {'error': 'duty_type_name is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def perform_create(self, serializer):
+        """Override to set assigned_by"""
+        serializer.save(assigned_by=self.request.user)
     
     def update(self, request, *args, **kwargs):
-        if not request.user.role.can_edit_duty_roster:
+        if not (request.user.is_staff or request.user.is_superuser or 
+                (request.user.role and request.user.role.can_edit_duty_roster)):
             return Response(
                 {'error': 'You do not have permission to update duties'},
                 status=status.HTTP_403_FORBIDDEN
@@ -90,7 +125,8 @@ class DutyViewSet(viewsets.ModelViewSet):
         return super().update(request, *args, **kwargs)
     
     def destroy(self, request, *args, **kwargs):
-        if not request.user.role.can_edit_duty_roster:
+        if not (request.user.is_staff or request.user.is_superuser or 
+                (request.user.role and request.user.role.can_edit_duty_roster)):
             return Response(
                 {'error': 'You do not have permission to delete duties'},
                 status=status.HTTP_403_FORBIDDEN

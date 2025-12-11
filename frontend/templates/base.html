@@ -88,35 +88,35 @@
                     </div>
                 </div>
                 <nav class="mt-6 px-3 space-y-1">
-                    <a class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_dashboard %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/dashboard/">
+                    <a id="dashButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_dashboard %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/dashboard/">
                         <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">dashboard</span>
                         Dashboard
                     </a>
-                    <a class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_duty %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/duty-roster/">
+                    <a id="dutyButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_duty %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/duty-roster/">
                         <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">assignment_ind</span>
                         Duty Roster
                     </a>
-                    <a class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_meetings %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/meetings/">
+                    <a id="meetingButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_meetings %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/meetings/">
                         <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">groups</span>
                         Meetings
                     </a>
-                    <a class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_announcements %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/announcements/">
+                    <a id="announcementButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_announcements %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/announcements/">
                         <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">campaign</span>
                         Announcements
                     </a>
-                    <a class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_discipline %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/discipline/">
+                    <a id="disciplineButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_discipline %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/discipline/">
                         <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">article</span>
                         Discipline
                     </a>
-                    <a class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_clubs %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/clubs/">
+                    <a id="clubButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_clubs %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/clubs/">
                         <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">school</span>
                         Clubs
                     </a>
-                    <a class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_competitions %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/competitions/">
+                    <a id="competitionButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_competitions %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/competitions/">
                         <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">emoji_events</span>
                         Competitions
                     </a>
-                    <a class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_admin %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/admin/" id="adminPanelLink" style="display: none;">
+                    <a id="adminpanelButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_admin %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/admin/" id="adminPanelLink" style="display: none;">
                         <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">admin_panel_settings</span>
                         Admin Panel
                     </a>
@@ -168,6 +168,22 @@
 
         if (!accessToken) {
             window.location.href = '/';
+        }
+
+        function checkPermissions() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            isNormalStudent = user.is_staff || user.is_superuser || 
+                (user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name));
+            
+            if (!isNormalStudent) {
+                document.getElementById('dashButton').style.display = 'none';
+                document.getElementById('dutyButton').style.display = 'none';
+                document.getElementById('meetingButton').style.display = 'none';
+                document.getElementById('disciplineButton').style.display = 'none';
+                document.getElementById('clubButton').style.display = 'none';
+                document.getElementById('competitionButton').style.display = 'none';
+                document.getElementById('adminpanelButton').style.display = 'none';
+            }
         }
 
         function showError(message) {
@@ -239,6 +255,7 @@
         }
 
         loadUserProfile();
+        checkPermissions();
     </script>
     {% block extra_js %}{% endblock %}
 </body>

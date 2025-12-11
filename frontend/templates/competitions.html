@@ -126,20 +126,29 @@ function renderCompetitions(competitions) {
         
         html += `
             <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
-                <div class="flex flex-col">
-                    <!-- Header -->
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-3 mb-2">
-                                <h3 class="text-xl font-bold text-lbg-main-light dark:text-white">${comp.name}</h3>
-                                ${comp.is_active ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 uppercase tracking-wide">Active</span>` : ''}
-                            </div>
-                            ${comp.description ? `<p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark leading-relaxed line-clamp-2">${comp.description}</p>` : ''}
-                        </div>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- School Logo -->
+                    <div class="w-full md:w-48 h-48 shrink-0 rounded-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center p-4">
+                        <img src="/static/images.png" 
+                             alt="School Logo" 
+                             class="w-full h-full object-contain">
                     </div>
                     
+                    <!-- Competition Info -->
+                    <div class="flex-1 flex flex-col">
+                        <!-- Header -->
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3">
+                                    <h3 class="text-xl font-bold text-lbg-main-light dark:text-white">${comp.name}</h3>
+                                    ${comp.is_active ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 uppercase tracking-wide">Active</span>` : ''}
+                                </div>
+                                ${comp.description ? `<p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark leading-relaxed line-clamp-2">${comp.description}</p>` : ''}
+                            </div>
+                        </div>
+                    
                     <!-- Competition Details Grid -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto pt-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto pt-4 pb-4 border-t border-gray-200 dark:border-gray-700">
                         ${comp.event_date ? `
                         <div class="flex items-start gap-2">
                             <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">event</span>
@@ -198,26 +207,28 @@ function renderCompetitions(competitions) {
                         </div>
                         ` : ''}
                     </div>
-                </div>
-
-                <div class="flex items-center justify-between gap-2 border-t border-gray-200 dark:border-gray-700 pt-4">
-                    <div class="flex items-center gap-4">
-                        ${comp.brochure ? `
-                            <a href="${comp.brochure}" target="_blank" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
-                                <span class="material-icons-round text-base">picture_as_pdf</span>
-                                Brochure
-                            </a>
-                        ` : ''}
-                        ${comp.event_link ? `
-                            <a href="${comp.event_link}" target="_blank" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
-                                <span class="material-icons-round text-base">link</span>
-                                Event Link
-                            </a>
-                        ` : ''}
+                    
+                    <!-- Action Buttons at Bottom -->
+                    <div class="flex items-center justify-between gap-2 border-t border-gray-200 dark:border-gray-700 pt-4 mt-auto">
+                        <div class="flex items-center gap-3">
+                            ${comp.brochure ? `
+                                <a href="${comp.brochure}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors text-sm font-medium shadow-sm">
+                                    <span class="material-icons-round text-base">picture_as_pdf</span>
+                                    Brochure
+                                </a>
+                            ` : ''}
+                            ${comp.event_link ? `
+                                <a href="${comp.event_link}" target="_blank" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+                                    <span class="material-icons-round text-base">link</span>
+                                    Event Link
+                                </a>
+                            ` : ''}
+                        </div>
+                        <button onclick="viewCompetition(${comp.id})" class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover transition-colors">
+                            View Info
+                        </button>
                     </div>
-                    <button onclick="viewCompetition(${comp.id})" class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover transition-colors">
-                        View Info
-                    </button>
+                    </div>
                 </div>
             </div>
         `;
@@ -262,25 +273,20 @@ function displayCompetitionModal(comp) {
                             ${comp.event_date ? `
                                 <li class="flex items-start gap-3">
                                     <span class="material-icons-round text-lg mt-0.5 text-primary">event</span>
-                                    <span><strong>Date:</strong> ${formatDate(comp.event_date)}</span>
+                                    <span class="mt-1"><strong>Date:</strong> ${formatDate(comp.event_date)}</span>
                                 </li>
                             ` : ''}
                             ${comp.event_time ? `
                                 <li class="flex items-start gap-3">
                                     <span class="material-icons-round text-lg mt-0.5 text-primary">schedule</span>
-                                    <span><strong>Time:</strong> ${comp.event_time}</span>
+                                    <span class="mt-1"><strong>Time:</strong> ${comp.event_time}</span>
                                 </li>
                             ` : ''}
-                            ${comp.location ? `
-                                <li class="flex items-start gap-3">
-                                    <span class="material-icons-round text-lg mt-0.5 text-primary">location_on</span>
-                                    <span><strong>Location:</strong> ${comp.location}</span>
-                                </li>
-                            ` : ''}
+                            
                             ${comp.team_size ? `
                                 <li class="flex items-start gap-3">
                                     <span class="material-icons-round text-lg mt-0.5 text-primary">groups</span>
-                                    <span><strong>Team Size:</strong> ${comp.team_size}</span>
+                                    <span class="mt-1"><strong>Team Size:</strong> ${comp.team_size}</span>
                                 </li>
                             ` : ''}
                         </ul>
@@ -296,6 +302,12 @@ function displayCompetitionModal(comp) {
                                 <span>${host}</span>
                             </li>
                         `).join('')}
+                        ${comp.location ? `
+                            <li class="flex items-start gap-3">
+                                <span class="material-icons-round text-lg text-primary">location_on</span>
+                                <span class="mt-0.5"><strong>Location:</strong> ${comp.location}</span>
+                            </li>
+                        ` : ''}
                     </ul>
                 </div>
             </div>

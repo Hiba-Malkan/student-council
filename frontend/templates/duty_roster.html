@@ -223,7 +223,10 @@ async function loadTodayDuty() {
                 const duty = duties[0];
                 const location = duty.location || 'Not specified';
                 const subsidiaryArea = duty.subsidiary_area || 'Not specified';
-                const firstName = userData.first_name || userData.username;
+                
+                // Use the assigned user's info from the duty object, not the logged-in user
+                const assignedUser = duty.assigned_to_detail;
+                const firstName = assignedUser?.first_name || assignedUser?.username || 'Unknown';
                 const initial = firstName.charAt(0).toUpperCase();
                 
                 dutyContent.innerHTML = `
@@ -358,8 +361,11 @@ document.getElementById('assignDutyForm').addEventListener('submit', async (e) =
             if (data.assigned_to === userData.id && data.date === today) {
                 loadTodayDuty();
             }
-            // Reload duties list
-            loadAllDuties();
+            // Reload duties list - reset to page 1 with current filters
+            currentPage = 1;
+            const searchValue = document.getElementById('searchDuties').value;
+            const filterValue = document.getElementById('filterDate').value;
+            loadAllDuties(currentPage, searchValue, filterValue);
         } else {
             const error = await response.json();
             showError(error.detail || error.message || 'Failed to assign duty');
@@ -485,9 +491,8 @@ function updateDutiesTable(duties) {
             status = `<span class="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded-full">Upcoming</span>`;
         }
         
-        // Check if user can delete this duty
-        const canDelete = (userData.role_detail?.can_edit_duty_roster || userData.is_staff) && 
-                         (duty.assigned_by === userData.id || userData.is_c_suite);
+        // Check if user can delete this duty - anyone with duty roster permission can delete all duties
+        const canDelete = userData.role_detail?.can_edit_duty_roster || userData.is_staff || userData.is_superuser;
         
         html += `
             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">

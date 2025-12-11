@@ -8,7 +8,7 @@ class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = [
-            'id', 'name',
+            'id', 'name', 'is_normal_student',
             'can_edit_duty_roster', 'can_schedule_meetings',
             'can_create_announcements', 'can_edit_announcements',
             'can_record_discipline', 'can_view_discipline',

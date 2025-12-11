@@ -8,7 +8,7 @@ from .models import Notification, NotificationPreference, EmailTemplate
 from .serializers import NotificationSerializer, NotificationPreferenceSerializer, EmailTemplateSerializer
 
 
-class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
+class NotificationViewSet(viewsets.ModelViewSet):
     """View and manage notifications"""
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer

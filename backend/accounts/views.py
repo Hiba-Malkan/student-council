@@ -4,14 +4,18 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from .models import User, Role
 from .serializers import UserSerializer, RoleSerializer, LoginSerializer, RegisterSerializer
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class LoginView(generics.GenericAPIView):
     """User login endpoint"""
     permission_classes = [AllowAny]
     serializer_class = LoginSerializer
+    authentication_classes = []
     
     def post(self, request):
         serializer = self.get_serializer(data=request.data)

@@ -27,10 +27,10 @@ class NotificationPreferenceSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'user', 'user_detail', 'email_for_meetings',
             'email_for_announcements', 'email_for_duties',
-            'email_for_discipline', 'email_for_projects',
+            'email_for_discipline', 'email_for_competitions',
             'in_app_for_meetings', 'in_app_for_announcements',
             'in_app_for_duties', 'in_app_for_discipline',
-            'in_app_for_projects', 'daily_digest', 'weekly_digest',
+            'in_app_for_competitions', 'daily_digest', 'weekly_digest',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['user', 'created_at', 'updated_at']

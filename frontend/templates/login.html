@@ -228,7 +228,7 @@
 
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="dno">D.No</label>
+                    <label for="dno">Username</label>
                     <div class="input-wrapper">
                         <svg class="input-icon" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
@@ -237,7 +237,7 @@
                             type="text" 
                             id="dno" 
                             name="username" 
-                            placeholder="Enter your D.No"
+                            placeholder="Enter your username"
                             required
                             autocomplete="username"
                         >
@@ -319,7 +319,7 @@
                     
                     // Redirect to dashboard
                     setTimeout(() => {
-                        window.location.href = '/duty-roster/';
+                        window.location.href = '/dashboard/';
                     }, 1000);
                 } else {
                     // Show error message

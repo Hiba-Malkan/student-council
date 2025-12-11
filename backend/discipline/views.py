@@ -3,8 +3,33 @@ from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import DisciplineRecord, OffenseLog  # Added OffenseLog
-from .serializers import DisciplineRecordSerializer
+from .serializers import DisciplineRecordSerializer, OffenseLogSerializer
 from .permissions import IsDisciplineManager
+
+
+class OffenseLogViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing individual offense logs"""
+    queryset = OffenseLog.objects.all()
+    serializer_class = OffenseLogSerializer
+    permission_classes = [IsAuthenticated, IsDisciplineManager]
+    
+    def perform_destroy(self, instance):
+        """When deleting an offense log, decrease the parent record's offense_count or delete the record"""
+        record = instance.record
+        
+        # Delete the offense log first
+        instance.delete()
+        
+        # Check how many offense logs are left for this record
+        remaining_offenses = record.offense_logs.count()
+        
+        if remaining_offenses == 0:
+            # If no offenses left, delete the entire discipline record
+            record.delete()
+        else:
+            # Update the offense count to match the actual number of logs
+            record.offense_count = remaining_offenses
+            record.save()
 
 
 class DisciplineRecordViewSet(viewsets.ModelViewSet):

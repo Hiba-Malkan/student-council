@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from django.utils import timezone
 from .models import Meeting, MinutesOfMeeting, MeetingAttendance
 from .serializers import MeetingSerializer, MinutesOfMeetingSerializer, MeetingAttendanceSerializer
 from accounts.permissions import CanScheduleMeetings
@@ -35,6 +36,66 @@ class MeetingViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(organized_by=self.request.user)
+    
+    def update(self, request, *args, **kwargs):
+        """Only allow editing future meetings and only by organizer or staff"""
+        meeting = self.get_object()
+        
+        # Check if meeting is in the past
+        if meeting.date < timezone.now().date():
+            return Response(
+                {'detail': 'Cannot edit past meetings.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Check if user is organizer or staff
+        if meeting.organized_by != request.user and not request.user.is_staff:
+            return Response(
+                {'detail': 'Only the meeting organizer or staff can edit this meeting.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        return super().update(request, *args, **kwargs)
+    
+    def partial_update(self, request, *args, **kwargs):
+        """Only allow editing future meetings and only by organizer or staff"""
+        meeting = self.get_object()
+        
+        # Check if meeting is in the past
+        if meeting.date < timezone.now().date():
+            return Response(
+                {'detail': 'Cannot edit past meetings.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Check if user is organizer or staff
+        if meeting.organized_by != request.user and not request.user.is_staff:
+            return Response(
+                {'detail': 'Only the meeting organizer or staff can edit this meeting.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        return super().partial_update(request, *args, **kwargs)
+    
+    def destroy(self, request, *args, **kwargs):
+        """Only allow deleting future meetings and only by organizer or staff"""
+        meeting = self.get_object()
+        
+        # Check if meeting is in the past
+        if meeting.date < timezone.now().date():
+            return Response(
+                {'detail': 'Cannot delete past meetings.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # Check if user is organizer or staff
+        if meeting.organized_by != request.user and not request.user.is_staff:
+            return Response(
+                {'detail': 'Only the meeting organizer or staff can delete this meeting.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        return super().destroy(request, *args, **kwargs)
 
     @action(detail=True, methods=['get', 'post', 'delete'], url_path='mom')
     def mom(self, request, pk=None):

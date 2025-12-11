@@ -5,6 +5,7 @@ class Role(models.Model):
     name = models.CharField(max_length=100, unique=True)
     
     # Permissions
+    is_normal_student = models.BooleanField(default=False)
     can_edit_duty_roster = models.BooleanField(default=False)
     can_schedule_meetings = models.BooleanField(default=False)
     can_create_announcements = models.BooleanField(default=False)

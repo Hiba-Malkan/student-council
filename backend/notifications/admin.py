@@ -1,20 +1,22 @@
 from django.contrib import admin
-from .models import Notification, NotificationPreference, EmailTemplate, NotificationBatch
+from .models import Notification, NotificationPreference, EmailTemplate
 
 
 @admin.register(Notification)
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ['recipient', 'notification_type', 'title', 'is_read', 'send_email', 'email_sent', 'created_at']
     list_filter = ['notification_type', 'is_read', 'is_snoozed', 'send_email', 'email_sent', 'created_at']
-    search_fields = ['recipient__username', 'title', 'message']
+    search_fields = ['recipient__username', 'recipient__first_name', 'recipient__last_name', 'title', 'message']
     date_hierarchy = 'created_at'
+    ordering = ['-created_at']
     
     fieldsets = (
         ('Notification Information', {
             'fields': ('recipient', 'notification_type', 'title', 'message')
         }),
         ('Content Object', {
-            'fields': ('content_type', 'object_id', 'action_url')
+            'fields': ('content_type', 'object_id', 'action_url'),
+            'classes': ('collapse',)
         }),
         ('Status', {
             'fields': ('is_read', 'read_at', 'is_snoozed', 'snoozed_until')
@@ -25,6 +27,28 @@ class NotificationAdmin(admin.ModelAdmin):
     )
     
     readonly_fields = ['read_at', 'email_sent_at', 'created_at']
+    
+    actions = ['mark_as_read', 'mark_as_unread', 'send_emails']
+    
+    def mark_as_read(self, request, queryset):
+        from django.utils import timezone
+        count = queryset.update(is_read=True, read_at=timezone.now())
+        self.message_user(request, f'{count} notification(s) marked as read.')
+    mark_as_read.short_description = 'Mark selected notifications as read'
+    
+    def mark_as_unread(self, request, queryset):
+        count = queryset.update(is_read=False, read_at=None)
+        self.message_user(request, f'{count} notification(s) marked as unread.')
+    mark_as_unread.short_description = 'Mark selected notifications as unread'
+    
+    def send_emails(self, request, queryset):
+        from .utils import send_notification_email
+        count = 0
+        for notification in queryset.filter(send_email=True, email_sent=False):
+            if send_notification_email(notification):
+                count += 1
+        self.message_user(request, f'{count} email(s) sent successfully.')
+    send_emails.short_description = 'Send pending emails for selected notifications'
 
 
 @admin.register(NotificationPreference)
@@ -74,22 +98,9 @@ class EmailTemplateAdmin(admin.ModelAdmin):
             'fields': ('name', 'subject', 'is_active')
         }),
         ('Template Body', {
-            'fields': ('body_template', 'available_variables')
+            'fields': ('body_template', 'available_variables'),
+            'description': 'Use variables like {{user_name}}, {{title}}, {{date}}, {{time}}, {{location}}'
         }),
     )
     
     readonly_fields = ['created_at', 'updated_at']
-
-
-@admin.register(NotificationBatch)
-class NotificationBatchAdmin(admin.ModelAdmin):
-    list_display = ['batch_type', 'sent_to_count', 'sent_at']
-    list_filter = ['batch_type', 'sent_at']
-    search_fields = ['batch_type']
-    readonly_fields = ['sent_at']
-    
-    fieldsets = (
-        ('Batch Information', {
-            'fields': ('batch_type', 'sent_to_count', 'metadata')
-        }),
-    )
