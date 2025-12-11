@@ -146,6 +146,16 @@ function timeAgo(dateString) {
     return past.toLocaleDateString();
 }
 
+function checkPermissions() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            isNormalStudent = user.is_staff || user.is_superuser || 
+                (user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name));
+            
+            if (!isNormalStudent) {
+                window.location.href = '/announcements/';
+            }
+        }
+
 async function loadDashboardData() {
     await loadUserProfile();
 
@@ -309,6 +319,8 @@ document.getElementById('nextPage').addEventListener('click', () => {
 
 // Auto refresh every minute
 setInterval(loadRecentActivity, 60000);
+
+checkPermissions();
 
 document.addEventListener('DOMContentLoaded', () => {
     loadDashboardData();

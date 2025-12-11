@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Meetings - CouncilApp{% endblock %}
-{% block nav_meetings %}bg-primary-light text-primary{% endblock %}
+{% block nav_meetings %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
 {% block page_title %}Meetings{% endblock %}
 {% block page_subtitle %}Manage upcoming council meetings and agenda items.{% endblock %}
 {% block content %}
 <!-- Upcoming Meetings Section -->
 <section class="mt-4">
-    <div class="bg-card-light rounded-2xl p-6 shadow-sm border border-gray-100">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <span class="material-icons-round text-primary">calendar_month</span>
                 Upcoming Meetings
             </h2>
@@ -26,9 +26,9 @@
 </section>
 <!-- Past Meetings Section -->
 <section class="mt-8">
-    <div class="bg-card-light rounded-2xl p-6 shadow-sm border border-gray-100">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                 <span class="material-icons-round text-primary">history</span>
                 Past Meetings
             </h2>
@@ -43,7 +43,7 @@
 </section>
 <!-- Schedule New Meeting Section -->
 <section class="mt-8" id="scheduleMeetingSection" style="display: none;">
-    <div class="bg-card-light rounded-2xl p-6 shadow-sm border border-gray-100">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
         <div class="flex justify-between items-start mb-6">
             <div>
                 <h2 class="text-lg font-semibold text-lbg-main-light dark:text-lbg-main-dark">Schedule New Meeting</h2>
@@ -108,7 +108,7 @@
                     Reminders will be sent on the morning of the meeting.
                 </div>
                 <div class="flex items-center gap-3 self-end sm:self-auto">
-                    <button class="px-4 py-2.5 text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors" type="button" onclick="this.form.reset()">
+                    <button class="px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg transition-colors" type="button" onclick="this.form.reset()">
                         Cancel
                     </button>
                     <button class="flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-sm transition-colors" type="submit">
@@ -122,8 +122,8 @@
 </section>
 <!-- Upload MOM Modal -->
 <div id="uploadMomModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-card-light rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6 border-b border-gray-200">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center">
                 <h3 class="text-xl font-semibold text-lbg-main-light dark:text-lbg-main-dark">Upload Minutes of Meeting</h3>
                 <button onclick="closeMomModal()" class="text-lbg-main-light dark:text-lbg-main-dark">
@@ -148,7 +148,7 @@
                 <input type="file" name="document" accept=".pdf,.doc,.docx" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
             </div>
             <div class="flex justify-end gap-3 pt-4">
-                <button type="button" onclick="closeMomModal()" class="px-4 py-2.5 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors">
+                <button type="button" onclick="closeMomModal()" class="px-4 py-2.5 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg transition-colors">
                     Cancel
                 </button>
                 <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-sm transition-colors">
@@ -160,8 +160,8 @@
 </div>
 <!-- View MOM Modal -->
 <div id="viewMomModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-card-light rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6 border-b border-gray-200">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center">
                 <h3 class="text-xl font-semibold text-lbg-main-light dark:text-lbg-main-dark">Minutes of Meeting</h3>
                 <button onclick="closeViewMomModal()" class="text-lbg-main-light dark:text-lbg-main-dark">
@@ -177,8 +177,8 @@
 </div>
 <!-- All Past Meetings Modal -->
 <div id="allPastModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-card-light rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6 border-b border-gray-200">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center">
                 <h3 class="text-xl font-semibold text-lbg-main-light dark:text-lbg-main-dark">All Past Meetings</h3>
                 <button onclick="closeAllPastModal()" class="text-lbg-main-light dark:text-lbg-main-dark">
@@ -195,8 +195,8 @@
 
 <!-- Edit Meeting Modal -->
 <div id="editMeetingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-card-light rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div class="p-6 border-b border-gray-200">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center">
                 <h3 class="text-xl font-semibold text-lbg-main-light dark:text-lbg-main-dark">Edit Meeting</h3>
                 <button onclick="closeEditMeetingModal()" class="text-lbg-main-light dark:text-lbg-main-dark">
@@ -260,7 +260,7 @@
             </div>
             
             <div class="flex justify-end gap-3 pt-4">
-                <button type="button" onclick="closeEditMeetingModal()" class="px-4 py-2.5 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors">
+                <button type="button" onclick="closeEditMeetingModal()" class="px-4 py-2.5 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg transition-colors">
                     Cancel
                 </button>
                 <button type="submit" class="flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-sm transition-colors">

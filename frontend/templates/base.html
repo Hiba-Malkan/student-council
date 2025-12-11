@@ -73,10 +73,44 @@
         .dark ::-webkit-scrollbar-thumb {
             background: #4B5563;
         }
+        
+        /* Global select styling for dark mode */
+        .dark select {
+            background-color: #374151;
+            color: #F3F4F6;
+            border-color: #4B5563;
+        }
+        .dark select option {
+            background-color: #374151;
+            color: #F3F4F6;
+        }
+        .dark select:hover {
+            background-color: #4B5563;
+        }
+        .dark select:focus {
+            border-color: #1F4D3C;
+            background-color: #374151;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body class="font-sans antialiased bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark selection:bg-primary selection:text-white transition-colors duration-200">
+    <script>
+        // Apply dark mode immediately on page load (before anything renders)
+        (function() {
+            const darkMode = localStorage.getItem('darkMode');
+            if (darkMode === 'enabled') {
+                document.documentElement.classList.add('dark');
+            } else if (darkMode === 'disabled') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                // Default to system preference if not set
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                }
+            }
+        })();
+    </script>
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
         <aside class="w-64 flex-shrink-0 bg-sidebar dark:bg-card-dark border-r border-gray-200 dark:border-gray-700 flex flex-col justify-between transition-colors duration-200">
@@ -141,7 +175,7 @@
                         <h1 class="text-2xl font-bold text-lbg-main-light dark:text-lbg-main-dark">{% block page_title %}CouncilApp{% endblock %}</h1>
                         <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">{% block page_subtitle %}{% endblock %}</p>
                     </div>
-                    <button class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-colors" onclick="document.documentElement.classList.toggle('dark')">
+                    <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-colors">
                         <span class="material-icons-round text-xl dark:hidden">dark_mode</span>
                         <span class="material-icons-round text-xl hidden dark:block">light_mode</span>
                     </button>
@@ -169,6 +203,12 @@
         if (!accessToken) {
             window.location.href = '/';
         }
+
+        // Dark mode toggle functionality with persistence
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+        });
 
         function checkPermissions() {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
