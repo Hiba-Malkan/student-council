@@ -16,7 +16,7 @@
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span class="material-icons-round text-gray-400 text-lg">search</span>
                 </div>
-                <input type="text" id="searchClubs" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="Search by name, founders, or tutors...">
+                <input type="text" id="searchClubs" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="Search by name, founders, or tutors...">
             </div>
             <select id="filterStatus" class="px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
                 <option value="">All Status</option>
@@ -41,14 +41,14 @@
     <div id="clubsContainer" class="space-y-6">
         <!-- Loading state -->
         <div class="text-center py-12">
-            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-4xl mb-3 animate-spin">sync</span>
-            <p class="text-lbg-main-light dark:text-lbg-main-dark">Loading clubs...</p>
+            <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-4xl mb-3 animate-spin">sync</span>
+            <p class="text-text-main-light dark:text-lbg-main-dark">Loading clubs...</p>
         </div>
     </div>
     
     <!-- Pagination -->
     <div class="flex items-center justify-between mt-6" id="paginationSection" style="display: none;">
-        <div class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark">
+        <div class="text-sm text-text-sub-light dark:text-lbg-sub-dark">
             <span id="clubCount">Showing 0 clubs</span>
         </div>
         <div class="flex gap-2">
@@ -129,8 +129,8 @@ function displayClubs(clubs) {
     if (clubs.length === 0) {
         container.innerHTML = `
             <div class="text-center py-12">
-                <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-4xl mb-3">school</span>
-                <p class="text-lbg-main-light dark:text-lbg-main-dark">No clubs found</p>
+                <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-4xl mb-3">school</span>
+                <p class="text-text-main-light dark:text-lbg-main-dark">No clubs found</p>
             </div>
         `;
         return;
@@ -171,12 +171,12 @@ function displayClubs(clubs) {
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <div class="flex items-center gap-3 mb-2">
-                                    <h3 class="text-xl font-bold text-lbg-main-light dark:text-white">${club.name}</h3>
+                                    <h3 class="text-xl font-bold text-text-main-light dark:text-white">${club.name}</h3>
                                     <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusColors[club.status]} uppercase tracking-wide">
                                         ${statusText[club.status]}
                                     </span>
                                 </div>
-                                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark leading-relaxed">${club.description}</p>
+                                <p class="text-sm text-text-sub-light dark:text-lbg-sub-dark leading-relaxed">${club.description}</p>
                             </div>
                             ${canManage ? `
                                 <div class="flex gap-2">
@@ -193,34 +193,34 @@ function displayClubs(clubs) {
                         <!-- Club Details Grid -->
                         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                             <div class="flex items-start gap-2">
-                                <span class="material-icons-round text-primary text-lg mt-0.5">group</span>
+                                <span class="material-icons-round text-white text-lg mt-0.5">group</span>
                                 <div>
-                                    <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Members</p>
-                                    <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${club.member_count} Members</p>
+                                    <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Members</p>
+                                    <p class="text-sm font-semibold text-text-main-light dark:text-white">${club.member_count} Members</p>
                                 </div>
                             </div>
                             
                             <div class="flex items-start gap-2">
-                                <span class="material-icons-round text-primary text-lg mt-0.5">calendar_today</span>
+                                <span class="material-icons-round text-white text-lg mt-0.5">calendar_today</span>
                                 <div>
-                                    <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Est.</p>
-                                    <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${club.established_year}</p>
+                                    <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Est.</p>
+                                    <p class="text-sm font-semibold text-text-main-light dark:text-white">${club.established_year}</p>
                                 </div>
                             </div>
                             
                             <div class="flex items-start gap-2">
-                                <span class="material-icons-round text-primary text-lg mt-0.5">badge</span>
+                                <span class="material-icons-round text-white text-lg mt-0.5">badge</span>
                                 <div>
-                                    <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Founders</p>
-                                    <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${club.founders_list.join(', ')}</p>
+                                    <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Founders</p>
+                                    <p class="text-sm font-semibold text-text-main-light dark:text-white truncate">${club.founders_list.join(', ')}</p>
                                 </div>
                             </div>
                             
                             <div class="flex items-start gap-2">
-                                <span class="material-icons-round text-primary text-lg mt-0.5">school</span>
+                                <span class="material-icons-round text-white text-lg mt-0.5">school</span>
                                 <div>
-                                    <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Tutors</p>
-                                    <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${club.tutors_list.join(', ')}</p>
+                                    <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Tutors</p>
+                                    <p class="text-sm font-semibold text-text-main-light dark:text-white truncate">${club.tutors_list.join(', ')}</p>
                                 </div>
                             </div>
                         </div>

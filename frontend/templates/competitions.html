@@ -15,7 +15,7 @@
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="material-icons-round text-gray-400 text-lg">search</span>
             </div>
-            <input type="text" id="searchCompetitions" class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-lbg-main-light dark:text-lbg-main-dark placeholder-text-gray-700 dark:placeholder-text-sub-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors" placeholder="Search competitions...">
+            <input type="text" id="searchCompetitions" class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-text-main-light dark:text-lbg-main-dark placeholder-text-gray-700 dark:placeholder-text-sub-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors" placeholder="Search competitions...">
         </div>
     </div>
     <div class="flex justify-end" id="addCompetitionSection" style="display: none;">
@@ -110,8 +110,8 @@ function renderCompetitions(competitions) {
     if (competitions.length === 0) {
         container.innerHTML = `
             <div class="text-center py-12">
-                <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-5xl mb-3">emoji_events</span>
-                <p class="text-lbg-main-light dark:text-lbg-main-dark">No competitions found.</p>
+                <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-5xl mb-3">emoji_events</span>
+                <p class="text-text-main-light dark:text-lbg-main-dark">No competitions found.</p>
             </div>
         `;
         return;
@@ -140,10 +140,10 @@ function renderCompetitions(competitions) {
                         <div class="flex justify-between items-start mb-2">
                             <div class="flex-1">
                                 <div class="flex items-center gap-3">
-                                    <h3 class="text-xl font-bold text-lbg-main-light dark:text-white">${comp.name}</h3>
+                                    <h3 class="text-xl font-bold text-text-main-light dark:text-white">${comp.name}</h3>
                                     ${comp.is_active ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 uppercase tracking-wide">Active</span>` : ''}
                                 </div>
-                                ${comp.description ? `<p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark leading-relaxed line-clamp-2">${comp.description}</p>` : ''}
+                                ${comp.description ? `<p class="text-sm text-text-sub-light dark:text-lbg-sub-dark leading-relaxed line-clamp-2">${comp.description}</p>` : ''}
                             </div>
                         </div>
                     
@@ -151,58 +151,58 @@ function renderCompetitions(competitions) {
                     <div class="flex grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto pt-4 pb-4 border-t border-gray-200 dark:border-gray-700">
                         ${comp.event_date ? `
                         <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">event</span>
+                            <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-lg mt-0.5">event</span>
                             <div>
-                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Date</p>
-                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${formatDate(comp.event_date)}</p>
+                                <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Date</p>
+                                <p class="text-sm font-semibold text-text-main-light dark:text-white">${formatDate(comp.event_date)}</p>
                             </div>
                         </div>
                         ` : ''}
                         
                         ${comp.event_time ? `
                         <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">schedule</span>
+                            <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-lg mt-0.5">schedule</span>
                             <div>
-                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Time</p>
-                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${comp.event_time}</p>
+                                <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Time</p>
+                                <p class="text-sm font-semibold text-text-main-light dark:text-white">${comp.event_time}</p>
                             </div>
                         </div>
                         ` : ''}
                         
                         ${comp.location ? `
                         <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">location_on</span>
+                            <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-lg mt-0.5">location_on</span>
                             <div>
-                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Location</p>
-                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${comp.location}</p>
+                                <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Location</p>
+                                <p class="text-sm font-semibold text-text-main-light dark:text-white truncate">${comp.location}</p>
                             </div>
                         </div>
                         ` : ''}
                         
                         ${comp.team_size ? `
                         <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">groups</span>
+                            <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-lg mt-0.5">groups</span>
                             <div>
-                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Team Size</p>
-                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white">${comp.team_size}</p>
+                                <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Team Size</p>
+                                <p class="text-sm font-semibold text-text-main-light dark:text-white">${comp.team_size}</p>
                             </div>
                         </div>
                         ` : ''}
                         
                         <div class="flex items-start gap-2">
-                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">corporate_fare</span>
+                            <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-lg mt-0.5">corporate_fare</span>
                             <div>
-                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Hosted By</p>
-                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${hosts}</p>
+                                <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Hosted By</p>
+                                <p class="text-sm font-semibold text-text-main-light dark:text-white truncate">${hosts}</p>
                             </div>
                         </div>
                         
                         ${participants.length > 0 ? `
                         <div style="display:none" class="flex items-start gap-2">
-                            <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark text-lg mt-0.5">people</span>
+                            <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-lg mt-0.5">people</span>
                             <div>
-                                <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark uppercase font-medium">Participants</p>
-                                <p class="text-sm font-semibold text-lbg-main-light dark:text-white truncate">${displayParticipants.join(', ')}${remainingCount > 0 ? ` +${remainingCount}` : ''}</p>
+                                <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Participants</p>
+                                <p class="text-sm font-semibold text-text-main-light dark:text-white truncate">${displayParticipants.join(', ')}${remainingCount > 0 ? ` +${remainingCount}` : ''}</p>
                             </div>
                         </div>
                         ` : ''}
@@ -332,7 +332,7 @@ function displayCompetitionModal(comp) {
             
             ${comp.brochure || comp.event_link ? `
             <div>
-                <h4 class="text-sm font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wider mb-2">Links</h4>
+                <h4 class="text-sm font-semibold text-text-sub-light dark:text-lbg-sub-dark uppercase tracking-wider mb-2">Links</h4>
                 <div class="flex flex-wrap gap-3">
                     ${comp.brochure ? `
                         <a href="${comp.brochure}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">

@@ -12,7 +12,7 @@
     <!-- Loading State -->
     <div id="loadingState" class="text-center py-12">
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        <p class="mt-2 text-sm text-lbg-sub-light dark:text-lbg-sub-dark">Loading announcement...</p>
+        <p class="mt-2 text-sm text-text-sub-light dark:text-lbg-sub-dark">Loading announcement...</p>
     </div>
 
     <!-- Main Content -->
@@ -40,8 +40,8 @@
                                 New
                             </span>
                         </div>
-                        <h1 id="announcementTitle" class="text-2xl font-bold text-lbg-main-light dark:text-white mb-2"></h1>
-                        <div class="flex items-center gap-4 flex-wrap text-sm text-lbg-sub-light dark:text-lbg  -sub-dark">
+                        <h1 id="announcementTitle" class="text-2xl font-bold text-text-main-light dark:text-white mb-2"></h1>
+                        <div class="flex items-center gap-4 flex-wrap text-sm text-text-sub-light dark:text-lbg  -sub-dark">
                             <span class="flex items-center">
                                 <span class="material-icons-round text-sm mr-1">person</span>
                                 <span id="creatorName"></span>
@@ -57,11 +57,11 @@
                         </div>
                     </div>
                     <div class="flex-shrink-0 flex gap-2">
-                        <button id="editBtn" style="display: none;" onclick="editAnnouncement()" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-lbg-main-light dark:text-white bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        <button id="editBtn" style="display: none;" onclick="editAnnouncement()" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-text-main-light dark:text-white bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
                             <span class="material-icons-round text-lg mr-1">edit</span>
                             Edit
                         </button>
-                        <button id="pinBtn" style="display: none;" onclick="togglePin()" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-lbg-main-light dark:text-white bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        <button id="pinBtn" style="display: none;" onclick="togglePin()" class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-text-main-light dark:text-white bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
                             <span class="material-icons-round text-lg mr-1" id="pinIcon">push_pin</span>
                             <span id="pinText">Pin</span>
                         </button>
@@ -75,12 +75,12 @@
 
             <!-- Content -->
             <div class="px-6 py-6">
-                <div id="announcementContent" class="prose prose-sm dark:prose-invert max-w-none text-lbg-main-light dark:text-lbg-main-dark whitespace-pre-wrap"></div>
+                <div id="announcementContent" class="prose prose-sm dark:prose-invert max-w-none text-text-main-light dark:text-lbg-main-dark whitespace-pre-wrap"></div>
             </div>
 
             <!-- Event Details Section -->
             <div id="eventDetailsSection" style="display: none;" class="px-6 py-5 bg-blue-50 dark:bg-blue-900/20 border-t border-blue-200 dark:border-blue-800">
-                <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white mb-4 flex items-center">
+                <h3 class="text-lg font-semibold text-text-main-light dark:text-white mb-4 flex items-center">
                     <span class="material-icons-round text-xl mr-2">event</span>
                     Event Information
                 </h3>
@@ -88,43 +88,43 @@
                     <div id="eventDateField" style="display: none;" class="flex items-start">
                         <span class="material-icons-round text-primary mr-2 mt-0.5">calendar_today</span>
                         <div>
-                            <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark font-medium uppercase">Date</p>
-                            <p id="eventDate" class="text-sm text-lbg-main-light dark:text-white font-semibold"></p>
+                            <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark font-medium uppercase">Date</p>
+                            <p id="eventDate" class="text-sm text-text-main-light dark:text-white font-semibold"></p>
                         </div>
                     </div>
                     <div id="eventTimeField" style="display: none;" class="flex items-start">
                         <span class="material-icons-round text-primary mr-2 mt-0.5">schedule</span>
                         <div>
-                            <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark font-medium uppercase">Time</p>
+                            <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark font-medium uppercase">Time</p>
                             <p id="eventTime" class="text-sm text-text-main-light dark:text-white font-semibold"></p>
                         </div>
                     </div>
                     <div id="eventLocationField" style="display: none;" class="flex items-start">
                         <span class="material-icons-round text-primary mr-2 mt-0.5">place</span>
                         <div>
-                            <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark font-medium uppercase">Location</p>
-                            <p id="eventLocation" class="text-sm text-lbg-main-light dark:text-white font-semibold"></p>
+                            <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark font-medium uppercase">Location</p>
+                            <p id="eventLocation" class="text-sm text-text-main-light dark:text-white font-semibold"></p>
                         </div>
                     </div>
                     <div id="registrationRequiredField" style="display: none;" class="flex items-start">
                         <span class="material-icons-round text-primary mr-2 mt-0.5">how_to_reg</span>
                         <div>
-                            <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark font-medium uppercase">Registration</p>
-                            <p class="text-sm text-lbg-main-light dark:text-white font-semibold">Required</p>
+                            <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark font-medium uppercase">Registration</p>
+                            <p class="text-sm text-text-main-light dark:text-white font-semibold">Required</p>
                         </div>
                     </div>
                     <div id="registrationDeadlineField" style="display: none;" class="flex items-start">
                         <span class="material-icons-round text-primary mr-2 mt-0.5">event_busy</span>
                         <div>
-                            <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark font-medium uppercase">Registration Deadline</p>
-                            <p id="registrationDeadline" class="text-sm text-lbg-main-light dark:text-white font-semibold"></p>
+                            <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark font-medium uppercase">Registration Deadline</p>
+                            <p id="registrationDeadline" class="text-sm text-text-main-light dark:text-white font-semibold"></p>
                         </div>
                     </div>
                     <div id="participantCountField" style="display: none;" class="flex items-start">
                         <span class="material-icons-round text-primary mr-2 mt-0.5">people</span>
                         <div>
-                            <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark font-medium uppercase">Participants</p>
-                            <p id="participantCount" class="text-sm text-lbg-main-light dark:text-white font-semibold"></p>
+                            <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark font-medium uppercase">Participants</p>
+                            <p id="participantCount" class="text-sm text-text-main-light dark:text-white font-semibold"></p>
                         </div>
                     </div>
                 </div>
@@ -148,12 +148,12 @@
 
             <!-- Participants List -->
             <div id="participantsList" style="display: none;" class="px-6 py-5 border-t border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white mb-4 flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-text-main-light dark:text-white mb-4 flex items-center justify-between">
                     <span class="flex items-center">
                         <span class="material-icons-round text-xl mr-2">people</span>
                         Event Participants
                     </span>
-                    <button onclick="toggleParticipantsList()" class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark hover:text-primary">
+                    <button onclick="toggleParticipantsList()" class="text-sm text-text-sub-light dark:text-lbg-sub-dark hover:text-primary">
                         <span class="material-icons-round text-lg">expand_less</span>
                     </button>
                 </h3>
@@ -162,7 +162,7 @@
 
             <!-- Targeting Information -->
             <div id="targetingSection" style="display:none" class="px-6 py-5 border-t border-gray-200 dark:border-gray-700">
-                <h3 class="text-sm font-semibold text-lbg-main-light dark:text-white mb-3 flex items-center">
+                <h3 class="text-sm font-semibold text-text-main-light dark:text-white mb-3 flex items-center">
                     <span class="material-icons-round text-lg mr-2">groups</span>
                     Target Audience
                 </h3>
@@ -176,11 +176,11 @@
 
             <!-- Attachments -->
             <div id="attachmentsSection" style="display: none;" class="px-6 py-5 border-t border-gray-200 dark:border-gray-700">
-                <h3 class="text-sm font-semibold text-lbg-main-light dark:text-white mb-3 flex items-center">
+                <h3 class="text-sm font-semibold text-text-main-light dark:text-white mb-3 flex items-center">
                     <span class="material-icons-round text-lg mr-2">attach_file</span>
                     Attachments
                 </h3>
-                <a id="attachmentLink" href="#" target="_blank" class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium text-lbg-main-light dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                <a id="attachmentLink" href="#" target="_blank" class="inline-flex items-center px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg text-sm font-medium text-text-main-light dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                     <span class="material-icons-round text-lg mr-2">download</span>
                     <span id="attachmentName">Download Attachment</span>
                 </a>
@@ -191,7 +191,7 @@
     <!-- Error State -->
     <div id="errorState" style="display: none;" class="text-center py-12">
         <span class="material-icons-round text-6xl text-red-300 dark:text-red-600 mb-4">error_outline</span>
-        <p class="text-lbg-sub-light dark:text-lbg-sub-dark mb-4">Failed to load announcement</p>
+        <p class="text-text-sub-light dark:text-lbg-sub-dark mb-4">Failed to load announcement</p>
         <button onclick="window.location.href='/announcements/'" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors">
             <span class="material-icons-round text-lg mr-2">arrow_back</span>
             Back to Announcements
@@ -514,7 +514,7 @@
         const container = document.getElementById('participantsContent');
         
         if (participants.length === 0) {
-            container.innerHTML = '<p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark">No participants yet</p>';
+            container.innerHTML = '<p class="text-sm text-text-sub-light dark:text-lbg-sub-dark">No participants yet</p>';
             return;
         }
 
@@ -525,10 +525,10 @@
                         ${(p.user_detail?.first_name || p.user_detail?.username || 'U').charAt(0).toUpperCase()}
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-lbg-main-light dark:text-white">
+                        <p class="text-sm font-medium text-text-main-light dark:text-white">
                             ${p.user_detail?.first_name || p.user_detail?.username || 'Unknown'}
                         </p>
-                        <p class="text-xs text-lbg-sub-light dark:text-lbg-sub-dark">
+                        <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark">
                             ${p.status_display}${p.role_in_event ? ` • ${p.role_in_event}` : ''}
                         </p>
                     </div>

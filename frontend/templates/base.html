@@ -22,11 +22,11 @@
                         "sym-logo": "#ffffff",
                         
                         // Page backgrounds
-                        "background-light": "#EBD5AB",  // Light gray - light mode page background
+                        "background-light": "#f7f7f7",  // Light gray - light mode page background
                         "background-dark": "#111827",   // Very dark gray - dark mode page background
                         
                         // Card/panel colors
-                        "card-light": "#8BAE66",  // White - light mode cards/sidebar
+                        "card-light": "#79a34b",  // White - light mode cards/sidebar
                         "card-dark": "#1F2937",   // Dark gray - dark mode cards/sidebar
                         
                         // Text colors
@@ -39,7 +39,7 @@
                         "lbg-main-dark": "#ffffff",
                         "lbg-sub-dark": "#9CA3AF",
 
-                        "sidebar": "#628141",
+                        "sidebar": "#426919",
 
                         // Input fields
                         "input-bg-light": "#F3F4F6",  // Light gray - input backgrounds in light mode
@@ -189,7 +189,7 @@
                 {% block content %}{% endblock %}
 
                 <footer class="mt-8 text-center">
-                    <p class="text-xs text-lbg-main-light dark:text-lbg-main-dark">© 2025 Student Council Management System. All rights reserved. Work of Hiba, Ritvick, Hritvik and Stervyn.</p>
+                    <p class="text-xs text-lbg-main-light dark:text-lbg-main-dark">© 2025 Student Council Management System. All rights reserved. Work of Hiba, Hritvik, Ritvick and Stervyn.</p>
                 </footer>
             </div>
         </main>
@@ -215,14 +215,14 @@
             isNormalStudent = user.is_staff || user.is_superuser || 
                 (user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name));
             
-            if (!isNormalStudent) {
-                document.getElementById('dashButton').style.display = 'none';
-                document.getElementById('dutyButton').style.display = 'none';
-                document.getElementById('meetingButton').style.display = 'none';
-                document.getElementById('disciplineButton').style.display = 'none';
-                document.getElementById('clubButton').style.display = 'none';
-                document.getElementById('competitionButton').style.display = 'none';
-                document.getElementById('adminpanelButton').style.display = 'none';
+            if (isNormalStudent) {
+                //document.getElementById('dashButton').style.display = 'none';
+                //document.getElementById('dutyButton').style.display = 'none';
+                //document.getElementById('meetingButton').style.display = 'none';
+                //document.getElementById('disciplineButton').style.display = 'none';
+                //document.getElementById('clubButton').style.display = 'none';
+                //document.getElementById('competitionButton').style.display = 'none';
+                //document.getElementById('adminpanelButton').style.display = 'none';
             }
         }
 

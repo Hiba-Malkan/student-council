@@ -22,8 +22,8 @@
 
     <!-- Loading State -->
     <div id="loadingState" class="bg-card-light dark:bg-card-dark rounded-lg shadow-sm p-12 text-center">
-        <span class="material-icons-round text-4xl text-lbg-main-light dark:text-lbg-main-dark animate-spin">refresh</span>
-        <p class="mt-4 text-lbg-main-light dark:text-lbg-main-dark">Loading record...</p>
+        <span class="material-icons-round text-4xl text-text-main-light dark:text-lbg-main-dark animate-spin">refresh</span>
+        <p class="mt-4 text-text-main-light dark:text-lbg-main-dark">Loading record...</p>
     </div>
 
     <!-- Form Card (hidden until loaded) -->
@@ -34,7 +34,7 @@
 
             <!-- Student Name -->
             <div class="mb-6">
-                <label for="studentName" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
+                <label for="studentName" class="block text-sm font-medium text-text-main-light dark:text-lbg-main-dark mb-2">
                     Student Name *
                 </label>
                 <input 
@@ -43,13 +43,13 @@
                     name="student_name"
                     required
                     placeholder="Enter student's full name"
-                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    class="w-full px-4 py-2 text-text-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
             </div>
 
             <!-- Class & Section -->
             <div class="mb-6">
-                <label for="classSection" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
+                <label for="classSection" class="block text-sm font-medium text-text-main-light dark:text-lbg-main-dark mb-2">
                     Class & Section *
                 </label>
                 <input 
@@ -58,14 +58,14 @@
                     name="class_section"
                     required
                     placeholder="e.g., 10A, 11B, 12C"
-                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    class="w-full px-4 py-2 text-text-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                <p class="mt-1 text-xs text-lbg-main-light dark:text-lbg-main-dark">Format: Grade + Section (e.g., 10A)</p>
+                <p class="mt-1 text-xs text-text-main-light dark:text-lbg-main-dark">Format: Grade + Section (e.g., 10A)</p>
             </div>
 
             <!-- Dno -->
             <div class="mb-6">
-                <label for="dno" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
+                <label for="dno" class="block text-sm font-medium text-text-main-light dark:text-lbg-main-dark mb-2">
                     D.No *
                 </label>
                 <input 
@@ -77,21 +77,21 @@
                     pattern="[Dd]\d{4,8}"
                     minlength="5"
                     maxlength="9"
-                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent font-mono"
+                    class="w-full px-4 py-2 text-text-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent font-mono"
                 >
-                <p class="mt-1 text-xs text-lbg-main-light dark:text-lbg-main-dark">Format: D followed by 4-8 digits (e.g., D1234 to D12345678)</p>
+                <p class="mt-1 text-xs text-text-main-light dark:text-lbg-main-dark">Format: D followed by 4-8 digits (e.g., D1234 to D12345678)</p>
             </div>
 
             <!-- Category -->
             <div class="mb-6">
-                <label for="category" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
+                <label for="category" class="block text-sm font-medium text-text-main-light dark:text-lbg-main-dark mb-2">
                     Category *
                 </label>
                 <select 
                     id="category" 
                     name="category"
                     required
-                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    class="w-full px-4 py-2 text-text-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                     <option value="">Select category</option>
                     <option value="UNIFORM">Uniform Violation</option>
@@ -106,7 +106,7 @@
 
             <!-- Reason -->
             <div class="mb-6">
-                <label for="reason" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
+                <label for="reason" class="block text-sm font-medium text-text-main-light dark:text-lbg-main-dark mb-2">
                     Reason *
                 </label>
                 <textarea 
@@ -115,13 +115,13 @@
                     required
                     placeholder="Provide details about the offense"
                     rows="4"
-                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-y"
+                    class="w-full px-4 py-2 text-text-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-y"
                 ></textarea>
             </div>
 
             <!-- Offense Count -->
             <div class="mb-6">
-                <label for="offenseCount" class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">
+                <label for="offenseCount" class="block text-sm font-medium text-text-main-light dark:text-lbg-main-dark mb-2">
                     Number of Offenses *
                 </label>
                 <input 
@@ -130,9 +130,9 @@
                     name="offense_count"
                     required
                     min="1"
-                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    class="w-full px-4 py-2 text-text-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                <p class="mt-1 text-xs text-lbg-main-light dark:text-lbg-main-dark">Enter the total number of offenses (including previous)</p>
+                <p class="mt-1 text-xs text-text-main-light dark:text-lbg-main-dark">Enter the total number of offenses (including previous)</p>
             </div>
 
             <!-- Form Actions -->

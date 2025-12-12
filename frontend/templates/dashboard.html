@@ -22,9 +22,9 @@
             </div>
 
             <div class="flex-1">
-                <h1 class="text-3xl font-bold text-lbg-main-light dark:text-lbg-main-dark" id="dashboardUserName">Loading...</h1>
+                <h1 class="text-3xl font-bold text-text-main-light dark:text-lbg-main-dark" id="dashboardUserName">Loading...</h1>
                 <p class="text-xl text-primary font-semibold mt-1" id="dashboardUserRole">Member</p>
-                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-2">Student Council • Active Member</p>
+                <p class="text-sm text-text-sub-light dark:text-lbg-sub-dark mt-2">Student Council • Active Member</p>
             </div>
         </div>
     </div>
@@ -38,13 +38,13 @@
             <div class="flex items-start justify-between">
                 <div>
                     <p class="text-4xl font-bold text-blue-600 dark:text-blue-400" id="meetingsCount">0</p>
-                    <p class="text-lg text-lbg-sub-light dark:text-lbg-sub-dark mt-3">Upcoming Meetings</p>
+                    <p class="text-lg text-text-sub-light dark:text-lbg-sub-dark mt-3">Upcoming Meetings</p>
                 </div>
                 <div class="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <span class="material-icons-round text-blue-600 dark:text-blue-400 text-3xl">calendar_month</span>
                 </div>
             </div>
-            <div class="mt-6 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark">
+            <div class="mt-6 text-sm font-medium text-text-main-light dark:text-lbg-main-dark">
                 View all meetings →
             </div>
         </div>
@@ -56,13 +56,13 @@
             <div class="flex items-start justify-between">
                 <div>
                     <p class="text-4xl font-bold text-red-600 dark:text-red-400" id="todayDutyStatus">No Duty</p>
-                    <p class="text-lg text-lbg-sub-light dark:text-lbg-sub-dark mt-3">Duty List</p>
+                    <p class="text-lg text-text-sub-light dark:text-lbg-sub-dark mt-3">Duty List</p>
                 </div>
                 <div class="w-16 h-16 rounded-2xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <span class="material-icons-round text-red-600 dark:text-red-400 text-3xl">assignment_ind</span>
                 </div>
             </div>
-            <div class="mt-6 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark">
+            <div class="mt-6 text-sm font-medium text-text-main-light dark:text-lbg-main-dark">
                 View duty roster →
             </div>
         </div>
@@ -74,13 +74,13 @@
             <div class="flex items-start justify-between">
                 <div>
                     <p class="text-4xl font-bold text-purple-600 dark:text-purple-400" id="announcementsCount">0</p>
-                    <p class="text-lg text-lbg-sub-light dark:text-lbg-sub-dark mt-3">Unread Announcements</p>
+                    <p class="text-lg text-text-sub-light dark:text-lbg-sub-dark mt-3">Unread Announcements</p>
                 </div>
                 <div class="w-16 h-16 rounded-2xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <span class="material-icons-round text-purple-600 dark:text-purple-400 text-3xl">campaign</span>
                 </div>
             </div>
-            <div class="mt-6 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark">
+            <div class="mt-6 text-sm font-medium text-text-main-light dark:text-lbg-main-dark">
                 View all →
             </div>
         </div>
@@ -91,11 +91,11 @@
 <div class="max-w-5xl mx-auto mt-12">
     <div class="bg-card-light dark:bg-card-dark rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
         <div class="p-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-lbg-main-light dark:text-lbg-main-dark flex items-center gap-3">
+            <h2 class="text-2xl font-bold text-text-main-light dark:text-lbg-main-dark flex items-center gap-3">
                 <span class="material-icons-round text-primary">update</span>
                 Recent Activity
             </h2>
-            <span class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark" id="lastUpdated">Just now</span>
+            <span class="text-sm text-text-sub-light dark:text-lbg-sub-dark" id="lastUpdated">Just now</span>
         </div>
 
         <div class="p-6" id="activityContainer">
@@ -111,7 +111,7 @@
                 <button id="prevPage" class="p-2.5 rounded-xl bg-primary dark:bg-input-bg-dark hover:bg-primary-light dark:hover:bg-primary-hover/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
                     <span class="material-icons-round">chevron_left</span>
                 </button>
-                <span class="text-sm font-medium text-lbg-sub-light dark:text-lbg-sub-dark">
+                <span class="text-sm font-medium text-text-sub-light dark:text-lbg-sub-dark">
                     Page <span id="currentPageNum">1</span> of <span id="totalPagesNum">1</span>
                 </span>
                 <button id="nextPage" class="p-2.5 rounded-xl bg-primary dark:bg-input-bg-dark hover:bg-primary-light dark:hover:bg-primary-hover/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all">
@@ -151,8 +151,8 @@ function checkPermissions() {
             isNormalStudent = user.is_staff || user.is_superuser || 
                 (user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name));
             
-            if (!isNormalStudent) {
-                window.location.href = '/announcements/';
+            if (isNormalStudent) {
+                //window.location.href = '/announcements/';
             }
         }
 
@@ -274,7 +274,7 @@ function renderPage(page) {
 
     if (pageItems.length === 0 && allActivities.length === 0) {
         document.getElementById('activityFeed').innerHTML = `
-            <div class="text-center py-16 text-lbg-sub-light dark:text-lbg-sub-dark">
+            <div class="text-center py-16 text-text-sub-light dark:text-lbg-sub-dark">
                 <span class="material-icons-round text-7xl mb-4 opacity-30">inbox</span>
                 <p>No recent activity</p>
             </div>`;
