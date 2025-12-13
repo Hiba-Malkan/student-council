@@ -1,0 +1,15 @@
+{
+  "name": "student-council-frontend",
+  "version": "1.0.0",
+  "description": "Frontend assets for Student Council Management System",
+  "scripts": {
+    "build:css": "tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --minify",
+    "watch:css": "tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --watch",
+    "dev": "npm run watch:css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10"
+  }
+}

@@ -3,59 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CouncilApp{% endblock %}</title>
+    <title>{% block title %} Council App{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    
-                    colors: {
-                        // Main brand colors
-                        primary: "#1F4D3C",  // Main green - used for buttons, icons, highlights
-                        "primary-light": "#E6F0EB",  // Light green background
-                        "primary-hover": "#173a2e",  // Darker green for hover states
-
-                        "sym-logo": "#ffffff",
-                        
-                        // Page backgrounds
-                        "background-light": "#f7f7f7",  // Light gray - light mode page background
-                        "background-dark": "#111827",   // Very dark gray - dark mode page background
-                        
-                        // Card/panel colors
-                        "card-light": "#79a34b",  // White - light mode cards/sidebar
-                        "card-dark": "#1F2937",   // Dark gray - dark mode cards/sidebar
-                        
-                        // Text colors
-                        "text-main-light": "#ffffff",  // Almost black - main text in light mode
-                        "text-main-dark": "#F3F4F6",   // Almost white - main text in dark mode
-                        "text-sub-light": "#dedede",   // Medium gray - secondary text in light mode
-                        "text-sub-dark": "#9CA3AF",    // Light gray - secondary text in dark mode
-                        "lbg-main-light": "#000000",
-                        "lbg-sub-light": "#3d3d3d",
-                        "lbg-main-dark": "#ffffff",
-                        "lbg-sub-dark": "#9CA3AF",
-
-                        "sidebar": "#426919",
-
-                        // Input fields
-                        "input-bg-light": "#F3F4F6",  // Light gray - input backgrounds in light mode
-                        "input-bg-dark": "#374151",   // Medium gray - input backgrounds in dark mode
-                    },
-                    fontFamily: {
-                        display: ["Inter", "sans-serif"],
-                        sans: ["Inter", "sans-serif"],
-                    },
-                    borderRadius: {
-                        DEFAULT: "0.5rem",
-                    },
-                },
-            },
-        };
-    </script>
+    {% load static %}
+    <link href="{% static 'dist/output.css' %}" rel="stylesheet">
     <style>
         ::-webkit-scrollbar {
             width: 8px;
@@ -118,7 +70,7 @@
                 <div class="h-16 flex items-center px-6 border-b border-gray-100 dark:border-gray-800">
                     <div class="flex items-center gap-2">
                         <span class="material-icons-round text-sym-lo text-2xl">school</span>
-                        <span class="text-xl font-bold text-sym-logo dark:text-white tracking-tight">CouncilApp</span>
+                        <span class="text-xl font-bold text-sym-logo dark:text-white tracking-tight">Council App</span>
                     </div>
                 </div>
                 <nav class="mt-6 px-3 space-y-1">
@@ -172,7 +124,7 @@
             <header class="bg-background-light dark:bg-background-dark pt-8 pb-4 px-8">
                 <div class="flex justify-between items-end">
                     <div>
-                        <h1 class="text-2xl font-bold text-lbg-main-light dark:text-lbg-main-dark">{% block page_title %}CouncilApp{% endblock %}</h1>
+                        <h1 class="text-2xl font-bold text-lbg-main-light dark:text-lbg-main-dark">{% block page_title %}Council App{% endblock %}</h1>
                         <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">{% block page_subtitle %}{% endblock %}</p>
                     </div>
                     <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-colors">

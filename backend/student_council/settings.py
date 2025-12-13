@@ -83,12 +83,34 @@ TEMPLATES = [
 WSGI_APPLICATION = 'student_council.wsgi.application'
 
 # Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+import os
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': config('DB_NAME', default='student_council_db'),
+        'USER': config('DB_USER', default=os.environ.get('USER', 'postgres')),  # Uses system username on macOS
+        'PASSWORD': config('DB_PASSWORD', default=''),  # Empty password for local macOS development
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
+        'OPTIONS': {
+            # psycopg3 specific options
+            'connect_timeout': 10,
+            'options': '-c statement_timeout=30000',  # 30 seconds
+        },
+        'CONN_MAX_AGE': config('DB_CONN_MAX_AGE', default=600, cast=int),  # Connection pooling
+        'CONN_HEALTH_CHECKS': True,  # Verify connections before using them
     }
 }
+
+# Fallback to SQLite for development if PostgreSQL is not configured
+if config('USE_SQLITE', default=False, cast=bool):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
