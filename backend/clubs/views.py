@@ -109,12 +109,12 @@ class ClubViewSet(viewsets.ModelViewSet):
 
 class ClubsOverviewView(TemplateView):
     """Display clubs overview page"""
-    template_name = 'clubs.html'
+    template_name = 'clubs/clubs.html'
 
 
 class ClubFormView(TemplateView):
     """Display club create/edit form"""
-    template_name = 'clubs_form.html'
+    template_name = 'clubs/clubs_form.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -36,10 +36,10 @@ urlpatterns = [
     path('dashboard/', TemplateView.as_view(template_name='dashboard.html'), name='dashboard'),
     
     # Announcements
-    path('announcements/', TemplateView.as_view(template_name='announcements.html'), name='announcements'),
-    path('announcements/new/', TemplateView.as_view(template_name='new_announcement.html'), name='new_announcement'),
-    path('announcements/edit/<int:pk>/', TemplateView.as_view(template_name='edit_announcement.html'), name='edit_announcement'),
-    path('announcements/detail/<int:pk>/', TemplateView.as_view(template_name='announcement_detail.html'), name='announcement_detail'),
+    path('announcements/', TemplateView.as_view(template_name='announcements/announcements.html'), name='announcements'),
+    path('announcements/new/', TemplateView.as_view(template_name='announcements/new_announcement.html'), name='new_announcement'),
+    path('announcements/edit/<int:pk>/', TemplateView.as_view(template_name='announcements/edit_announcement.html'), name='edit_announcement'),
+    path('announcements/detail/<int:pk>/', TemplateView.as_view(template_name='announcements/announcement_detail.html'), name='announcement_detail'),
     
     # Clubs HTML pages
     path('clubs/', include(clubs_html_urls)),
@@ -48,17 +48,17 @@ urlpatterns = [
     path('', include(competitions_html_urls)),
     
     # Duties
-    path('duties/', TemplateView.as_view(template_name='duty-roster.html'), name='duty-roster'),
-    path('duty-roster/', TemplateView.as_view(template_name='duty_roster.html'), name='duty_roster'),
+    path('duties/', TemplateView.as_view(template_name='duty-roster/duty_roster.html'), name='duty-roster'),
+    path('duty-roster/', TemplateView.as_view(template_name='duty-roster/duty_roster.html'), name='duty_roster'),
     
     # Meetings
-    path('meetings/', TemplateView.as_view(template_name='meetings.html'), name='meetings'),
+    path('meetings/', TemplateView.as_view(template_name='meetings/meetings.html'), name='meetings'),
     
     # Discipline
-    path('discipline/', TemplateView.as_view(template_name='discipline.html'), name='discipline'),
-    path('discipline/new/', TemplateView.as_view(template_name='discipline_form.html'), name='new_discipline'),
-    path('discipline/edit/<int:pk>/', TemplateView.as_view(template_name='discipline_edit.html'), name='edit_discipline'),
-    path('discipline/detail/<int:pk>/', TemplateView.as_view(template_name='discipline_details.html'), 
+    path('discipline/', TemplateView.as_view(template_name='discipline/discipline.html'), name='discipline'),
+    path('discipline/new/', TemplateView.as_view(template_name='discipline/discipline_form.html'), name='new_discipline'),
+    path('discipline/edit/<int:pk>/', TemplateView.as_view(template_name='discipline/discipline_edit.html'), name='edit_discipline'),
+    path('discipline/detail/<int:pk>/', TemplateView.as_view(template_name='discipline/discipline_details.html'), 
          name='discipline-detail'),
     
     # Projects
