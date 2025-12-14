@@ -17,23 +17,23 @@ from .utils import send_notification_email, send_daily_discipline_report
 def notify_meeting_created(sender, instance, created, **kwargs):
     """Send notifications when a meeting is created or updated"""
     if created:
-        # Notify all attendees about new meeting
-        attendees = instance.attendees.all()
-        for attendee in attendees:
+        # Notify all council members about new meeting
+        council_members = User.objects.filter(is_active=True)
+        for member in council_members:
             Notification.objects.create(
-                recipient=attendee,
+                recipient=member,
                 notification_type='MEETING_TODAY',
                 title=f'New Meeting: {instance.title}',
-                message=f'You have been invited to "{instance.title}" on {instance.date.strftime("%B %d, %Y")} at {instance.location}.',
+                message=f'A new meeting "{instance.title}" has been scheduled for {instance.date.strftime("%B %d, %Y")} at {instance.location}.',
                 action_url=f'/meetings/{instance.id}/',
                 send_email=True
             )
     elif instance.is_cancelled:
-        # Notify attendees about cancellation
-        attendees = instance.attendees.all()
-        for attendee in attendees:
+        # Notify all council members about cancellation
+        council_members = User.objects.filter(is_active=True)
+        for member in council_members:
             Notification.objects.create(
-                recipient=attendee,
+                recipient=member,
                 notification_type='MEETING_CANCELLED',
                 title=f'Meeting Cancelled: {instance.title}',
                 message=f'The meeting "{instance.title}" scheduled for {instance.date.strftime("%B %d, %Y")} has been cancelled. {instance.cancellation_reason}',
@@ -46,11 +46,22 @@ def notify_meeting_created(sender, instance, created, **kwargs):
 def notify_duty_assigned(sender, instance, created, **kwargs):
     """Notify user when duty is assigned"""
     if created:
+        # Format subject: Duty Assigned - Duty Type, Location, Subsidiary Area
+        duty_location = instance.location if instance.location else "Location TBD"
+        subsidiary_area = f", {instance.subsidiary_area}" if instance.subsidiary_area else ""
+        
+        # Build message with all details
+        message = f'You have been assigned {instance.duty_type_name} duty on {instance.date.strftime("%B %d, %Y")} (Today).\n\n'
+        message += f'Location: {duty_location}{subsidiary_area}'
+        
+        if instance.instructions:
+            message += f'\n\nAdditional Instructions:\n{instance.instructions}'
+        
         Notification.objects.create(
             recipient=instance.assigned_to,
             notification_type='DUTY_ASSIGNED',
-            title='New Duty Assigned',
-            message=f'You have been assigned {instance.duty_type_name} duty on {instance.date.strftime("%B %d, %Y")} at {instance.location or "your designated location"}.',
+            title=f'Duty Assigned - {instance.duty_type_name}, {duty_location}{subsidiary_area}',
+            message=message,
             action_url='/duty-roster/',
             send_email=True
         )
