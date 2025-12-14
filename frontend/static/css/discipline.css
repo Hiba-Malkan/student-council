@@ -1,0 +1,438 @@
+/* ==========================================================================
+   Discipline Module Styles
+   ========================================================================== */
+
+/* Discipline Card */
+.discipline-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+    transition: all 0.2s;
+}
+
+.discipline-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.dark .discipline-card {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+/* Discipline Header */
+.discipline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.discipline-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.dark .discipline-title {
+    color: #f9fafb;
+}
+
+.discipline-student {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.dark .discipline-student {
+    color: #9ca3af;
+}
+
+/* Discipline Info */
+.discipline-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.discipline-info-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.dark .discipline-info-row {
+    color: #9ca3af;
+}
+
+.discipline-info-icon {
+    color: #ef4444;
+    font-size: 1.125rem;
+}
+
+/* Discipline Description */
+.discipline-description {
+    background-color: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+.dark .discipline-description {
+    background-color: rgba(245, 158, 11, 0.1);
+    border-color: #f59e0b;
+}
+
+.discipline-description-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #92400e;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.dark .discipline-description-title {
+    color: #fbbf24;
+}
+
+.discipline-description-text {
+    font-size: 0.875rem;
+    color: #78350f;
+    line-height: 1.5;
+}
+
+.dark .discipline-description-text {
+    color: #fde047;
+}
+
+/* Discipline Action Taken */
+.discipline-action {
+    background-color: #fee2e2;
+    border-left: 4px solid #dc2626;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+}
+
+.dark .discipline-action {
+    background-color: rgba(220, 38, 38, 0.1);
+    border-color: #dc2626;
+}
+
+.discipline-action-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #991b1b;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.dark .discipline-action-title {
+    color: #fca5a5;
+}
+
+.discipline-action-text {
+    font-size: 0.875rem;
+    color: #7f1d1d;
+    line-height: 1.5;
+}
+
+.dark .discipline-action-text {
+    color: #fecaca;
+}
+
+/* Discipline Severity */
+.discipline-severity {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.discipline-severity.low {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.dark .discipline-severity.low {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #93c5fd;
+}
+
+.discipline-severity.medium {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.dark .discipline-severity.medium {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+
+.discipline-severity.high {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.dark .discipline-severity.high {
+    background-color: rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
+}
+
+/* Discipline Status */
+.discipline-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.discipline-status.resolved {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.dark .discipline-status.resolved {
+    background-color: rgba(22, 163, 74, 0.2);
+    color: #86efac;
+}
+
+.discipline-status.pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.dark .discipline-status.pending {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+}
+
+.discipline-status.escalated {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.dark .discipline-status.escalated {
+    background-color: rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
+}
+
+/* Discipline Form */
+.discipline-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.discipline-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+/* Discipline Timeline */
+.discipline-timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin-top: 1.5rem;
+}
+
+.discipline-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #e5e7eb;
+}
+
+.dark .discipline-timeline::before {
+    background-color: #374151;
+}
+
+.discipline-timeline-item {
+    position: relative;
+    padding-bottom: 1.5rem;
+}
+
+.discipline-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.375rem;
+    top: 0.25rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    background-color: #ef4444;
+    border-radius: 9999px;
+    border: 2px solid #ffffff;
+}
+
+.dark .discipline-timeline-item::before {
+    border-color: #1f2937;
+}
+
+.discipline-timeline-date {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.25rem;
+}
+
+.dark .discipline-timeline-date {
+    color: #9ca3af;
+}
+
+.discipline-timeline-content {
+    font-size: 0.875rem;
+    color: #111827;
+}
+
+.dark .discipline-timeline-content {
+    color: #f9fafb;
+}
+
+/* Discipline Student Info */
+.discipline-student-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.dark .discipline-student-info {
+    background-color: #374151;
+}
+
+.discipline-student-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    background-color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.discipline-student-details {
+    flex: 1;
+}
+
+.discipline-student-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.dark .discipline-student-name {
+    color: #f9fafb;
+}
+
+.discipline-student-class {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.dark .discipline-student-class {
+    color: #9ca3af;
+}
+
+/* Discipline Actions */
+.discipline-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.dark .discipline-actions {
+    border-color: #374151;
+}
+
+/* Discipline Grid */
+.discipline-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Discipline Filters */
+.discipline-filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.discipline-filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.discipline-filter-btn:hover {
+    background-color: #f9fafb;
+    border-color: #ef4444;
+}
+
+.discipline-filter-btn.active {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border-color: #ef4444;
+}
+
+.dark .discipline-filter-btn {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #9ca3af;
+}
+
+.dark .discipline-filter-btn:hover {
+    background-color: #4b5563;
+}
+
+.dark .discipline-filter-btn.active {
+    background-color: rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
+    border-color: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .discipline-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .discipline-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .discipline-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

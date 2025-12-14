@@ -8,6 +8,13 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     {% load static %}
     <link href="{% static 'dist/output.css' %}" rel="stylesheet">
+    
+    <!-- Component Library CSS -->
+    <link href="{% static 'css/components.css' %}" rel="stylesheet">
+    
+    <!-- Module-specific CSS (loaded per template) -->
+    {% block module_css %}{% endblock %}
+    
     <style>
         ::-webkit-scrollbar {
             width: 8px;

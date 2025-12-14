@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
+{% block module_css %}
+<link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+{% endblock %}
 {% block title %}Dashboard - CouncilApp{% endblock %}
 
 {% block nav_dashboard %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}

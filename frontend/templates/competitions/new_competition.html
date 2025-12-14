@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
+{% block module_css %}
+<link href="{% static 'css/competitions.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block title %}New Competition - CouncilApp{% endblock %}
 

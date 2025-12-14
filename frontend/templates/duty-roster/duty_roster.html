@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
+{% block module_css %}
+<link href="{% static 'css/duty-roster.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block title %}Duty Roster - CouncilApp{% endblock %}
 

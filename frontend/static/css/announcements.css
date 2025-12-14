@@ -1,0 +1,215 @@
+/* ==========================================================================
+   Announcements Module Styles
+   ========================================================================== */
+
+/* Announcement Card */
+.announcement-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.announcement-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.dark .announcement-card {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+.announcement-card.pinned {
+    border-color: #16a34a;
+    border-width: 2px;
+}
+
+/* Announcement Header */
+.announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 0.75rem;
+}
+
+.announcement-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 0.5rem;
+}
+
+.dark .announcement-title {
+    color: #f9fafb;
+}
+
+.announcement-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Announcement Content */
+.announcement-content {
+    color: #4b5563;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.dark .announcement-content {
+    color: #9ca3af;
+}
+
+.announcement-content-preview {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Announcement Footer */
+.announcement-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.dark .announcement-footer {
+    border-color: #374151;
+}
+
+.announcement-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.dark .announcement-author {
+    color: #9ca3af;
+}
+
+.announcement-date {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.dark .announcement-date {
+    color: #6b7280;
+}
+
+/* Announcement Form */
+.announcement-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.announcement-form-group {
+    position: relative;
+}
+
+.announcement-editor {
+    min-height: 200px;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: #111827;
+    resize: vertical;
+}
+
+.dark .announcement-editor {
+    background-color: #374151;
+    color: #f9fafb;
+}
+
+/* Announcement Filters */
+.announcement-filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.announcement-filter-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.announcement-filter-btn:hover {
+    background-color: #f9fafb;
+    border-color: #16a34a;
+}
+
+.announcement-filter-btn.active {
+    background-color: #dcfce7;
+    color: #16a34a;
+    border-color: #16a34a;
+}
+
+.dark .announcement-filter-btn {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #9ca3af;
+}
+
+.dark .announcement-filter-btn:hover {
+    background-color: #4b5563;
+}
+
+.dark .announcement-filter-btn.active {
+    background-color: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+    border-color: #16a34a;
+}
+
+/* Pinned Indicator */
+.pinned-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #16a34a;
+}
+
+/* Read/Unread Indicator */
+.unread-indicator {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: #16a34a;
+    border-radius: 9999px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .announcement-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .announcement-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}

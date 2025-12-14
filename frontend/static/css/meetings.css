@@ -1,0 +1,224 @@
+/* ==========================================================================
+   Meetings Module Styles
+   ========================================================================== */
+
+/* Meeting Card */
+.meeting-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+    transition: all 0.2s;
+}
+
+.meeting-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.dark .meeting-card {
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+/* Meeting Header */
+.meeting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.meeting-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.dark .meeting-title {
+    color: #f9fafb;
+}
+
+/* Meeting Info */
+.meeting-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.meeting-info-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.dark .meeting-info-row {
+    color: #9ca3af;
+}
+
+.meeting-info-icon {
+    color: #16a34a;
+    font-size: 1.25rem;
+}
+
+/* Meeting Attendees */
+.meeting-attendees {
+    margin-top: 1rem;
+}
+
+.meeting-attendees-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.dark .meeting-attendees-title {
+    color: #9ca3af;
+}
+
+.meeting-attendees-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.meeting-attendee {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background-color: #f3f4f6;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    color: #4b5563;
+}
+
+.dark .meeting-attendee {
+    background-color: #374151;
+    color: #d1d5db;
+}
+
+/* Meeting Form */
+.meeting-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.meeting-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+/* Meeting Timeline */
+.meeting-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.meeting-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: #e5e7eb;
+}
+
+.dark .meeting-timeline::before {
+    background-color: #374151;
+}
+
+.meeting-timeline-item {
+    position: relative;
+    padding-bottom: 2rem;
+}
+
+.meeting-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.375rem;
+    top: 0.25rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    background-color: #16a34a;
+    border-radius: 9999px;
+    border: 2px solid #ffffff;
+}
+
+.dark .meeting-timeline-item::before {
+    border-color: #1f2937;
+}
+
+/* Meeting Status */
+.meeting-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.meeting-status.upcoming {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.dark .meeting-status.upcoming {
+    background-color: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+
+.meeting-status.ongoing {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.dark .meeting-status.ongoing {
+    background-color: rgba(22, 163, 74, 0.3);
+    color: #86efac;
+}
+
+.meeting-status.completed {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.dark .meeting-status.completed {
+    background-color: #374151;
+    color: #9ca3af;
+}
+
+/* Meeting Actions */
+.meeting-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.dark .meeting-actions {
+    border-color: #374151;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .meeting-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .meeting-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

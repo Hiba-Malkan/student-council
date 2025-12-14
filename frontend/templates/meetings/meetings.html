@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
+{% block module_css %}
+<link href="{% static 'css/meetings.css' %}" rel="stylesheet">
+{% endblock %}
 {% block title %}Meetings - CouncilApp{% endblock %}
 {% block nav_meetings %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
 {% block page_title %}Meetings{% endblock %}
