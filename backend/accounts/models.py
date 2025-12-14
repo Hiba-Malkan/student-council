@@ -1,5 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
+from datetime import timedelta
+import random
+import string
 
 class Role(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -79,6 +83,89 @@ class UserSession(models.Model):
     class Meta:
         ordering = ['-created_at']
     
+
+class PasswordResetOTP(models.Model):
+    """Model to store OTPs for password reset"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='password_reset_otps')
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['user', 'otp', 'is_used']),
+        ]
+    
+    def __str__(self):
+        return f"OTP for {self.user.username} - {'Used' if self.is_used else 'Active'}"
+    
+    @classmethod
+    def generate_otp(cls):
+        """Generate a 6-digit OTP"""
+        return ''.join(random.choices(string.digits, k=6))
+    
+    @classmethod
+    def create_otp(cls, user, ip_address=None):
+        """Create a new OTP for user"""
+        otp_code = cls.generate_otp()
+        expires_at = timezone.now() + timedelta(minutes=10)  # OTP valid for 10 minutes
+        
+        return cls.objects.create(
+            user=user,
+            otp=otp_code,
+            expires_at=expires_at,
+            ip_address=ip_address
+        )
+    
+    def is_valid(self):
+        """Check if OTP is still valid"""
+        return not self.is_used and timezone.now() < self.expires_at
+    
+    def mark_as_used(self):
+        """Mark OTP as used"""
+        self.is_used = True
+        self.save()
+
     def __str__(self):
         return f"{self.user.username} - {self.created_at}"
+
+
+class ContactMessage(models.Model):
+    """Model for users to contact administrators"""
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+        ('resolved', 'Resolved'),
+    ]
+    
+    name = models.CharField(max_length=200)
+    email = models.EmailField()
+    username = models.CharField(max_length=150, blank=True, help_text="If you have an account")
+    subject = models.CharField(max_length=300)
+    message = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    
+    # Admin response
+    admin_response = models.TextField(blank=True)
+    responded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='admin_responses')
+    responded_at = models.DateTimeField(null=True, blank=True)
+    
+    # Metadata
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.CharField(max_length=500, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['status', 'created_at']),
+            models.Index(fields=['email']),
+        ]
+    
+    def __str__(self):
+        return f"{self.subject} - {self.name} ({self.status})"
 

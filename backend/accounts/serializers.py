@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Role, UserSession
+from .models import User, Role, UserSession, PasswordResetOTP, ContactMessage
 
 
 class RoleSerializer(serializers.ModelSerializer):
@@ -100,3 +100,119 @@ class UserSessionSerializer(serializers.ModelSerializer):
         model = UserSession
         fields = ['id', 'user', 'user_detail', 'ip_address', 'user_agent', 'created_at', 'expires_at']
         read_only_fields = ['created_at']
+
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    """Serializer for initiating password reset - accepts email or username"""
+    identifier = serializers.CharField(
+        help_text="Email address or username"
+    )
+    
+    def validate(self, data):
+        """Find and validate the user"""
+        identifier = data.get('identifier')
+        user = None
+        
+        if '@' in identifier:
+            # It's an email
+            try:
+                user = User.objects.get(email=identifier, is_active=True)
+            except User.DoesNotExist:
+                raise serializers.ValidationError("No account found with this email address.")
+        else:
+            # It's a username
+            try:
+                user = User.objects.get(username=identifier, is_active=True)
+            except User.DoesNotExist:
+                raise serializers.ValidationError("No account found with this username.")
+        
+        if not user.email:
+            raise serializers.ValidationError("This account does not have an email address set.")
+        
+        # Add user to validated data
+        data['user'] = user
+        return data
+
+
+class VerifyOTPSerializer(serializers.Serializer):
+    """Serializer for verifying OTP"""
+    identifier = serializers.CharField(
+        help_text="Email address or username"
+    )
+    otp = serializers.CharField(
+        min_length=6,
+        max_length=6,
+        help_text="6-digit OTP code"
+    )
+    
+    def validate_otp(self, value):
+        """Validate OTP format"""
+        if not value.isdigit():
+            raise serializers.ValidationError("OTP must contain only digits.")
+        return value
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    """Serializer for resetting password with OTP"""
+    identifier = serializers.CharField(
+        help_text="Email address or username"
+    )
+    otp = serializers.CharField(
+        min_length=6,
+        max_length=6,
+        help_text="6-digit OTP code"
+    )
+    new_password = serializers.CharField(
+        min_length=8,
+        write_only=True,
+        help_text="New password (minimum 8 characters)"
+    )
+    confirm_password = serializers.CharField(
+        write_only=True,
+        help_text="Confirm new password"
+    )
+    
+    def validate_otp(self, value):
+        """Validate OTP format"""
+        if not value.isdigit():
+            raise serializers.ValidationError("OTP must contain only digits.")
+        return value
+    
+    def validate(self, data):
+        """Validate passwords match"""
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError({
+                "confirm_password": "Passwords do not match."
+            })
+        return data
+
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    """Serializer for contact admin messages"""
+    responded_by_name = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = ContactMessage
+        fields = [
+            'id', 'name', 'email', 'username', 'subject', 'message',
+            'status', 'admin_response', 'responded_by', 'responded_by_name',
+            'responded_at', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['status', 'admin_response', 'responded_by', 'responded_at', 'created_at', 'updated_at']
+    
+    def get_responded_by_name(self, obj):
+        if obj.responded_by:
+            return obj.responded_by.get_full_name() or obj.responded_by.username
+        return None
+    
+    def validate_email(self, value):
+        """Validate email format"""
+        if not value:
+            raise serializers.ValidationError("Email is required.")
+        return value.lower()
+    
+    def validate_message(self, value):
+        """Ensure message is not too short"""
+        if len(value.strip()) < 10:
+            raise serializers.ValidationError("Message must be at least 10 characters long.")
+        return value

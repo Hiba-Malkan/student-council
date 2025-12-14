@@ -31,6 +31,8 @@ urlpatterns = [
     
     # Authentication & Home
     path('', TemplateView.as_view(template_name='login.html'), name='login'),
+    path('forgot-password/', TemplateView.as_view(template_name='forgot_password.html'), name='forgot-password'),
+    path('contact-admin/', TemplateView.as_view(template_name='contact_admin.html'), name='contact-admin'),
     
     # Dashboard
     path('dashboard/', TemplateView.as_view(template_name='dashboard.html'), name='dashboard'),

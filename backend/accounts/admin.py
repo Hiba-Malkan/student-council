@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import Role, User, UserSession
+from django.utils.html import format_html
+from .models import Role, User, UserSession, ContactMessage
 
 @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):
@@ -64,3 +65,48 @@ class UserSessionAdmin(admin.ModelAdmin):
     list_filter = ['created_at', 'expires_at']
     search_fields = ['user__username', 'ip_address']
     readonly_fields = ['user', 'token', 'ip_address', 'user_agent', 'created_at', 'expires_at']
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ['subject', 'name', 'email', 'status_badge', 'created_at']
+    list_filter = ['status', 'created_at']
+    search_fields = ['name', 'email', 'username', 'subject', 'message']
+    readonly_fields = ['name', 'email', 'username', 'subject', 'message', 'ip_address', 'user_agent', 'created_at', 'updated_at']
+    
+    fieldsets = (
+        ('Contact Information', {
+            'fields': ('name', 'email', 'username', 'created_at')
+        }),
+        ('Message', {
+            'fields': ('subject', 'message')
+        }),
+        ('Status & Response', {
+            'fields': ('status', 'admin_response', 'responded_by', 'responded_at')
+        }),
+        ('Metadata', {
+            'fields': ('ip_address', 'user_agent', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def status_badge(self, obj):
+        colors = {
+            'pending': '#fbbf24',
+            'in_progress': '#3b82f6',
+            'resolved': '#10b981'
+        }
+        color = colors.get(obj.status, '#6b7280')
+        return format_html(
+            '<span style="background-color: {}; color: white; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600;">{}</span>',
+            color,
+            obj.get_status_display()
+        )
+    status_badge.short_description = 'Status'
+    
+    def save_model(self, request, obj, form, change):
+        if change and 'admin_response' in form.changed_data:
+            obj.responded_by = request.user
+            from django.utils import timezone
+            obj.responded_at = timezone.now()
+        super().save_model(request, obj, form, change)
