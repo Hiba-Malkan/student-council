@@ -84,7 +84,7 @@
 
   <!-- Sort Dropdown -->
         <div class="flex items-center gap-3 text-sm">
-        <span class="text-gray-600 dark:text-gray-400 font-medium">Sort by:</span>
+        <span class="text-white dark:text-gray-400 font-medium">Sort by:</span>
         <div class="relative">
         <select 
             id="sortSelect" 
@@ -123,11 +123,11 @@
     <!-- Pagination -->
     <div id="paginationContainer" class="mt-8 flex items-center justify-center" style="display: none;">
         <nav class="inline-flex rounded-lg shadow-sm">
-            <button id="prevPage" class="px-4 py-2 rounded-l-lg border border-gray-300 dark:border-gray-600 bg-card-light dark:bg-card-dark text-sm font-medium text-text-sub-light hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+            <button id="prevPage" class="px-4 py-2 rounded-l-lg border border-gray-300 dark:border-gray-600 bg-card-light dark:bg-card-dark text-sm font-medium text-white hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span class="material-icons-round text-lg">chevron_left</span>
             </button>
-            <span id="pageInfo" class="px-6 py-2 border-t border-b border-gray-300 dark:border-gray-600 bg-card-light dark:bg-card-dark text-sm font-medium text-text-main-light dark:text-text-main-dark">Page 1</span>
-            <button id="nextPage" class="px-4 py-2 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-card-light dark:bg-card-dark text-sm font-medium text-text-sub-light hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+            <span id="pageInfo" class="px-6 py-2 border-t border-b border-gray-300 dark:border-gray-600 bg-card-light dark:bg-card-dark text-sm font-medium text-white dark:text-text-main-dark">Page 1</span>
+            <button id="nextPage" class="px-4 py-2 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-card-light dark:bg-card-dark text-sm font-medium text-white hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span class="material-icons-round text-lg">chevron_right</span>
             </button>
         </nav>
@@ -389,33 +389,33 @@
                               (userData.role_detail?.can_edit_announcements && a.created_by === userData.id);
 
             return `
-                <div class="bg-card-light dark:bg-card-dark ${a.is_pinned ? 'border-l-4 ' + badge.border : ''} rounded-xl shadow-sm hover:shadow-lg transition-all p-6 border border-gray-200 dark:border-gray-700 cursor-pointer announcement-card group relative" data-id="${a.id}">
+                <div class="bg-card-light dark:bg-card-dark ${a.is_pinned ? 'border-l-4 ' + badge.border : ''} rounded-xl shadow-sm hover:shadow-lg transition-all p-6 border border-gray-200 dark:border-gray-700 cursor-pointer announcement-card group relative" data-id="${a.id}" style="background-color: #449443 !important;">
                     <div class="flex justify-between items-start">
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text}">
                                 ${a.announcement_type_display || a.announcement_type}
                             </span>
-                            ${a.is_pinned ? `<span class="text-xs font-medium text-primary flex items-center gap-1"><span class="material-icons-round text-sm">push_pin</span>Pinned</span>` : ''}
+                            ${a.is_pinned ? `<span class="text-xs font-medium text-white flex items-center gap-1"><span class="material-icons-round text-sm">push_pin</span>Pinned</span>` : ''}
                             ${!a.is_read_by_user ? `<span class="px-2 py-1 text-xs font-bold bg-primary text-white rounded-full">NEW</span>` : ''}
                         </div>
 
                         ${canManage ? `
                             <button class="p-2 more-btn" data-id="${a.id}" onclick="event.stopPropagation(); showDropdown(this, ${JSON.stringify(a).replace(/"/g, '&quot;')})">
-                                <span class="material-icons-round text-xl text-text-main-light dark:text-gray-500">more_vert</span>
+                                <span class="material-icons-round text-xl text-white dark:text-gray-500">more_vert</span>
                             </button>
                         ` : ''}
                     </div>
 
-                    <h3 class="text-xl font-bold text-text-main-light dark:text-lbg-main-dark mb-3 pr-10">${a.title}</h3>
-                    <p class="text-text-sub-light dark:text-lbg-sub-dark text-sm leading-relaxed line-clamp-2 mb-4">${a.content}</p>
+                    <h3 class="text-xl font-bold text-white dark:text-lbg-main-dark mb-3 pr-10">${a.title}</h3>
+                    <p class="text-white dark:text-lbg-sub-dark text-sm leading-relaxed line-clamp-2 mb-4">${a.content}</p>
 
-                    <div class="flex flex-wrap items-center justify-between text-xs text-text-sub-light dark:text-lbg-sub-dark pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-wrap items-center justify-between text-xs text-white dark:text-lbg-sub-dark pt-4 border-t border-gray-200 dark:border-gray-700">
                         <div class="flex flex-wrap items-center gap-4">
                             <span class="flex items-center gap-1"><span class="material-icons-round text-sm">calendar_today</span> ${date}</span>
                             <span class="flex items-center gap-1"><span class="material-icons-round text-sm">person</span> ${creator}</span>
-                            ${a.attachments?.length ? `<span class="flex items-center gap-1 text-primary"><span class="material-icons-round text-sm">attach_file</span> Attachment</span>` : ''}
+                            ${a.attachments?.length ? `<span class="flex items-center gap-1 text-text-main-light"><span class="material-icons-round text-sm">attach_file</span> Attachment</span>` : ''}
                         </div>
-                        <span class="font-medium text-primary hover:underline">View Details</span>
+                        <span class="font-medium text-white hover:underline">View Details</span>
                     </div>
                 </div>
             `;

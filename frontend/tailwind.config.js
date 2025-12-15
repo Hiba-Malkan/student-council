@@ -20,23 +20,25 @@ module.exports = {
         "background-dark": "#111827",   // Very dark gray - dark mode page background
         
         // Card/panel colors
-        "card-light": "#F1F3E0",  // Sage gray cards
+        "card-light": "#449443",  // Green cards
         "card-dark": "#1F2937",   // Dark gray - dark mode cards/sidebar
         
         // Text colors
-        "text-main-light": "#000000",  // Black - main text in light mode
+        "text-main-light": "#000000",  // Black - main text for default readability
         "text-main-dark": "#F3F4F6",   // Almost white - main text in dark mode
-        "text-sub-light": "#4a4a4a",   // Dark gray - secondary text in light mode
+        "text-sub-light": "#4a4a4a",   // Dark gray - secondary text
         "text-sub-dark": "#9CA3AF",    // Light gray - secondary text in dark mode
+        "text-on-card": "#ffffff",     // White text specifically for green cards
+        "text-on-card-secondary": "#f3f4f6", // Light gray for secondary text on cards
         "lbg-main-light": "#000000",   // Black for labels
-        "lbg-sub-light": "#3d3d3d",    // Dark gray for sub-labels
+        "lbg-sub-light": "#4a4a4a",    // Dark gray for sub-labels
         "lbg-main-dark": "#ffffff",
-        "lbg-sub-dark": "#9CA3AF",
+        "lbg-sub-dark": "#ffffff",
 
-        "sidebar": "#aec8a4",  // Sage green sidebar
+        "sidebar": "#559e54",  // Sage green sidebar
 
         // Input fields
-        "input-bg-light": "#ffffff",  // White input backgrounds in light mode
+        "input-bg-light": "#f3f4f6",  // Light gray input backgrounds in light mode
         "input-bg-dark": "#374151",   // Medium gray - input backgrounds in dark mode
       },
       fontFamily: {

@@ -70,6 +70,4 @@ echo "To stop services:"
 echo "  • Close the terminal windows"
 echo "  • Or press Ctrl+C in each terminal"
 echo ""
-echo "To check if emails are configured:"
-echo "  python check_email_setup.py"
-echo ""
+

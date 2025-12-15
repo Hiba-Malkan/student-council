@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us - CouncilApp{% endblock %}
+
+{% block nav_about %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
+
+{% block page_title %}About Us{% endblock %}
+{% block page_subtitle %}Learn about our mission, vision, and the team behind Council App{% endblock %}
+
+{% block content %}
+<div class="mt-6 space-y-8">
+    <!-- Vision & Mission Section -->
+    <div class="grid md:grid-cols-2 gap-6">
+        <!-- Vision Card -->
+        <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="material-icons-round text-4xl text-white">visibility</span>
+                <h2 class="text-2xl font-bold text-white dark:text-white">Our Vision</h2>
+            </div>
+            <p class="text-white dark:text-lbg-main-dark leading-relaxed">
+                To empower student councils with innovative technology that streamlines administrative tasks, 
+                enhances communication, and fosters a more organized and efficient student governance system. 
+                We envision a future where every student council member has the tools they need to make a 
+                meaningful impact on their school community.
+            </p>
+        </div>
+
+        <!-- Mission Card -->
+        <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="material-icons-round text-4xl text-white">flag</span>
+                <h2 class="text-2xl font-bold text-white dark:text-white">Our Mission</h2>
+            </div>
+            <p class="text-white dark:text-lbg-main-dark leading-relaxed">
+                To provide a comprehensive, user-friendly platform that simplifies duty roster management, 
+                meeting coordination, announcement distribution, and club oversight. We are committed to 
+                building solutions that save time, reduce administrative burden, and enable student leaders 
+                to focus on what truly matters—serving their peers and creating positive change.
+            </p>
+        </div>
+    </div>
+
+    <!-- What We Do Section -->
+    <div class="bg-white dark:bg-card-dark rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl font-bold text-lbg-main-light dark:text-white mb-6">What We Do</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="flex flex-col items-center text-center">
+                <div class="bg-primary/10 dark:bg-primary/20 rounded-full p-4 mb-4">
+                    <span class="material-icons-round text-4xl text-primary">assignment_ind</span>
+                </div>
+                <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white mb-2">Duty Management</h3>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark">
+                    Streamline duty roster assignments and track responsibilities efficiently
+                </p>
+            </div>
+
+            <div class="flex flex-col items-center text-center">
+                <div class="bg-primary/10 dark:bg-primary/20 rounded-full p-4 mb-4">
+                    <span class="material-icons-round text-4xl text-primary">groups</span>
+                </div>
+                <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white mb-2">Meeting Coordination</h3>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark">
+                    Schedule, organize, and document meetings with built-in attendance tracking
+                </p>
+            </div>
+
+            <div class="flex flex-col items-center text-center">
+                <div class="bg-primary/10 dark:bg-primary/20 rounded-full p-4 mb-4">
+                    <span class="material-icons-round text-4xl text-primary">campaign</span>
+                </div>
+                <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white mb-2">Announcements</h3>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark">
+                    Distribute targeted announcements and manage event registrations seamlessly
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Section -->
+    <div class="bg-white dark:bg-card-dark rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl font-bold text-lbg-main-light dark:text-white mb-2 text-center">Meet Our Team</h2>
+        <p class="text-lbg-sub-light dark:text-lbg-sub-dark text-center mb-8">
+            The talented individuals who brought Council App to life
+        </p>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            <!-- Team Member 1 - Hiba -->
+            <div class="flex flex-col items-center group">
+                <div class="relative mb-4">
+                    <div class="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-primary-hover flex items-center justify-center text-white text-4xl font-bold shadow-lg group-hover:shadow-2xl transition-shadow">
+                        H
+                    </div>
+                    <div class="absolute inset-0 rounded-full bg-primary opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                </div>
+                <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white">Hiba</h3>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark text-center">Lead Developer</p>
+                <div class="mt-2 flex gap-2">
+                    <span class="material-icons-round text-primary text-sm">code</span>
+                    <span class="material-icons-round text-primary text-sm">brush</span>
+                </div>
+            </div>
+
+            <!-- Team Member 2 - Hritvik -->
+            <div class="flex flex-col items-center group">
+                <div class="relative mb-4">
+                    <div class="w-32 h-32 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center text-white text-4xl font-bold shadow-lg group-hover:shadow-2xl transition-shadow">
+                        H
+                    </div>
+                    <div class="absolute inset-0 rounded-full bg-blue-500 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                </div>
+                <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white">Hritvik</h3>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark text-center">Full Stack Developer</p>
+                <div class="mt-2 flex gap-2">
+                    <span class="material-icons-round text-blue-500 text-sm">developer_mode</span>
+                    <span class="material-icons-round text-blue-500 text-sm">storage</span>
+                </div>
+            </div>
+
+            <!-- Team Member 3 - Ritvick -->
+            <div class="flex flex-col items-center group">
+                <div class="relative mb-4">
+                    <div class="w-32 h-32 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white text-4xl font-bold shadow-lg group-hover:shadow-2xl transition-shadow">
+                        R
+                    </div>
+                    <div class="absolute inset-0 rounded-full bg-purple-500 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                </div>
+                <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white">Ritvick</h3>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark text-center">Backend Developer</p>
+                <div class="mt-2 flex gap-2">
+                    <span class="material-icons-round text-purple-500 text-sm">settings</span>
+                    <span class="material-icons-round text-purple-500 text-sm">api</span>
+                </div>
+            </div>
+
+            <!-- Team Member 4 - Stervyn -->
+            <div class="flex flex-col items-center group">
+                <div class="relative mb-4">
+                    <div class="w-32 h-32 rounded-full bg-gradient-to-br from-orange-500 to-orange-700 flex items-center justify-center text-white text-4xl font-bold shadow-lg group-hover:shadow-2xl transition-shadow">
+                        S
+                    </div>
+                    <div class="absolute inset-0 rounded-full bg-orange-500 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                </div>
+                <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white">Stervyn</h3>
+                <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark text-center">UI/UX Designer</p>
+                <div class="mt-2 flex gap-2">
+                    <span class="material-icons-round text-orange-500 text-sm">palette</span>
+                    <span class="material-icons-round text-orange-500 text-sm">design_services</span>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+{% endblock %}

@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     {% load static %}
-    <link href="{% static 'dist/output.css' %}" rel="stylesheet">
+    <link href="{% static 'dist/output.css' %}?v=20251215v2" rel="stylesheet">
     
     <!-- Component Library CSS -->
     <link href="{% static 'css/components.css' %}" rel="stylesheet">
@@ -76,50 +76,55 @@
             <div>
                 <div class="h-16 flex items-center px-6 border-b border-gray-100 dark:border-gray-800">
                     <div class="flex items-center gap-2">
-                        <span class="material-icons-round text-sym-lo text-2xl">school</span>
-                        <span class="text-xl font-bold text-sym-logo dark:text-white tracking-tight">Council App</span>
+                        <span class="material-icons-round text-white text-2xl">school</span>
+                        <span class="text-xl font-bold text-white tracking-tight">Council App</span>
                     </div>
                 </div>
                 <nav class="mt-6 px-3 space-y-1">
-                    <a id="dashButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_dashboard %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/dashboard/">
-                        <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">dashboard</span>
+                    <a id="dashButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_dashboard %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/dashboard/">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">dashboard</span>
                         Dashboard
                     </a>
-                    <a id="dutyButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_duty %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/duty-roster/">
-                        <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">assignment_ind</span>
+                    <a id="dutyButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_duty %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/duty-roster/">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">assignment_ind</span>
                         Duty Roster
                     </a>
-                    <a id="meetingButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_meetings %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/meetings/">
-                        <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">groups</span>
+                    <a id="meetingButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_meetings %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/meetings/">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">groups</span>
                         Meetings
                     </a>
-                    <a id="announcementButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_announcements %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/announcements/">
-                        <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">campaign</span>
+                    <a id="announcementButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_announcements %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/announcements/">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">campaign</span>
                         Announcements
                     </a>
-                    <a id="disciplineButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_discipline %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/discipline/">
-                        <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">article</span>
+                    <a id="disciplineButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_discipline %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/discipline/">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">article</span>
                         Discipline
                     </a>
-                    <a id="clubButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_clubs %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/clubs/">
-                        <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">school</span>
+                    <a id="clubButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_clubs %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/clubs/">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">school</span>
                         Clubs
                     </a>
-                    <a id="competitionButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_competitions %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/competitions/">
-                        <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">emoji_events</span>
+                    <a id="competitionButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_competitions %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/competitions/">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">emoji_events</span>
                         Competitions
                     </a>
-                    <a id="adminpanelButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_admin %}text-text-sub-light dark:text-text-sub-dark hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-primary dark:hover:text-white{% endblock %} transition-colors" href="/admin/" id="adminPanelLink" style="display: none;">
-                        <span class="material-icons-round mr-3 text-xl group-hover:text-primary dark:group-hover:text-white transition-colors">admin_panel_settings</span>
+                    <a id="aboutButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_about %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/about/">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">info</span>
+                        About Us
+                    </a>
+                    <a id="adminpanelButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_admin %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/admin/" id="adminPanelLink" style="display: none;">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">admin_panel_settings</span>
                         Admin Panel
                     </a>
+                    
                 </nav>
             </div>
             <div class="p-4 border-t border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-3">
                     <div class="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold" id="sidebarAvatar">U</div>
                     <div>
-                        <p class="text-sm font-semibold text-text-main-light dark:text-white" id="sidebarUserName">Loading...</p>
+                        <p class="text-sm font-semibold text-white dark:text-white" id="sidebarUserName">Loading...</p>
                         <p class="text-xs text-text-sub-light dark:text-text-sub-dark" id="sidebarUserRole">Member</p>
                     </div>
                 </div>

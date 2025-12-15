@@ -37,6 +37,9 @@ urlpatterns = [
     # Dashboard
     path('dashboard/', TemplateView.as_view(template_name='dashboard.html'), name='dashboard'),
     
+    # About
+    path('about/', TemplateView.as_view(template_name='about.html'), name='about'),
+    
     # Announcements
     path('announcements/', TemplateView.as_view(template_name='announcements/announcements.html'), name='announcements'),
     path('announcements/new/', TemplateView.as_view(template_name='announcements/new_announcement.html'), name='new_announcement'),
@@ -62,9 +65,6 @@ urlpatterns = [
     path('discipline/edit/<int:pk>/', TemplateView.as_view(template_name='discipline/discipline_edit.html'), name='edit_discipline'),
     path('discipline/detail/<int:pk>/', TemplateView.as_view(template_name='discipline/discipline_details.html'), 
          name='discipline-detail'),
-    
-    # Projects
-    path('projects/', TemplateView.as_view(template_name='projects.html'), name='projects'),
     
     # Users/Profile
     path('profile/', TemplateView.as_view(template_name='profile.html'), name='profile'),

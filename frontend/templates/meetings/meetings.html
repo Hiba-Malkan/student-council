@@ -12,8 +12,8 @@
 <section class="mt-4">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <span class="material-icons-round text-primary">calendar_month</span>
+            <h2 class="text-lg font-semibold text-white dark:text-gray-100 flex items-center gap-2">
+                <span class="material-icons-round text-white">calendar_month</span>
                 Upcoming Meetings
             </h2>
             <span class="bg-primary-light text-primary text-xs font-medium px-2.5 py-1 rounded-full" id="userRoleBadge">
@@ -22,7 +22,7 @@
         </div>
          
         <div id="upcomingMeetingsContainer" class="space-y-4">
-            <div class="text-center py-8 text-gray-500">
+            <div class="text-center py-8 text-white">
                 Loading meetings...
             </div>
         </div>
@@ -32,14 +32,14 @@
 <section class="mt-8">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <span class="material-icons-round text-primary">history</span>
+            <h2 class="text-lg font-semibold text-white dark:text-gray-100 flex items-center gap-2">
+                <span class="material-icons-round text-white">history</span>
                 Past Meetings
             </h2>
         </div>
          
         <div id="pastMeetingsContainer" class="space-y-4">
-            <div class="text-center py-8 text-gray-500">
+            <div class="text-center py-8 text-white">
                 Loading past meetings...
             </div>
         </div>
@@ -50,8 +50,8 @@
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
         <div class="flex justify-between items-start mb-6">
             <div>
-                <h2 class="text-lg font-semibold text-lbg-main-light dark:text-lbg-main-dark">Schedule New Meeting</h2>
-                <p class="text-sm text-lbg-main-light dark:text-lbg-main-dark mt-1">Create a meeting and notify council members.</p>
+                <h2 class="text-lg font-semibold text-white dark:text-lbg-main-dark">Schedule New Meeting</h2>
+                <p class="text-sm text-white dark:text-lbg-main-dark mt-1">Create a meeting and notify council members.</p>
             </div>
             <span class="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full border border-gray-200">
                 Admin Access
@@ -60,54 +60,54 @@
          
         <form id="scheduleMeetingForm" class="space-y-6">
             <div>
-                <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Meeting Title</label>
+                <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Meeting Title</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">edit</span>
                     </div>
-                    <input name="title" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400" placeholder="e.g. Monthly Council Review" type="text" required/>
+                    <input name="title" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400" placeholder="e.g. Monthly Council Review" type="text" required/>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Date</label>
+                    <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Date</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">event</span>
                         </div>
-                        <input name="date" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark" type="date" required/>
+                        <input name="date" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark" type="date" required/>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Location</label>
+                    <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Location</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">place</span>
                         </div>
-                        <input name="location" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400" type="text" placeholder="e.g. Council Room" required/>
+                        <input name="location" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400" type="text" placeholder="e.g. Council Room" required/>
                     </div>
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Meeting Link (Optional)</label>
+                <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Meeting Link (Optional)</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">link</span>
                     </div>
-                    <input name="meeting_link" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400" type="url" placeholder="https://meet.google.com/..."/>
+                    <input name="meeting_link" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400" type="url" placeholder="https://meet.google.com/..."/>
                 </div>
             </div>
             <div>
-                <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Agenda / Description</label>
+                <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Agenda / Description</label>
                 <div class="relative">
                     <div class="absolute top-3 left-3 pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">notes</span>
                     </div>
-                    <textarea name="agenda" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 resize-none" placeholder="Add details about the meeting agenda..." rows="3"></textarea>
+                    <textarea name="agenda" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 resize-none" placeholder="Add details about the meeting agenda..." rows="3"></textarea>
                 </div>
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-                <div class="flex items-center text-xs text-lbg-main-light dark:text-lbg-main-dark">
+                <div class="flex items-center text-xs text-white dark:text-lbg-main-dark">
                     <span class="material-icons-round text-base mr-1 text-primary">notifications_active</span>
                     Reminders will be sent on the morning of the meeting.
                 </div>
@@ -129,8 +129,8 @@
     <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center">
-                <h3 class="text-xl font-semibold text-lbg-main-light dark:text-lbg-main-dark">Upload Minutes of Meeting</h3>
-                <button onclick="closeMomModal()" class="text-lbg-main-light dark:text-lbg-main-dark">
+                <h3 class="text-xl font-semibold text-white dark:text-lbg-main-dark">Upload Minutes of Meeting</h3>
+                <button onclick="closeMomModal()" class="text-white dark:text-lbg-main-dark">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
@@ -140,19 +140,19 @@
             <input style="display:none" type="hidden" id="momMeetingId" name="meeting_id">
              
             <div>
-                <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Content</label>
-                <textarea name="content" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 resize-none" placeholder="Enter the minutes of the meeting..." rows="6" required></textarea>
+                <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Content</label>
+                <textarea name="content" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 resize-none" placeholder="Enter the minutes of the meeting..." rows="6" required></textarea>
             </div>
             <div>
-                <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Action Items (Optional)</label>
-                <textarea name="action_items" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 resize-none" placeholder="List action items and responsibilities..." rows="4"></textarea>
+                <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Action Items (Optional)</label>
+                <textarea name="action_items" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 resize-none" placeholder="List action items and responsibilities..." rows="4"></textarea>
             </div>
             <div>
-                <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Document (Optional)</label>
-                <input type="file" name="document" accept=".pdf,.doc,.docx" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
+                <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Document (Optional)</label>
+                <input type="file" name="document" accept=".pdf,.doc,.docx" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark">
             </div>
             <div class="flex justify-end gap-3 pt-4">
-                <button type="button" onclick="closeMomModal()" class="px-4 py-2.5 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg transition-colors">
+                <button type="button" onclick="closeMomModal()" class="px-4 py-2.5 text-sm font-medium text-text-main-light dark:text-lbg-main-dark bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg transition-colors">
                     Cancel
                 </button>
                 <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-sm transition-colors">
@@ -167,8 +167,8 @@
     <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center">
-                <h3 class="text-xl font-semibold text-lbg-main-light dark:text-lbg-main-dark">Minutes of Meeting</h3>
-                <button onclick="closeViewMomModal()" class="text-lbg-main-light dark:text-lbg-main-dark">
+                <h3 class="text-xl font-semibold text-white dark:text-lbg-main-dark">Minutes of Meeting</h3>
+                <button onclick="closeViewMomModal()" class="text-text-main-light dark:text-lbg-main-dark">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
@@ -184,8 +184,8 @@
     <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center">
-                <h3 class="text-xl font-semibold text-lbg-main-light dark:text-lbg-main-dark">All Past Meetings</h3>
-                <button onclick="closeAllPastModal()" class="text-lbg-main-light dark:text-lbg-main-dark">
+                <h3 class="text-xl font-semibold text-white dark:text-lbg-main-dark">All Past Meetings</h3>
+                <button onclick="closeAllPastModal()" class="text-white dark:text-lbg-main-dark">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
@@ -202,8 +202,8 @@
     <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="flex justify-between items-center">
-                <h3 class="text-xl font-semibold text-lbg-main-light dark:text-lbg-main-dark">Edit Meeting</h3>
-                <button onclick="closeEditMeetingModal()" class="text-lbg-main-light dark:text-lbg-main-dark">
+                <h3 class="text-xl font-semibold text-white dark:text-lbg-main-dark">Edit Meeting</h3>
+                <button onclick="closeEditMeetingModal()" class="text-white dark:text-lbg-main-dark">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
@@ -213,58 +213,58 @@
             <input type="hidden" id="editMeetingId" name="meeting_id">
             
             <div>
-                <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Meeting Title</label>
+                <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Meeting Title</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">edit</span>
                     </div>
-                    <input id="editTitle" name="title" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400" placeholder="e.g. Monthly Council Review" type="text" required/>
+                    <input id="editTitle" name="title" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400" placeholder="e.g. Monthly Council Review" type="text" required/>
                 </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Date</label>
+                    <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Date</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">event</span>
                         </div>
-                        <input id="editDate" name="date" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark" type="date" required/>
+                        <input id="editDate" name="date" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark" type="date" required/>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Location</label>
+                    <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Location</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">place</span>
                         </div>
-                        <input id="editLocation" name="location" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400" type="text" placeholder="e.g. Council Room" required/>
+                        <input id="editLocation" name="location" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400" type="text" placeholder="e.g. Council Room" required/>
                     </div>
                 </div>
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Meeting Link (Optional)</label>
+                <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Meeting Link (Optional)</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">link</span>
                     </div>
-                    <input id="editMeetingLink" name="meeting_link" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400" type="url" placeholder="https://meet.google.com/..."/>
+                    <input id="editMeetingLink" name="meeting_link" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400" type="url" placeholder="https://meet.google.com/..."/>
                 </div>
             </div>
             
             <div>
-                <label class="block text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark mb-2">Agenda / Description</label>
+                <label class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">Agenda / Description</label>
                 <div class="relative">
                     <div class="absolute top-3 left-3 pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">notes</span>
                     </div>
-                    <textarea id="editAgenda" name="agenda" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 resize-none" placeholder="Add details about the meeting agenda..." rows="3"></textarea>
+                    <textarea id="editAgenda" name="agenda" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 resize-none" placeholder="Add details about the meeting agenda..." rows="3"></textarea>
                 </div>
             </div>
             
             <div class="flex justify-end gap-3 pt-4">
-                <button type="button" onclick="closeEditMeetingModal()" class="px-4 py-2.5 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg transition-colors">
+                <button type="button" onclick="closeEditMeetingModal()" class="px-4 py-2.5 text-sm font-medium text-text-main-light dark:text-lbg-main-dark bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg transition-colors">
                     Cancel
                 </button>
                 <button type="submit" class="flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-sm transition-colors">
@@ -410,7 +410,7 @@ function displayMeetings(meetings, containerId, isUpcoming) {
    
     if (meetings.length === 0) {
         container.innerHTML = `
-            <div class="text-center py-8 text-lbg-main-light dark:text-lbg-main-dark">
+            <div class="text-center py-8 text-white dark:text-lbg-main-dark">
                 No ${isUpcoming ? 'upcoming' : 'past'} meetings found.
             </div>
         `;
@@ -423,8 +423,8 @@ function displayMeetings(meetings, containerId, isUpcoming) {
         html += `
             <div class="mt-6 p-4 bg-primary-light rounded-xl cursor-pointer hover:bg-primary/10 transition-colors" onclick="openAllPastModal()">
                 <div class="flex items-center">
-                    <span class="text-lbg-main-light dark:text-lbg-main-dark font-medium">Show all past meetings (${meetings.length})</span>
-                    <span class="material-icons-round text-lbg-main-light dark:text-lbg-main-dark ml-2">expand_more</span>
+                    <span class="text-primary dark:text-lbg-main-dark font-medium">Show all past meetings (${meetings.length})</span>
+                    <span class="material-icons-round text-primary dark:text-lbg-main-dark ml-2">expand_more</span>
                 </div>
             </div>
         `;
@@ -536,16 +536,16 @@ async function viewMom(meetingId) {
                 const content = `
                     <div class="space-y-4">
                     <div>
-                        <h4 class="text-sm font-semibold text-lbg-main-light dark:text-lbg-main-dark mb-2">Content</h4>
-                        <div class="text-sm text-lbg-main-light dark:text-lbg-main-dark whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <h4 class="text-sm font-semibold text-white dark:text-lbg-main-dark mb-2">Content</h4>
+                        <div class="text-sm text-text-main-light dark:text-lbg-main-dark whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200">
                             ${mom.content || 'No content available'}
                         </div>
                     </div>
                      
                     ${mom.action_items ? `
                         <div>
-                            <h4 class="text-sm font-semibold text-lbg-main-light dark:text-lbg-main-dark mb-2">Action Items</h4>
-                            <div class="text-sm text-lbg-main-light dark:text-lbg-main-dark whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h4 class="text-sm font-semibold text-white dark:text-lbg-main-dark mb-2">Action Items</h4>
+                            <div class="text-sm text-text-main-light dark:text-lbg-main-dark whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200">
                                 ${mom.action_items}
                             </div>
                         </div>
@@ -553,7 +553,7 @@ async function viewMom(meetingId) {
                      
                     ${mom.document ? `
                         <div>
-                            <h4 class="text-sm font-semibold text-lbg-main-light dark:text-lbg-main-dark mb-2">Attached Document</h4>
+                            <h4 class="text-sm font-semibold text-white dark:text-lbg-main-dark mb-2">Attached Document</h4>
                             <a href="${mom.document}" target="_blank" class="inline-flex items-center gap-2 text-sm text-primary hover:underline">
                                 <span class="material-icons-round text-base">description</span>
                                 Download Document
@@ -561,7 +561,7 @@ async function viewMom(meetingId) {
                         </div>
                     ` : ''}
                      
-                    <div class="text-xs text-lbg-main-light dark:text-lbg-main-dark pt-2 border-t border-gray-200">
+                    <div class="text-xs text-white dark:text-lbg-main-dark pt-2 border-t border-gray-200">
                         Uploaded by ${mom.uploaded_by_detail?.first_name || mom.uploaded_by_detail?.username || 'Unknown'} on ${new Date(mom.uploaded_at).toLocaleDateString()}
                     </div>
                     </div>
@@ -611,7 +611,7 @@ function closeAllPastModal() {
 function displayAllPastMeetings() {
     if (!pastMeetingsData || pastMeetingsData.length === 0) {
         document.getElementById('allPastContent').innerHTML = `
-            <div class="text-center py-8 text-lbg-main-light dark:text-lbg-main-dark">
+            <div class="text-center py-8 text-white dark:text-lbg-main-dark">
                 No past meetings found.
             </div>
         `;

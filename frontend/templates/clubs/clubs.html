@@ -18,7 +18,7 @@
         <div class="flex flex-col md:flex-row gap-4">
             <div class="flex-1 relative mb-2">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span class="material-icons-round text-gray-400 text-lg">search</span>
+                    <span class="material-icons-round text-white text-lg">search</span>
                 </div>
                 <input type="text" id="searchClubs" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="Search by name, founders, or tutors...">
             </div>
@@ -175,19 +175,19 @@ function displayClubs(clubs) {
                         <div class="flex justify-between items-start mb-4">
                             <div>
                                 <div class="flex items-center gap-3 mb-2">
-                                    <h3 class="text-xl font-bold text-text-main-light dark:text-white">${club.name}</h3>
+                                    <h3 class="text-xl font-bold text-white dark:text-white">${club.name}</h3>
                                     <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusColors[club.status]} uppercase tracking-wide">
                                         ${statusText[club.status]}
                                     </span>
                                 </div>
-                                <p class="text-sm text-text-sub-light dark:text-lbg-sub-dark leading-relaxed">${club.description}</p>
+                                <p class="text-sm text-white dark:text-lbg-sub-dark leading-relaxed">${club.description}</p>
                             </div>
                             ${canManage ? `
                                 <div class="flex gap-2">
-                                    <a href="/clubs/edit/${club.id}/" class="text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors">
+                                    <a href="/clubs/edit/${club.id}/" class="text-white hover:bg-primary/10 p-2 rounded-lg transition-colors">
                                         <span class="material-icons-round">edit</span>
                                     </a>
-                                    <button onclick="deleteClub(${club.id})" class="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-colors">
+                                    <button onclick="deleteClub(${club.id})" class="text-white hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-colors">
                                         <span class="material-icons-round">delete</span>
                                     </button>
                                 </div>
@@ -199,32 +199,32 @@ function displayClubs(clubs) {
                             <div class="flex items-start gap-2">
                                 <span class="material-icons-round text-white text-lg mt-0.5">group</span>
                                 <div>
-                                    <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Members</p>
-                                    <p class="text-sm font-semibold text-text-main-light dark:text-white">${club.member_count} Members</p>
+                                    <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Members</p>
+                                    <p class="text-sm font-semibold text-white dark:text-white">${club.member_count} Members</p>
                                 </div>
                             </div>
                             
                             <div class="flex items-start gap-2">
                                 <span class="material-icons-round text-white text-lg mt-0.5">calendar_today</span>
                                 <div>
-                                    <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Est.</p>
-                                    <p class="text-sm font-semibold text-text-main-light dark:text-white">${club.established_year}</p>
+                                    <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Est.</p>
+                                    <p class="text-sm font-semibold text-white dark:text-white">${club.established_year}</p>
                                 </div>
                             </div>
                             
                             <div class="flex items-start gap-2">
                                 <span class="material-icons-round text-white text-lg mt-0.5">badge</span>
                                 <div>
-                                    <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Founders</p>
-                                    <p class="text-sm font-semibold text-text-main-light dark:text-white truncate">${club.founders_list.join(', ')}</p>
+                                    <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Founders</p>
+                                    <p class="text-sm font-semibold text-white dark:text-white truncate">${club.founders_list.join(', ')}</p>
                                 </div>
                             </div>
                             
                             <div class="flex items-start gap-2">
                                 <span class="material-icons-round text-white text-lg mt-0.5">school</span>
                                 <div>
-                                    <p class="text-xs text-text-sub-light dark:text-lbg-sub-dark uppercase font-medium">Tutors</p>
-                                    <p class="text-sm font-semibold text-text-main-light dark:text-white truncate">${club.tutors_list.join(', ')}</p>
+                                    <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Tutors</p>
+                                    <p class="text-sm font-semibold text-white dark:text-white truncate">${club.tutors_list.join(', ')}</p>
                                 </div>
                             </div>
                         </div>
