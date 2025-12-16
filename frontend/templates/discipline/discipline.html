@@ -18,12 +18,13 @@
         <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <div class="flex-1 w-full sm:w-auto">
                 <div class="relative">
-                    <span class="material-icons-round absolute left-3 top-1/2 transform -translate-y-1/2 text-white">search</span>
+                    <span class="material-icons-round absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">search</span>
                     <input 
                         type="text" 
                         id="searchInput" 
                         placeholder="Search by name, Dno, or class..." 
-                        class="w-full pl-10 pr-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                        style="color: #6b7280 !important;"
+                        class="w-full pl-10 pr-4 py-2 text-gray-500 dark:text-gray-400 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                     >
                 </div>
             </div>
@@ -158,9 +159,9 @@
             return `
                 <tr class="hover:bg-primary-light/10 dark:hover:bg-primary/10 cursor-pointer transition-all duration-200" 
                     onclick="window.location.href='/discipline/detail/${record.id}/'">
-                    <td class="px-6 py-4 text-sm font-medium text-text-main-light dark:text-lbg-main-dark">${record.student_name}</td>
-                    <td class="px-6 py-4 text-sm text-text-main-light dark:text-lbg-main-dark font-mono">${record.dno}</td>
-                    <td class="px-6 py-4 text-sm text-text-main-light dark:text-lbg-main-dark">${record.class_section}</td>
+                    <td class="px-6 py-4 text-sm font-medium text-white dark:text-lbg-main-dark" style="color: white !important;">${record.student_name}</td>
+                    <td class="px-6 py-4 text-sm text-white dark:text-lbg-main-dark font-mono" style="color: white !important;">${record.dno}</td>
+                    <td class="px-6 py-4 text-sm text-white dark:text-lbg-main-dark" style="color: white !important;">${record.class_section}</td>
                     <td class="px-6 py-4 text-sm">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             record.offense_count >= 3 ? 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300' :
@@ -170,10 +171,10 @@
                             ${record.offense_count} ${record.offense_count === 1 ? 'offense' : 'offenses'}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-sm text-text-main-light dark:text-lbg-main-dark font-medium">
+                    <td class="px-6 py-4 text-sm text-white dark:text-lbg-main-dark font-medium" style="color: white !important;">
                         ${record.latest_category || '—'}
                     </td>
-                    <td class="px-6 py-4 text-sm text-text-main-light dark:text-lbg-main-dark">${latestDate}</td>
+                    <td class="px-6 py-4 text-sm text-white dark:text-lbg-main-dark" style="color: white !important;">${latestDate}</td>
                     <td class="px-6 py-4 text-sm text-right" onclick="event.stopPropagation()">
                         ${canManageRecords ? `
                             <button 
