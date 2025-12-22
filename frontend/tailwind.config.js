@@ -4,6 +4,12 @@ module.exports = {
     "./templates/**/*.html",
     "./static/js/**/*.js",
   ],
+  safelist: [
+  'border-blue-500', 'border-blue-300',
+  'border-purple-500', 'border-purple-300',
+  'border-orange-500', 'border-orange-300',
+  'bg-card-light', 'dark:bg-card-dark'
+  ],
   darkMode: "class",
   theme: {
     extend: {

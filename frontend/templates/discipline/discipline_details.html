@@ -3,7 +3,9 @@
 {% block module_css %}
 <link href="{% static 'css/discipline.css' %}" rel="stylesheet">
 {% endblock %}
-{% block title %}Student Details - CouncilApp{% endblock %}
+{% block title %}Discipline Details - Council App{% endblock %}
+{% block page_title %}Discipline Details{% endblock %}
+{% block page_subtitle %}View student's Discipline Records{% endblock %}
 {% block nav_discipline %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
 
 {% block content %}
@@ -30,7 +32,7 @@
                         Total <span id="offenseLabel">Offenses</span>
                     </div>
                 </div>
-                <button id="addOffenseBtn" onclick="showAddOffenseModal()" class="hidden px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium flex items-center gap-2 transition-colors shadow-sm">
+                <button id="addOffenseBtn" onclick="showAddOffenseModal()" class="hidden px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium flex items-center gap-2 transition-colors">
                     <span class="material-icons-round">add</span>
                     Add Offense
                 </button>
@@ -41,9 +43,9 @@
     <!-- Offense History -->
     <div class="bg-card-light dark:bg-card-dark rounded-xl shadow overflow-hidden">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-            <h2 class="text-xl font-semibold text-white dark:text-lbg-main-dark">Offense History (<span id="historyCount">0</span>)</h2>
+            <h2 class="text-xl font-semibold text-text-main-dark dark:text-lbg-main-dark">Offense History (<span id="historyCount">0</span>)</h2>
             <div class="flex items-center gap-3">
-                <span class="text-sm font-medium text-white dark:text-lbg-sub-dark">Sort by:</span>
+                <span class="text-sm font-medium text-text-sub-light dark:text-lbg-sub-dark">Sort by:</span>
                 <select id="sortSelect" class="px-4 py-2 border rounded-lg bg-input-bg-light dark:bg-input-bg-dark text-lbg-main-light dark:text-lbg-main-dark border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary">
                     <option value="newest">Newest First</option>
                     <option value="oldest">Oldest First</option>
@@ -95,7 +97,7 @@
                     class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                     <option value="">Select category</option>
                     <option value="UNIFORM">Uniform Violation</option>
-                    <option value="LATE">Late Arrival / Submission</option>
+                    <option value="LATE">Late Arrival</option>
                     <option value="BEHAVIOR">Misbehavior</option>
                     <option value="ACADEMIC">Academic Misconduct</option>
                     <option value="ABSENCE">Unauthorized Absence</option>
@@ -208,14 +210,14 @@ function renderOffenseLogs() {
                 <div class="flex justify-between items-start gap-6">
                     <div class="flex-1">
                         <div class="flex items-center gap-4 mb-2">
-                            <span class="text-sm font-medium text-white dark:text-lbg-sub-dark" style="color: white !important;">
+                            <span class="text-sm font-medium text-text-sub-light dark:text-lbg-sub-dark">
                                 ${formattedDate}
                             </span>
                             <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-xs font-medium text-lbg-main-light dark:text-lbg-main-dark">
                                 ${log.category_display}
                             </span>
                         </div>
-                        <p class="text-white dark:text-lbg-main-dark mt-1" style="color: white !important;">
+                        <p class="text-text-main-light dark:text-lbg-main-dark mt-1">
                             ${log.reason || 'No reason provided'}
                         </p>
                     </div>
