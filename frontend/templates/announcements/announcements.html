@@ -389,7 +389,7 @@
                               (userData.role_detail?.can_edit_announcements && a.created_by === userData.id);
 
             return `
-                <div class="bg-card-dark dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 ${a.is_pinned ? 'border-l-4 ' + badge.border : ''} cursor-pointer announcement-card group relative" data-id="${a.id}" style="background-color: #449443 !important;">
+                <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 ${a.is_pinned ? 'border-l-4 ' + badge.border : ''} cursor-pointer a-card group relative" data-id="${a.id}" style="border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); cursor: pointer; transition: all 0.3s;">
                     <div class="flex justify-between items-start">
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text}">
@@ -428,7 +428,7 @@
     }
 
     function attachCardListeners() {
-        document.querySelectorAll('.announcement-card').forEach(card => {
+        document.querySelectorAll('.a-card').forEach(card => {
             card.addEventListener('click', e => {
                 if (!e.target.closest('.more-btn')) {
                     window.location.href = `/announcements/detail/${card.dataset.id}/`;
