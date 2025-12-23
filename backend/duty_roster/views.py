@@ -94,17 +94,39 @@ class DutyViewSet(viewsets.ModelViewSet):
                 {'error': 'You do not have permission to create duties'},
                 status=status.HTTP_403_FORBIDDEN
             )
-        
-        # Create a mutable copy of request data
         data = request.data.copy()
-        
+        user_id = data.get('assigned_to')
+        date_str = data.get('date')
+        if user_id and date_str:
+            from datetime import datetime, timedelta
+            from .models import DutyType, Duty
+            user_id = int(user_id)
+            duty_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            month_start = duty_date.replace(day=1)
+            month_end = (month_start + timedelta(days=32)).replace(day=1)
+            # If user already has a duty for this month, do nothing special
+            if not Duty.objects.filter(assigned_to_id=user_id, date__gte=month_start, date__lt=month_end).exists():
+                # Get all duty types
+                duty_types = list(DutyType.objects.all())
+                if duty_types:
+                    # Find last month's duty type for this user
+                    last_month = (month_start - timedelta(days=1)).replace(day=1)
+                    last_duty = Duty.objects.filter(assigned_to_id=user_id, date__gte=last_month, date__lt=month_start).order_by('date').first()
+                    if last_duty and last_duty.duty_type in duty_types:
+                        idx = duty_types.index(last_duty.duty_type)
+                        next_idx = (idx + 1) % len(duty_types)
+                    else:
+                        next_idx = 0
+                    next_duty_type = duty_types[next_idx]
+                    data['duty_type'] = next_duty_type.id
+                    data['duty_type_name'] = next_duty_type.name
+                    data['location'] = data.get('location') or next_duty_type.location
         # Validate required fields
         if not data.get('duty_type_name'):
             return Response(
                 {'error': 'duty_type_name is required'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

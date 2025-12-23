@@ -216,13 +216,11 @@ async function loadTodayDuty() {
     try {
         const today = new Date().toISOString().split('T')[0];
         const response = await apiCall(`/duty-roster/duties/?assigned_to=${userData.id}&date=${today}`);
-        
         if (response && response.ok) {
             const data = await response.json();
-            const duties = data.results || data;
-            
+            // Filter duties to only those with date === today
+            const duties = (data.results || data).filter(duty => duty.date === today);
             const dutyContent = document.getElementById('dutyContent');
-            
             if (duties.length > 0) {
                 const duty = duties[0];
                 const location = duty.location || 'Not specified';
@@ -455,8 +453,11 @@ async function loadAllDuties(page = 1, search = '', dateFilter = 'all') {
 // Update duties table with data
 function updateDutiesTable(duties) {
     const tableBody = document.getElementById('dutiesTableBody');
-    
-    if (duties.length === 0) {
+    const today = new Date().toISOString().split('T')[0];
+    // Only show duties for today or future, or completed duties
+    const filteredDuties = duties.filter(duty => duty.date >= today || duty.is_completed);
+
+    if (filteredDuties.length === 0) {
         tableBody.innerHTML = `
             <tr>
                 <td colspan="8" class="px-6 py-12 text-center">
@@ -469,9 +470,8 @@ function updateDutiesTable(duties) {
         `;
         return;
     }
-    
     let html = '';
-    duties.forEach(duty => {
+    filteredDuties.forEach(duty => {
         const assigneeName = duty.assigned_to_detail?.first_name && duty.assigned_to_detail?.last_name 
             ? `${duty.assigned_to_detail.first_name} ${duty.assigned_to_detail.last_name}`
             : duty.assigned_to_detail?.username || 'Unknown';

@@ -189,7 +189,9 @@ async function loadDashboardData() {
     const dRes = await apiCall(`/duty-roster/duties/?assigned_to=${user.id}&date=${today}`);
     if (dRes?.ok) {
         const data = await dRes.json();
-        const duty = (data.results || data)[0];
+        // Only show duty for today
+        const duties = (data.results || data).filter(duty => duty.date === today);
+        const duty = duties[0];
         document.getElementById('todayDutyStatus').textContent = duty ? (duty.duty_type_name || 'Assigned') : 'No Duty Today';
     }
 
