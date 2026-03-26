@@ -27,7 +27,7 @@ The architecture uses an API-first approach with 20+ RESTful endpoints, PostgreS
 7. [Maintenance Procedures](#maintenance-procedures)
 8. [Monitoring & Logging](#monitoring--logging)
 9. [Backup & Recovery](#backup--recovery)
-10. [Troubleshooting](#troubleshooting)
+10. [Troubleshooting Guide](#troubleshooting--guide)
 
 ## System Architecture
 
