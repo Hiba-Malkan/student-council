@@ -118,11 +118,13 @@ student-council/
 
 ## Documentation
 
-For local development setup, see `docs/LOCAL_DEVELOPMENT.md` which covers system requirements, installation steps, running services, development workflow, API testing, and troubleshooting.
+All documentation is in the `docs/` folder.
 
-For technical architecture details, see `docs/SYSTEM_DOCUMENTATION.md` which explains the system design, technology stack, codebase structure, module documentation, database schema, API reference, maintenance procedures, and monitoring setup.
+For local development setup, see `LOCAL_DEVELOPMENT.md` which covers system requirements, installation steps, running services, development workflow, API testing, and troubleshooting.
 
-For production deployment, see `docs/PRODUCTION_DOCUMENTATION.md` which covers server setup, application deployment, security hardening, backup and recovery, monitoring, and scaling strategies.
+For technical architecture details, see `SYSTEM_DOCUMENTATION.md` which explains the system design, technology stack, codebase structure, module documentation, database schema, API reference, maintenance procedures, and monitoring setup.
+
+For production deployment, see `PRODUCTION_DOCUMENTATION.md` which covers server setup, application deployment, security hardening, backup and recovery, monitoring, and scaling strategies.
 
 ## API Endpoints
 
@@ -194,7 +196,7 @@ Write code following PEP 8 for Python, ES6+ for JavaScript, and Tailwind best pr
 
 Before deploying to production, complete these tasks:
 
-- Read `docs/PRODUCTION_DOCUMENTATION.md`
+- Read PRODUCTION_DOCUMENTATION.md
 - Set up an Ubuntu 20.04+ server
 - Configure PostgreSQL with daily backups
 - Install and configure Redis
@@ -204,7 +206,7 @@ Before deploying to production, complete these tasks:
 - Run database migrations
 - Test all services thoroughly
 
-You can host this application on AWS, DigitalOcean, Heroku, or Linode. Each platform has different configuration requirements covered in `docs/PRODUCTION_DOCUMENTATION.md`.
+You can host this application on AWS, DigitalOcean, Heroku, or Linode. Each platform has different configuration requirements covered in PRODUCTION_DOCUMENTATION.md.
 
 The `.env` file must never be committed to version control. Copy `.env.example` to `.env` and fill in your values:
 
@@ -295,17 +297,13 @@ See `docs/LOCAL_DEVELOPMENT.md` for additional troubleshooting guidance.
 
 ## License
 
-This project uses a source-available license. See `docs/LICENSE.md` for full terms. You may view and fork this repository for study purposes, but may not use, deploy, or incorporate this code without explicit written permission. AI/ML training on this code is prohibited. Contact hiba.malkan@gmail.com for permission requests.
+This project uses a source-available license. See `LICENSE.md` for full terms. You may view and fork this repository for study purposes, but may not use, deploy, or incorporate this code without explicit written permission. AI/ML training on this code is prohibited. Contact hiba.malkan@gmail.com for permission requests.
 
 ## Support
 
-## Support
+Documentation lives in the `docs/` folder. Open an issue on GitHub to report bugs. Email hiba.malkan@gmail.com for questions or emergencies.
 
-Comprehensive documentation lives in the `docs/` folder and should be reviewed carefully before requesting assistance. Most setup, usage, and troubleshooting issues are resolved at this step. If followed properly, you will not need to escalate 99% of the time (¬_¬).
-
-For bug reports, open an issue on GitHub. For questions, emergencies, or other inquiries, email hiba.malkan@gmail.com. Support is provided on a selective, best-effort basis. Clear, detailed, and well-prepared requests receive priority. Extra effort or creative persuasion is always appreciated <3.
-
-Requests that skip steps or ignore the documentation may not receive a response.
+Contact hiba.malkan@gmail.com for support, questions, or incident reports.
 
 ## Status
 
@@ -313,10 +311,10 @@ The backend is production ready, the frontend is production ready, the database 
 
 ## Quick Links
 
-- [Local Development Guide](./docs/LOCAL_DEVELOPMENT.md)
-- [Production Deployment Guide](./docs/PRODUCTION_DOCUMENTATION.md)
-- [System Architecture Documentation](./docs/SYSTEM_DOCUMENTATION.md)
-- [License](./docs/LICENSE.md)
+- [Local Development Guide](./LOCAL_DEVELOPMENT.md)
+- [Production Deployment Guide](./PRODUCTION_DOCUMENTATION.md)
+- [System Architecture Documentation](./SYSTEM_DOCUMENTATION.md)
+- [License](./LICENSE.md)
 - [Django Documentation](https://docs.djangoproject.com/)
 - [Django REST Framework](https://www.django-rest-framework.org/)
 - [Celery Documentation](https://docs.celeryproject.org/)
@@ -327,4 +325,5 @@ The application is built with Django and Django REST Framework, styled with Tail
 **Written by Hiba**
 
 Last Updated: March 26, 2026  
-Version: 1.0
+Version: 1.0  
+Status: Production Ready

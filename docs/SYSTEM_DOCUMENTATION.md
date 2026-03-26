@@ -27,47 +27,47 @@ The architecture uses an API-first approach with 20+ RESTful endpoints, PostgreS
 7. [Maintenance Procedures](#maintenance-procedures)
 8. [Monitoring & Logging](#monitoring--logging)
 9. [Backup & Recovery](#backup--recovery)
-10. [Troubleshooting Guide](#troubleshooting--guide)
+10. [Troubleshooting](#troubleshooting)
 
 ## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Client Layer                             │
+│                        Client Layer                              │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │  Web Browser (HTML, CSS, JavaScript, Tailwind CSS)       │   │
-│  │  • Dashboard                                             │   │
-│  │  • Admin Panel                                           │   │
-│  │  • Public Pages                                          |   │
+│  │  • Dashboard                                              │   │
+│  │  • Admin Panel                                            │   │
+│  │  • Public Pages                                           │   │
 │  └──────────────────────────────────────────────────────────┘   │
-└─────────────────────┬──────────────────────────────────────────-┘
+└─────────────────────┬──────────────────────────────────────────┘
                       │ HTTP/HTTPS
-┌─────────────────────▼──────────────────────────────────────────--
+┌─────────────────────▼──────────────────────────────────────────┐
 │                    API Layer                                    │
 │  ┌──────────────────────────────────────────────────────────┐   │
-│  │  Django REST Framework                                   │   │
+│  │  Django REST Framework                                    │   │
 │  │  • REST Endpoints (/api/*)                               │   │
-│  │  • JWT Authentication                                    │   │
+│  │  • JWT Authentication                                     │   │
 │  │  • Serializers & Validation                              │   │
-│  │  • Permission Classes                                    │   │
+│  │  • Permission Classes                                     │   │
 │  └──────────────────────────────────────────────────────────┘   │
 └─────────┬──────────────────────────────────────┬────────────────┘
           │                                      │
           │ SQL                                  │ Tasks
 ┌─────────▼──────────────────┐  ┌──────────────▼──────────────┐
-│   PostgreSQL Database      │  │  Message Queue System       │
-│  ┌───────────────────────┐ │  │  ┌────────────────────────┐ │
-│  │ • 42 Tables           │ │  │  │  Redis (Message Broker)│ │
-│  │ • Users & Roles       │ │  │  │  Celery (Task Queue)   │ │
-│  │ • Clubs & Members     │ │  │  │  Celery Beat (Scheduler) │
-│  │ • Duties & Tasks      │ │  │  └────────────────────────┘ │
-│  │ • Announcements       │ │  │                             │
-│  │ • Competitions        │ │  │  Background Jobs:           │
-│  │ • Meetings            │ │  │  • Email Notifications      |
-│  │ • Discipline Records  │ │  │  • Duty Cycling             │
-│  │ • Notifications       │ │  │  • Scheduled Tasks          │
-│  └───────────────────────┘ │  │                             │
-└────────────────────────────┘  └─────────────────────────────┘
+│   PostgreSQL Database      │  │  Message Queue System        │
+│  ┌───────────────────────┐ │  │  ┌────────────────────────┐  │
+│  │ • 42 Tables           │ │  │  │  Redis (Message Broker)│  │
+│  │ • Users & Roles       │ │  │  │  Celery (Task Queue)   │  │
+│  │ • Clubs & Members     │ │  │  │  Celery Beat (Scheduler)  │
+│  │ • Duties & Tasks      │ │  │  └────────────────────────┘  │
+│  │ • Announcements       │ │  │                               │
+│  │ • Competitions        │ │  │  Background Jobs:             │
+│  │ • Meetings            │ │  │  • Email Notifications        │
+│  │ • Discipline Records  │ │  │  • Duty Cycling              │
+│  │ • Notifications       │ │  │  • Scheduled Tasks           │
+│  └───────────────────────┘ │  │                               │
+└────────────────────────────┘  └───────────────────────────────┘
 ```
 
 The frontend runs on HTML5 with CSS3 for structure and styling, using Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity. The backend is built with Django 4.2.7 and Django REST Framework to deliver the API. PostgreSQL 12+ serves as the primary data store with 42 optimized tables. Redis handles message brokering while Celery manages background tasks with a scheduler via Celery Beat. Authentication relies on JWT tokens for stateless request validation. Gunicorn serves the Django application in production, and Nginx acts as a reverse proxy handling HTTPS/SSL termination and static file serving.
@@ -855,3 +855,5 @@ Documentation is located in `/path/to/docs/`. Report issues on GitHub. Contact h
 **Next Review:** June 26, 2026
 
 ---
+
+*This documentation is confidential and intended for authorized personnel only.*
