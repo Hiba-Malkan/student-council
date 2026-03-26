@@ -299,9 +299,12 @@ This project uses a source-available license. See LICENSE.md for full terms. You
 
 ## Support
 
-Documentation lives in the `docs/` folder. Open an issue on GitHub to report bugs. Email hiba.malkan@gmail.com for questions or emergencies.
+Documentation lives in the `docs/` folder. Open an issue on GitHub to report bugs. 
 
-Contact hiba.malkan@gmail.com for support, questions, or incident reports.
+Email hiba.malkan@gmail.com for questions or emergencies.
+
+Also, contact hiba.malkan@gmail.com for support, questions, or incident reports. 
+Do not expect a reply back.
 
 ## Status
 
