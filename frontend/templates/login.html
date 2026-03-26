@@ -317,9 +317,14 @@
                     successMessage.textContent = 'Login successful! Redirecting...';
                     successMessage.style.display = 'block';
                     
-                    // Redirect to dashboard
+                    // Redirect based on user role
+                    let redirectUrl = '/dashboard/';
+                    if (result.user.role_detail?.is_normal_student) {
+                        redirectUrl = '/clubs/';
+                    }
+                    
                     setTimeout(() => {
-                        window.location.href = '/dashboard/';
+                        window.location.href = redirectUrl;
                     }, 1000);
                 } else {
                     // Show error message

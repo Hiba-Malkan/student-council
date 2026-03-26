@@ -68,6 +68,46 @@
         </div>
     </div>
 </section>
+
+<!-- Join Club Modal -->
+<div id="joinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="display: none;">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 max-w-md w-full shadow-lg">
+        <h3 class="text-xl font-bold text-white mb-4" id="joinClubName">Join Club</h3>
+        <form id="joinForm" class="space-y-4">
+            <input type="hidden" id="joinClubId">
+            <div>
+                <label for="joinStudentName" class="text-sm font-medium text-white">Your Name</label>
+                <input type="text" id="joinStudentName" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark" required>
+            </div>
+            <div>
+                <label for="joinEmail" class="text-sm font-medium text-white">Email</label>
+                <input type="email" id="joinEmail" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark" required>
+            </div>
+            <div>
+                <label for="joinPhone" class="text-sm font-medium text-white">Phone (optional)</label>
+                <input type="text" id="joinPhone" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark">
+            </div>
+            <div>
+                <label for="joinMessage" class="text-sm font-medium text-white">Message to Club (optional)</label>
+                <textarea id="joinMessage" rows="3" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark"></textarea>
+            </div>
+            <div class="flex flex-col gap-2">
+                <button type="submit" class="px-4 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+                    <span class="material-icons-round text-lg">send</span>
+                    Send Join Request
+                </button>
+                <div id="joinSuccess" class="text-green-500 text-sm font-medium hidden"></div>
+                <div id="joinError" class="text-red-500 text-sm font-medium hidden"></div>
+            </div>
+        </form>
+        <div class="mt-4">
+            <button onclick="closeJoinModal()" class="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg shadow-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                <span class="material-icons-round">close</span>
+                Close
+            </button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -182,16 +222,19 @@ function displayClubs(clubs) {
                                 </div>
                                 <p class="text-sm text-white dark:text-lbg-sub-dark leading-relaxed">${club.description}</p>
                             </div>
-                            ${canManage ? `
-                                <div class="flex gap-2">
+                            <div class="flex gap-2">
+                                ${canManage ? `
                                     <a href="/clubs/edit/${club.id}/" class="text-white hover:bg-primary/10 p-2 rounded-lg transition-colors">
                                         <span class="material-icons-round">edit</span>
                                     </a>
                                     <button onclick="deleteClub(${club.id})" class="text-white hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-colors">
                                         <span class="material-icons-round">delete</span>
                                     </button>
-                                </div>
-                            ` : ''}
+                                ` : ''}
+                                <button onclick="openJoinModal(${club.id}, '${escapeHtml(club.name)}')" class="text-white hover:bg-blue-600/10 p-2 rounded-lg transition-colors ml-auto">
+                                    <span class="material-icons-round">person_add</span>
+                                </button>
+                            </div>
                         </div>
                         
                         <!-- Club Details Grid -->
@@ -269,6 +312,99 @@ async function deleteClub(clubId) {
         showError('An error occurred while deleting the club');
     }
 }
+
+// Join Club Modal Functions
+function openJoinModal(clubId, clubName) {
+    document.getElementById('joinClubId').value = clubId;
+    document.getElementById('joinClubName').textContent = clubName;
+    document.getElementById('joinModal').style.display = 'flex';
+    document.getElementById('joinForm').reset();
+    document.getElementById('joinError').style.display = 'none';
+    document.getElementById('joinSuccess').style.display = 'none';
+}
+
+function closeJoinModal() {
+    document.getElementById('joinModal').style.display = 'none';
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Join form submission
+document.getElementById('joinForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const clubId = document.getElementById('joinClubId').value;
+    const studentName = document.getElementById('joinStudentName').value.trim();
+    const email = document.getElementById('joinEmail').value.trim();
+    const phone = document.getElementById('joinPhone').value.trim();
+    const message = document.getElementById('joinMessage').value.trim();
+    
+    if (!studentName) {
+        showJoinError('Please enter your name');
+        return;
+    }
+    
+    if (!email) {
+        showJoinError('Please enter your email');
+        return;
+    }
+    
+    if (!email.includes('@')) {
+        showJoinError('Please enter a valid email');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/clubs/${clubId}/join/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                student_name: studentName,
+                email: email,
+                phone: phone,
+                message: message
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            document.getElementById('joinSuccess').textContent = result.message || 'Thank you! Your request has been received.';
+            document.getElementById('joinSuccess').style.display = 'block';
+            document.getElementById('joinError').style.display = 'none';
+            setTimeout(() => closeJoinModal(), 2000);
+        } else {
+            showJoinError(result.error || 'An error occurred');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showJoinError('Network error. Please try again.');
+    }
+});
+
+function showJoinError(message) {
+    document.getElementById('joinError').textContent = message;
+    document.getElementById('joinError').style.display = 'block';
+    document.getElementById('joinSuccess').style.display = 'none';
+}
+
+// Close modal when clicking outside
+document.getElementById('joinModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('joinModal')) {
+        closeJoinModal();
+    }
+});
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.getElementById('joinModal').style.display !== 'none') {
+        closeJoinModal();
+    }
+});
 
 // Initialize
 async function initClubs() {

@@ -258,6 +258,15 @@
             if (userData.is_staff || userData.is_superuser) {
                 document.getElementById('adminPanelLink').style.display = 'flex';
             }
+
+            // Hide dashboard and other features for normal students
+            if (userData.role_detail?.is_normal_student) {
+                document.getElementById('dashButton').style.display = 'none';
+                document.getElementById('dutyButton').style.display = 'none';
+                document.getElementById('disciplineButton').style.display = 'none';
+                document.getElementById('meetingButton').style.display = 'none';
+                // Students can only see: announcements, clubs, competitions, about
+            }
         }
 
         loadUserProfile();

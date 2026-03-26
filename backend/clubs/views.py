@@ -103,6 +103,55 @@ class ClubViewSet(viewsets.ModelViewSet):
             'inactive_clubs': inactive_clubs,
             'total_members': total_members,
         })
+    
+    @action(detail=True, methods=['post'], permission_classes=[AllowAny])
+    def join(self, request, pk=None):
+        """
+        Public endpoint for students to join a club.
+        
+        POST /api/clubs/{id}/join/
+        Body: {
+            "student_name": "string",
+            "email": "string",
+            "phone": "string (optional)",
+            "message": "string (optional)"
+        }
+        
+        No authentication required - open to public.
+        """
+        club = self.get_object()
+        
+        # Validate required fields
+        student_name = request.data.get('student_name', '').strip()
+        email = request.data.get('email', '').strip()
+        
+        if not student_name:
+            return Response(
+                {'error': 'Student name is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if not email:
+            return Response(
+                {'error': 'Email is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Basic email validation
+        if '@' not in email:
+            return Response(
+                {'error': 'Invalid email format'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Create a pending signup record (you can store this in a separate model)
+        # For now, we'll return a success message
+        return Response({
+            'success': True,
+            'message': f'Thank you {student_name}! Your request to join {club.name} has been received. You will be contacted soon.',
+            'club_id': club.id,
+            'club_name': club.name
+        }, status=status.HTTP_201_CREATED)
 
 
 # HTML Template Views

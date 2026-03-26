@@ -1,6 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.utils import timezone
@@ -222,3 +222,21 @@ class EventParticipantViewSet(viewsets.ModelViewSet):
         participant.save()
         
         return Response(EventParticipantSerializer(participant, context={'request': request}).data)
+
+
+class PublicAnnouncementViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Public read-only viewset for viewing announcements.
+    No authentication required.
+    """
+    serializer_class = AnnouncementSerializer
+    permission_classes = [AllowAny]
+    filterset_fields = ['announcement_type']
+    search_fields = ['title', 'content']
+    
+    def get_queryset(self):
+        """Return only public, published announcements"""
+        return Announcement.objects.filter(
+            is_public=True,
+            is_published=True
+        ).prefetch_related('target_roles', 'target_users').order_by('-published_at')
