@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 from django.views.generic import TemplateView
 from django.db.models import Sum
@@ -20,11 +20,10 @@ class ClubViewSet(viewsets.ModelViewSet):
     ViewSet for managing clubs.
     
     Permissions:
-    - List/Retrieve: Any authenticated user
+    - List/Retrieve: Any user (authenticated or anonymous)
     - Create/Update/Delete: Users with can_add_clubs permission
     """
     queryset = Club.objects.all()
-    permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description', 'established_by', 'tutors']
     filterset_fields = ['status']
@@ -44,7 +43,8 @@ class ClubViewSet(viewsets.ModelViewSet):
         if self.action in ['create', 'update', 'partial_update', 'destroy', 'change_status']:
             permission_classes = [IsAuthenticated, CanManageClubs]
         else:
-            permission_classes = [IsAuthenticated]
+            # Allow any user (authenticated or anonymous) to view clubs
+            permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
     
     def perform_create(self, serializer):

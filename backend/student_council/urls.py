@@ -40,6 +40,9 @@ urlpatterns = [
     # About
     path('about/', TemplateView.as_view(template_name='about.html'), name='about'),
     
+    # Public Clubs (no permissions required)
+    path('public/clubs/', TemplateView.as_view(template_name='clubs/public_clubs.html'), name='public_clubs'),
+    
     # Announcements
     path('announcements/', TemplateView.as_view(template_name='announcements/announcements.html'), name='announcements'),
     path('announcements/new/', TemplateView.as_view(template_name='announcements/new_announcement.html'), name='new_announcement'),

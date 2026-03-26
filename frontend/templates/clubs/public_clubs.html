@@ -1,0 +1,252 @@
+{% extends "public_base.html" %}
+{% load static %}
+{% block module_css %}
+<link href="{% static 'css/clubs.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Clubs Overview - CouncilApp{% endblock %}
+
+{% block page_title %}Clubs Overview{% endblock %}
+{% block page_subtitle %}Explore all registered student organizations.{% endblock %}
+
+{% block content %}
+<!-- Search and Filter -->
+<section class="mb-6">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+        <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1 relative mb-2">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="material-icons-round text-white text-lg">search</span>
+                </div>
+                <input type="text" id="searchClubs" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="Search by name, founders, or tutors...">
+            </div>
+            <select id="filterStatus" class="px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="under_review">Under Review</option>
+                <option value="inactive">Inactive</option>
+            </select>
+        </div>
+    </div>
+</section>
+
+<!-- Clubs List -->
+<section>
+    <div id="clubsContainer" class="space-y-6">
+        <!-- Loading state -->
+        <div class="text-center py-12">
+            <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-4xl mb-3 animate-spin">sync</span>
+            <p class="text-text-main-light dark:text-lbg-main-dark">Loading clubs...</p>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    <div class="flex items-center justify-between mt-6" id="paginationSection" style="display: none;">
+        <div class="text-sm text-text-sub-light dark:text-lbg-sub-dark">
+            <span id="clubCount">Showing 0 clubs</span>
+        </div>
+        <div class="flex gap-2">
+            <button id="prevPage" class="px-3 py-1.5 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Previous
+            </button>
+            <span class="px-3 py-1.5 text-sm text-lbg-main-light dark:text-lbg-main-dark">
+                Page <span id="currentPage">1</span>
+            </span>
+            <button id="nextPage" class="px-3 py-1.5 text-sm font-medium text-lbg-main-light dark:text-lbg-main-dark bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Next
+            </button>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentPage = 1;
+let hasNext = false;
+let hasPrev = false;
+
+// Load clubs
+async function loadClubs(page = 1, search = '', status = '') {
+    try {
+        let url = `/clubs/?page=${page}`;
+        
+        if (search) {
+            url += `&search=${encodeURIComponent(search)}`;
+        }
+        
+        if (status) {
+            url += `&status=${status}`;
+        }
+        
+        console.log('Loading clubs from:', url);
+        const response = await apiCall(url);
+        console.log('Response:', response);
+        
+        if (response && response.ok) {
+            const data = await response.json();
+            console.log('Clubs data:', data);
+            displayClubs(data.results || data);
+            
+            // Update pagination
+            currentPage = page;
+            hasNext = !!data.next;
+            hasPrev = !!data.previous;
+            updatePagination(data.count || data.length);
+        } else {
+            console.error('Response not OK:', response);
+            throw new Error('Failed to load clubs');
+        }
+    } catch (error) {
+        console.error('Error loading clubs:', error);
+        document.getElementById('clubsContainer').innerHTML = `
+            <div class="text-center py-12">
+                <span class="material-icons-round text-red-400 text-4xl mb-3">error</span>
+                <p class="text-red-500">Failed to load clubs. Please try again.</p>
+            </div>
+        `;
+    }
+}
+
+// Display clubs (without edit/delete buttons)
+function displayClubs(clubs) {
+    const container = document.getElementById('clubsContainer');
+    
+    if (clubs.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-12">
+                <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-4xl mb-3">school</span>
+                <p class="text-text-main-light dark:text-lbg-main-dark">No clubs found</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    clubs.forEach(club => {
+        const statusColors = {
+            'active': 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400',
+            'under_review': 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400',
+            'inactive': 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400'
+        };
+        
+        const statusText = {
+            'active': 'Active',
+            'under_review': 'Under Review',
+            'inactive': 'Inactive'
+        };
+        
+        html += `
+            <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- Club Logo -->
+                    <div class="w-full md:w-48 h-48 shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+                        ${club.logo_url ? `
+                            <img src="${club.logo_url}" alt="${club.name}" class="w-full h-full object-cover">
+                        ` : `
+                            <div class="w-full h-full flex items-center justify-center">
+                                <span class="material-icons-round text-gray-400 text-5xl">school</span>
+                            </div>
+                        `}
+                    </div>
+                    
+                    <!-- Club Info -->
+                    <div class="flex-1 flex flex-col">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="flex items-center gap-3 mb-2">
+                                    <h3 class="text-xl font-bold text-white dark:text-white">${club.name}</h3>
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusColors[club.status]} uppercase tracking-wide">
+                                        ${statusText[club.status]}
+                                    </span>
+                                </div>
+                                <p class="text-sm text-white dark:text-lbg-sub-dark leading-relaxed">${club.description}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Club Details Grid -->
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <div class="flex items-start gap-2">
+                                <span class="material-icons-round text-white text-lg mt-0.5">group</span>
+                                <div>
+                                    <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Members</p>
+                                    <p class="text-sm font-semibold text-white dark:text-white">${club.member_count} Members</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-2">
+                                <span class="material-icons-round text-white text-lg mt-0.5">calendar_today</span>
+                                <div>
+                                    <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Est.</p>
+                                    <p class="text-sm font-semibold text-white dark:text-white">${club.established_year}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-2">
+                                <span class="material-icons-round text-white text-lg mt-0.5">badge</span>
+                                <div>
+                                    <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Founders</p>
+                                    <p class="text-sm font-semibold text-white dark:text-white truncate">${club.founders_list.join(', ')}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-2">
+                                <span class="material-icons-round text-white text-lg mt-0.5">school</span>
+                                <div>
+                                    <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Tutors</p>
+                                    <p class="text-sm font-semibold text-white dark:text-white truncate">${club.tutors_list.join(', ')}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Update pagination
+function updatePagination(total) {
+    document.getElementById('paginationSection').style.display = 'flex';
+    document.getElementById('clubCount').textContent = `Showing ${total} club${total !== 1 ? 's' : ''}`;
+    document.getElementById('currentPage').textContent = currentPage;
+    document.getElementById('prevPage').disabled = !hasPrev;
+    document.getElementById('nextPage').disabled = !hasNext;
+}
+
+// Initialize
+async function initClubs() {
+    await loadClubs();
+    
+    // Search functionality
+    document.getElementById('searchClubs').addEventListener('input', (e) => {
+        clearTimeout(window.searchTimeout);
+        window.searchTimeout = setTimeout(() => {
+            loadClubs(1, e.target.value, document.getElementById('filterStatus').value);
+        }, 300);
+    });
+    
+    // Filter functionality
+    document.getElementById('filterStatus').addEventListener('change', (e) => {
+        loadClubs(1, document.getElementById('searchClubs').value, e.target.value);
+    });
+    
+    // Pagination
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (hasPrev) {
+            loadClubs(currentPage - 1, document.getElementById('searchClubs').value, document.getElementById('filterStatus').value);
+        }
+    });
+    
+    document.getElementById('nextPage').addEventListener('click', () => {
+        if (hasNext) {
+            loadClubs(currentPage + 1, document.getElementById('searchClubs').value, document.getElementById('filterStatus').value);
+        }
+    });
+}
+
+initClubs();
+</script>
+{% endblock %}
