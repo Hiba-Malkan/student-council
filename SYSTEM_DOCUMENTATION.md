@@ -855,5 +855,3 @@ Documentation is located in `/path/to/docs/`. Report issues on GitHub. Contact h
 **Next Review:** June 26, 2026
 
 ---
-
-*This documentation is confidential and intended for authorized personnel only.*
