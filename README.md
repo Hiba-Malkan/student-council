@@ -1,8 +1,5 @@
 # Student Council Management System
 
-![Version](https://img.shields.io/badge/version-1.0-blue.svg)
-![Status](https://img.shields.io/badge/status-Production%20Ready-green.svg)
-
 This is a web application for managing student council operations. It handles clubs, competitions, meetings, duty rosters, announcements, and discipline tracking. The system provides a responsive dashboard for council administrators and public pages showing available clubs to all students without login required.
 
 ## Features
