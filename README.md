@@ -2,7 +2,6 @@
 
 ![Version](https://img.shields.io/badge/version-1.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-Production%20Ready-green.svg)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 This is a web application for managing student council operations. It handles clubs, competitions, meetings, duty rosters, announcements, and discipline tracking. The system provides a responsive dashboard for council administrators and public pages showing available clubs to all students without login required.
 
@@ -299,7 +298,7 @@ See LOCAL_DEVELOPMENT.md for additional troubleshooting guidance.
 
 ## License
 
-This project is licensed under the MIT License.
+This project uses a source-available license. See LICENSE.md for full terms. You may view and fork this repository for study purposes, but may not use, deploy, or incorporate this code without explicit written permission. AI/ML training on this code is prohibited. Contact hiba.malkan@gmail.com for permission requests.
 
 ## Support
 
