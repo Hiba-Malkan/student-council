@@ -42,3 +42,20 @@ class CanManageCompetitions(permissions.BasePermission):
         
         # Creators can edit/delete their own competitions
         return obj.created_by == request.user
+
+
+class CanViewCompetitionSignups(permissions.BasePermission):
+    """
+    Strict permission for viewing and managing competition signups.
+    Only allows users with can_manage_competitions permission.
+    """
+    
+    def has_permission(self, request, view):
+        return (
+            request.user and 
+            request.user.is_authenticated and
+            (request.user.is_superuser or
+             (hasattr(request.user, 'role') and 
+              request.user.role and 
+              getattr(request.user.role, 'can_manage_competitions', False)))
+        )

@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+{% load static %}
+{% block module_css %}
+<link href="{% static 'css/competitions.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block title %}Edit Competition - CouncilApp{% endblock %}
+
+{% block nav_competitions %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
+
+{% block page_title %}Edit Competition{% endblock %}
+{% block page_subtitle %}Update the details of this competition or event.{% endblock %}
+
+{% block content %}
+<section class="mt-4">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200">
+        <form id="competitionForm" class="space-y-6">
+            <!-- Competition Name -->
+            <div>
+                <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                    Competition Name <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-gray-400 text-lg">emoji_events</span>
+                    </div>
+                    <input type="text" name="name" required class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="Enter the name of the competition">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Hosted By -->
+                <div>
+                    <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                        Hosted By <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 text-lg">corporate_fare</span>
+                        </div>
+                        <input type="text" name="hosted_by" required class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="Separate multiple hosts with a comma">
+                    </div>
+                </div>
+
+                <!-- Participant Count -->
+                <div>
+                    <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                        Participant Count
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 text-lg">pin</span>
+                        </div>
+                        <input type="number" name="participant_count" min="0" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="Total number of participants">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participants -->
+                <div style="display:none">
+                    <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                        Participants
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 text-lg">people</span>
+                        </div>
+                        <input type="text" name="participants" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="Separate participant names with a comma">
+                    </div>
+                </div>
+
+            <!-- Event Link -->
+                <div>
+                    <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                        Event Link
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 text-lg">link</span>
+                        </div>
+                        <input type="url" name="event_link" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="https://example.com">
+                    </div>
+                </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Event Date -->
+                <div>
+                    <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                        Event Date
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 text-lg">event</span>
+                        </div>
+                        <input type="date" name="event_date" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors">
+                    </div>
+                </div>
+
+                <!-- Event Time -->
+                <div>
+                    <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                        Event Time
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 text-lg">schedule</span>
+                        </div>
+                        <input type="text" name="event_time" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="e.g., 9:00 AM - 5:00 PM">
+                    </div>
+                </div>
+
+                <!-- Team Size -->
+                <div>
+                    <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                        Team Size
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 text-lg">groups</span>
+                        </div>
+                        <input type="text" name="team_size" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="e.g., 2-4 members">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div>
+                <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                    Location
+                </label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="material-icons-round text-gray-400 text-lg">location_on</span>
+                    </div>
+                    <input type="text" name="location" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="e.g., Main Auditorium">
+                </div>
+            </div>
+
+            <!-- File Upload -->
+            <div>
+                <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                    PDF/Brochure
+                </label>
+                <div class="flex items-center justify-center w-full">
+                    <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 dark:border-gray-700 border-dashed rounded-lg cursor-pointer bg-input-bg-light dark:bg-input-bg-dark hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <span class="material-icons-round text-gray-400 dark:text-gray-500 text-4xl mb-2">cloud_upload</span>
+                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                <span class="font-semibold">Click to upload</span> or drag and drop
+                            </p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">PDF, DOC, DOCX, PNG, or JPG</p>
+                            <p id="fileName" class="mt-2 text-xs text-primary font-medium"></p>
+                        </div>
+                        <input type="file" name="brochure" id="brochureInput" class="hidden" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                    Description
+                </label>
+                <div class="relative">
+                    <div class="absolute top-3 left-3 pointer-events-none">
+                        <span class="material-icons-round text-gray-400 text-lg">description</span>
+                    </div>
+                    <textarea name="description" rows="4" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors resize-none" placeholder="Detailed description of the competition..."></textarea>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div>
+                <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
+                    Additional Info
+                </label>
+                <div class="relative">
+                    <div class="absolute top-3 left-3 pointer-events-none">
+                        <span class="material-icons-round text-gray-400 text-lg">notes</span>
+                    </div>
+                    <textarea name="additional_info" rows="3" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors resize-none" placeholder="Any other relevant details..."></textarea>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end gap-3 pt-4">
+                <a href="/competitions/" class="px-6 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" id="submitBtn" class="flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-sm transition-colors">
+                    <span class="material-icons-round text-sm mr-2">check</span>
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let competitionId = null;
+
+// Extract competition ID from URL
+function getCompetitionId() {
+    const path = window.location.pathname;
+    const matches = path.match(/\/competitions\/edit\/(\d+)\//);
+    return matches ? parseInt(matches[1]) : null;
+}
+
+// Load competition data
+async function loadCompetition() {
+    competitionId = getCompetitionId();
+    if (!competitionId) {
+        showError('Competition ID not found');
+        return;
+    }
+    
+    try {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch(`/api/competitions/${competitionId}/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to load competition');
+        }
+        
+        const comp = await response.json();
+        
+        // Populate form
+        document.querySelector('input[name="name"]').value = comp.name || '';
+        document.querySelector('input[name="hosted_by"]').value = comp.hosted_by || '';
+        document.querySelector('input[name="participant_count"]').value = comp.participant_count || '';
+        document.querySelector('input[name="event_link"]').value = comp.event_link || '';
+        document.querySelector('input[name="event_date"]').value = comp.event_date || '';
+        document.querySelector('input[name="event_time"]').value = comp.event_time || '';
+        document.querySelector('input[name="team_size"]').value = comp.team_size || '';
+        document.querySelector('input[name="location"]').value = comp.location || '';
+        document.querySelector('textarea[name="description"]').value = comp.description || '';
+        document.querySelector('textarea[name="additional_info"]').value = comp.additional_info || '';
+        
+    } catch (error) {
+        console.error('Error loading competition:', error);
+        showError('Failed to load competition details');
+    }
+}
+
+// File upload preview
+document.getElementById('brochureInput').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        document.getElementById('fileName').textContent = `Selected: ${file.name}`;
+    } else {
+        document.getElementById('fileName').textContent = '';
+    }
+});
+
+// Handle form submission
+document.getElementById('competitionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="material-icons-round text-sm mr-2 animate-spin">sync</span><span>Saving...</span>';
+    
+    try {
+        const formData = new FormData(e.target);
+        
+        // If no file selected, remove it from formData
+        if (!formData.get('brochure').name) {
+            formData.delete('brochure');
+        }
+        
+        const response = await fetch(`/api/competitions/${competitionId}/`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${getAccessToken()}`
+            },
+            body: formData
+        });
+        
+        if (response.ok) {
+            showSuccess('Competition updated successfully!');
+            setTimeout(() => {
+                window.location.href = '/competitions/';
+            }, 1500);
+        } else {
+            const error = await response.json();
+            showError(error.detail || error.message || 'Failed to update competition');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span class="material-icons-round text-sm mr-2">check</span><span>Save Changes</span>';
+        }
+    } catch (error) {
+        console.error('Error updating competition:', error);
+        showError('An error occurred while updating the competition');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span class="material-icons-round text-sm mr-2">check</span><span>Save Changes</span>';
+    }
+});
+
+// Load competition on page load
+window.addEventListener('load', loadCompetition);
+</script>
+{% endblock %}

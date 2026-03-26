@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from accounts.models import User
-from .models import Club
+from .models import Club, ClubSignup
 
 
 class UserBasicSerializer(serializers.ModelSerializer):
@@ -117,3 +117,36 @@ class ClubCreateUpdateSerializer(serializers.ModelSerializer):
         # Set the created_by field from the request user
         validated_data['created_by'] = self.context['request'].user
         return super().create(validated_data)
+
+
+class ClubSignupSerializer(serializers.ModelSerializer):
+    """Serializer for club signups"""
+    
+    class Meta:
+        model = ClubSignup
+        fields = [
+            'id',
+            'club',
+            'student_name',
+            'email',
+            'phone',
+            'message',
+            'created_at',
+        ]
+        read_only_fields = ['id', 'created_at']
+    
+    def create(self, validated_data):
+        # Handle duplicate email for same club - update instead of create
+        club = validated_data.get('club')
+        email = validated_data.get('email')
+        
+        signup, created = ClubSignup.objects.update_or_create(
+            club=club,
+            email=email,
+            defaults={
+                'student_name': validated_data.get('student_name'),
+                'phone': validated_data.get('phone', ''),
+                'message': validated_data.get('message', ''),
+            }
+        )
+        return signup

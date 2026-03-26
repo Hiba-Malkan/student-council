@@ -245,32 +245,58 @@
             const initial = firstName.charAt(0).toUpperCase();
             const roleName = userData.role_detail?.name || 'Member';
 
-            document.getElementById('sidebarUserName').textContent = firstName;
-            document.getElementById('sidebarUserRole').textContent = roleName;
-            
+            const sidebarUserName = document.getElementById('sidebarUserName');
+            const sidebarUserRole = document.getElementById('sidebarUserRole');
             const sidebarAvatar = document.getElementById('sidebarAvatar');
-            if (userData.avatar) {
-                sidebarAvatar.innerHTML = `<img src="${userData.avatar}" alt="${firstName}" class="w-full h-full rounded-full object-cover">`;
-            } else {
-                sidebarAvatar.textContent = initial;
+            const adminPanelLink = document.getElementById('adminPanelLink');
+            const dashButton = document.getElementById('dashButton');
+            const dutyButton = document.getElementById('dutyButton');
+            const disciplineButton = document.getElementById('disciplineButton');
+            const meetingButton = document.getElementById('meetingButton');
+
+            if (sidebarUserName) sidebarUserName.textContent = firstName;
+            if (sidebarUserRole) sidebarUserRole.textContent = roleName;
+            
+            if (sidebarAvatar) {
+                if (userData.avatar) {
+                    sidebarAvatar.innerHTML = `<img src="${userData.avatar}" alt="${firstName}" class="w-full h-full rounded-full object-cover">`;
+                } else {
+                    sidebarAvatar.textContent = initial;
+                }
             }
 
             if (userData.is_staff || userData.is_superuser) {
-                document.getElementById('adminPanelLink').style.display = 'flex';
+                if (adminPanelLink) {
+                    adminPanelLink.style.display = 'flex';
+                }
             }
 
             // Hide dashboard and other features for normal students
             if (userData.role_detail?.is_normal_student) {
-                document.getElementById('dashButton').style.display = 'none';
-                document.getElementById('dutyButton').style.display = 'none';
-                document.getElementById('disciplineButton').style.display = 'none';
-                document.getElementById('meetingButton').style.display = 'none';
+                if (dashButton) dashButton.style.display = 'none';
+                if (dutyButton) dutyButton.style.display = 'none';
+                if (disciplineButton) disciplineButton.style.display = 'none';
+                if (meetingButton) meetingButton.style.display = 'none';
                 // Students can only see: announcements, clubs, competitions, about
+            }
+
+            // Show signup management pages only to users with appropriate permissions
+            const canManageClubs = userData.is_superuser || userData.is_staff || userData.role_detail?.can_add_clubs || userData.role_detail?.can_manage_clubs;
+            const canManageCompetitions = userData.is_superuser || userData.is_staff || userData.role_detail?.can_manage_competitions;
+            
+            if (canManageClubs) {
+                const clubSignupsButton = document.getElementById('clubSignupsButton');
+                if (clubSignupsButton) clubSignupsButton.classList.remove('hidden');
+            }
+            if (canManageCompetitions) {
+                const competitionSignupsButton = document.getElementById('competitionSignupsButton');
+                if (competitionSignupsButton) competitionSignupsButton.classList.remove('hidden');
             }
         }
 
         loadUserProfile();
-        checkPermissions();
+        // Small delay to ensure async loadUserProfile completes
+        setTimeout(() => checkPermissions(), 100);
     </script>
     {% block extra_js %}{% endblock %}
 </body>

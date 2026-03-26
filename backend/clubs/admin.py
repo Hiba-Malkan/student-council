@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Club
+from .models import Club, ClubSignup
 
 
 @admin.register(Club)
@@ -74,3 +74,37 @@ class ClubAdmin(admin.ModelAdmin):
             )
         return 'No logo uploaded'
     logo_preview_large.short_description = 'Logo Preview'
+
+
+@admin.register(ClubSignup)
+class ClubSignupAdmin(admin.ModelAdmin):
+    list_display = [
+        'student_name',
+        'email',
+        'club',
+        'phone',
+        'created_at',
+    ]
+    list_filter = ['club', 'created_at']
+    search_fields = ['student_name', 'email', 'phone']
+    readonly_fields = ['created_at']
+    
+    fieldsets = (
+        ('Personal Information', {
+            'fields': ('student_name', 'email', 'phone')
+        }),
+        ('Club Information', {
+            'fields': ('club',)
+        }),
+        ('Message', {
+            'fields': ('message',)
+        }),
+        ('Metadata', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        """Prevent manual creation - signups come from public form only"""
+        return False

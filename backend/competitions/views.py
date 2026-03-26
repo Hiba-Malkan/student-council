@@ -2,15 +2,16 @@ from rest_framework import viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework import status
 
-from .models import Competition
+from .models import Competition, CompetitionSignup
 from .serializers import (
     CompetitionSerializer,
-    CompetitionListSerializer
+    CompetitionListSerializer,
+    CompetitionSignupSerializer
 )
-from .permissions import CanManageCompetitions
+from .permissions import CanManageCompetitions, CanViewCompetitionSignups
 
 
 class CompetitionViewSet(viewsets.ModelViewSet):
@@ -81,7 +82,7 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         
         POST /api/competitions/{id}/signup/
         Body: {
-            "participant_name": "string",
+            "student_name": "string",
             "email": "string",
             "phone": "string (optional)",
             "team_name": "string (optional)",
@@ -93,12 +94,12 @@ class CompetitionViewSet(viewsets.ModelViewSet):
         competition = self.get_object()
         
         # Validate required fields
-        participant_name = request.data.get('participant_name', '').strip()
+        student_name = request.data.get('student_name', '').strip()
         email = request.data.get('email', '').strip()
         
-        if not participant_name:
+        if not student_name:
             return Response(
-                {'error': 'Participant name is required'},
+                {'error': 'Student name is required'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
@@ -122,9 +123,81 @@ class CompetitionViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        return Response({
-            'success': True,
-            'message': f'Thank you {participant_name}! Your signup for {competition.name} has been received. You will be contacted soon with further details.',
-            'competition_id': competition.id,
-            'competition_name': competition.name
-        }, status=status.HTTP_201_CREATED)
+        # Save signup to database
+        try:
+            signup, created = CompetitionSignup.objects.update_or_create(
+                competition=competition,
+                email=email,
+                defaults={
+                    'student_name': student_name,
+                    'phone': request.data.get('phone', ''),
+                    'team_name': request.data.get('team_name', ''),
+                    'message': request.data.get('message', ''),
+                }
+            )
+            
+            action_msg = 'registered' if created else 'updated your registration for'
+            return Response({
+                'success': True,
+                'message': f'Thank you {student_name}! You have {action_msg} {competition.name}. You will be contacted soon with further details.',
+                'competition_id': competition.id,
+                'competition_name': competition.name
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to process signup: {str(e)}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
+    @action(detail=True, methods=['get'], permission_classes=[CanViewCompetitionSignups])
+    def signups(self, request, pk=None):
+        """
+        Get all signups for a competition.
+        
+        GET /api/competitions/{id}/signups/
+        Requires: CanViewCompetitionSignups permission (can_manage_competitions role)
+        """
+        competition = self.get_object()
+        signups = competition.signups.all()
+        serializer = CompetitionSignupSerializer(signups, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['delete'], permission_classes=[CanViewCompetitionSignups])
+    def delete_signup(self, request, pk=None):
+        """
+        Delete a signup from a competition.
+        
+        DELETE /api/competitions/{id}/delete_signup/?signup_id={signup_id}
+        Requires: CanViewCompetitionSignups permission (can_manage_competitions role)
+        """
+        competition = self.get_object()
+        signup_id = request.query_params.get('signup_id')
+        
+        if not signup_id:
+            return Response(
+                {'error': 'signup_id is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            signup = CompetitionSignup.objects.get(id=signup_id, competition=competition)
+            student_name = signup.student_name
+            signup.delete()
+            return Response({
+                'success': True,
+                'message': f'Signup from {student_name} has been deleted.'
+            })
+        except CompetitionSignup.DoesNotExist:
+            return Response(
+                {'error': 'Signup not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+
+# HTML Template Views
+from django.views.generic import TemplateView
+
+
+class CompetitionSignupsView(TemplateView):
+    """Display competition signups management page"""
+    template_name = 'competitions/competition-signups.html'

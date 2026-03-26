@@ -6,13 +6,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.views.generic import TemplateView
 from django.db.models import Sum
 
-from .models import Club
+from .models import Club, ClubSignup
 from .serializers import (
     ClubListSerializer,
     ClubDetailSerializer,
-    ClubCreateUpdateSerializer
+    ClubCreateUpdateSerializer,
+    ClubSignupSerializer
 )
-from .permissions import CanManageClubs
+from .permissions import CanManageClubs, CanViewClubSignups
 
 
 class ClubViewSet(viewsets.ModelViewSet):
@@ -144,14 +145,74 @@ class ClubViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Create a pending signup record (you can store this in a separate model)
-        # For now, we'll return a success message
-        return Response({
-            'success': True,
-            'message': f'Thank you {student_name}! Your request to join {club.name} has been received. You will be contacted soon.',
-            'club_id': club.id,
-            'club_name': club.name
-        }, status=status.HTTP_201_CREATED)
+        # Save signup to database
+        try:
+            signup, created = ClubSignup.objects.update_or_create(
+                club=club,
+                email=email,
+                defaults={
+                    'student_name': student_name,
+                    'phone': request.data.get('phone', ''),
+                    'message': request.data.get('message', ''),
+                }
+            )
+            
+            action_msg = 'registered' if created else 'updated your registration for'
+            return Response({
+                'success': True,
+                'message': f'Thank you {student_name}! You have {action_msg} {club.name}. You will be contacted soon.',
+                'club_id': club.id,
+                'club_name': club.name
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to process signup: {str(e)}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+    
+    @action(detail=True, methods=['get'], permission_classes=[CanViewClubSignups])
+    def signups(self, request, pk=None):
+        """
+        Get all signups for a club.
+        
+        GET /api/clubs/{id}/signups/
+        Requires: CanViewClubSignups permission (can_add_clubs role)
+        """
+        club = self.get_object()
+        signups = club.signups.all()
+        serializer = ClubSignupSerializer(signups, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['delete'], permission_classes=[CanViewClubSignups])
+    def delete_signup(self, request, pk=None):
+        """
+        Delete a signup from a club.
+        
+        DELETE /api/clubs/{id}/delete_signup/?signup_id={signup_id}
+        Requires: CanViewClubSignups permission (can_add_clubs role)
+        """
+        club = self.get_object()
+        signup_id = request.query_params.get('signup_id')
+        
+        if not signup_id:
+            return Response(
+                {'error': 'signup_id is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            signup = ClubSignup.objects.get(id=signup_id, club=club)
+            student_name = signup.student_name
+            signup.delete()
+            return Response({
+                'success': True,
+                'message': f'Signup from {student_name} has been deleted.'
+            })
+        except ClubSignup.DoesNotExist:
+            return Response(
+                {'error': 'Signup not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 
 # HTML Template Views
@@ -170,3 +231,8 @@ class ClubFormView(TemplateView):
         # For edit mode, pass club_id to template
         context['club_id'] = self.kwargs.get('pk')
         return context
+
+
+class ClubSignupsView(TemplateView):
+    """Display club signups management page"""
+    template_name = 'clubs/club-signups.html'

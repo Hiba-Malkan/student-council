@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Competition
+from .models import Competition, CompetitionSignup
 
 
 @admin.register(Competition)
@@ -32,3 +32,38 @@ class CompetitionAdmin(admin.ModelAdmin):
         if not change:  # If creating new object
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
+
+
+@admin.register(CompetitionSignup)
+class CompetitionSignupAdmin(admin.ModelAdmin):
+    list_display = [
+        'student_name',
+        'email',
+        'competition',
+        'phone',
+        'team_name',
+        'created_at',
+    ]
+    list_filter = ['competition', 'created_at']
+    search_fields = ['student_name', 'email', 'phone', 'team_name']
+    readonly_fields = ['created_at']
+    
+    fieldsets = (
+        ('Personal Information', {
+            'fields': ('student_name', 'email', 'phone')
+        }),
+        ('Competition Information', {
+            'fields': ('competition', 'team_name')
+        }),
+        ('Message', {
+            'fields': ('message',)
+        }),
+        ('Metadata', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def has_add_permission(self, request):
+        """Prevent manual creation - signups come from public form only"""
+        return False

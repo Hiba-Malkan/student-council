@@ -48,3 +48,21 @@ class Competition(models.Model):
         if not self.participants:
             return []
         return [p.strip() for p in self.participants.split(',') if p.strip()]
+
+
+class CompetitionSignup(models.Model):
+    """Track public signups for competitions"""
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name='signups')
+    student_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, blank=True)
+    team_name = models.CharField(max_length=200, blank=True)
+    message = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ('competition', 'email')  # Prevent duplicate signups from same email
+    
+    def __str__(self):
+        return f"{self.student_name} - {self.competition.name}"

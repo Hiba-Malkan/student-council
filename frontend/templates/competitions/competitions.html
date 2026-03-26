@@ -12,6 +12,14 @@
 {% block page_subtitle %}View and manage all competitions and events.{% endblock %}
 
 {% block content %}
+<!-- View Signups Button -->
+<div id="competitionSignupsButtonContainer" class="mb-6 hidden">
+    <a href="/competitions/signups/" class="inline-flex items-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+        <span class="material-icons-round text-sm mr-2">assessment</span>
+        View Competition Signups
+    </a>
+</div>
+
 <!-- Add New Competition Button -->
 <section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div class="flex items-center gap-3">
@@ -66,11 +74,63 @@
                 <button onclick="closeModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                     Close
                 </button>
-                <button id="registerBtn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors">
-                    Register Now
+                <button id="registerBtn" onclick="openSignupForm()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors">
+                    Sign Up Now
                 </button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Competition Actions Dropdown Template -->
+<template id="compDropdownTemplate">
+    <div class="comp-dropdown-menu hidden absolute right-0 top-0 mt-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+        <a href="#" class="edit-option w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors">
+            <span class="material-icons-round text-lg">edit</span> Edit
+        </a>
+        <button class="delete-option w-full text-left px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center gap-3 transition-colors">
+            <span class="material-icons-round text-lg">delete</span> Delete
+        </button>
+    </div>
+</template>
+
+<!-- Competition Signup Modal -->
+<div id="signupModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white dark:bg-card-dark rounded-2xl p-6 max-w-md w-full shadow-lg">
+        <h3 class="text-xl font-bold text-white mb-4" id="signupCompName">Sign Up for Competition</h3>
+        <form id="signupForm" class="space-y-4">
+            <input type="hidden" id="signupCompId">
+            <div>
+                <label for="signupStudentName" class="text-sm font-medium text-white">Your Name *</label>
+                <input type="text" id="signupStudentName" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark" required>
+            </div>
+            <div>
+                <label for="signupEmail" class="text-sm font-medium text-white">Email *</label>
+                <input type="email" id="signupEmail" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark" required>
+            </div>
+            <div>
+                <label for="signupPhone" class="text-sm font-medium text-white">Phone (optional)</label>
+                <input type="text" id="signupPhone" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark">
+            </div>
+            <div>
+                <label for="signupTeamName" class="text-sm font-medium text-white">Team Name (optional)</label>
+                <input type="text" id="signupTeamName" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark">
+            </div>
+            <div>
+                <label for="signupMessage" class="text-sm font-medium text-white">Message (optional)</label>
+                <textarea id="signupMessage" rows="3" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark"></textarea>
+            </div>
+            <div class="flex flex-col gap-2">
+                <button type="submit" class="px-4 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+                    Sign Up
+                </button>
+                <div id="signupSuccess" class="text-green-500 text-sm font-medium hidden"></div>
+                <div id="signupError" class="text-red-500 text-sm font-medium hidden"></div>
+            </div>
+            <button type="button" onclick="closeSignupForm()" class="w-full px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                Cancel
+            </button>
+        </form>
     </div>
 </div>
 {% endblock %}
@@ -149,6 +209,11 @@ function renderCompetitions(competitions) {
                                 </div>
                                 ${comp.description ? `<p class="text-sm text-white dark:text-lbg-sub-dark leading-relaxed line-clamp-2">${comp.description}</p>` : ''}
                             </div>
+                            ${userData && (userData.role_detail?.can_manage_competitions || userData.is_staff || userData.is_superuser) ? `
+                            <button class="p-2 comp-more-btn relative" data-comp-id="${comp.id}" onclick="event.stopPropagation(); showCompDropdown(this, ${comp.id})">
+                                <span class="material-icons-round text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">more_vert</span>
+                            </button>
+                            ` : ''}
                         </div>
                     
                     <!-- Competition Details Grid -->
@@ -228,9 +293,17 @@ function renderCompetitions(competitions) {
                                 </a>
                             ` : ''}
                         </div>
-                        <button onclick="viewCompetition(${comp.id})" class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-hover transition-colors">
-                            View Info
-                        </button>
+                        <div class="flex gap-2">
+                            <button onclick="viewCompetition(${comp.id})" class="inline-flex items-center justify-center rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors">
+                                View Info
+                            </button>
+                            ${!userData.role_detail?.can_manage_competitions && !userData.is_staff && !userData.is_superuser ? `
+                            <button onclick="openDirectSignupForm(${comp.id}, this.dataset.compName)" data-comp-name="${escapeHtml(comp.name)}" class="inline-flex items-center justify-center rounded-lg bg-green-600 hover:bg-green-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors">
+                                <span class="material-icons-round text-base mr-2">person_add</span>
+                                Sign Up
+                            </button>
+                            ` : ''}
+                        </div>
                     </div>
                     </div>
                 </div>
@@ -258,6 +331,21 @@ async function viewCompetition(id) {
         console.error('Error loading competition:', error);
         showError('Failed to load competition details');
     }
+}
+
+// Direct signup from competition card (without modal)
+function openDirectSignupForm(id, compName) {
+    document.getElementById('signupCompId').value = id;
+    document.getElementById('signupCompName').textContent = `Sign Up for ${compName}`;
+    document.getElementById('signupModal').classList.remove('hidden');
+    currentCompetitionId = id;
+}
+
+// Escape HTML helper
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // Display competition in modal
@@ -356,11 +444,38 @@ function displayCompetitionModal(comp) {
         </div>
     `;
     
-    // Hide the register button since we're not using registration anymore
+    // Hide the Sign Up button for managers
     const registerBtn = document.getElementById('registerBtn');
-    registerBtn.style.display = 'none';
+    const isManager = userData.role_detail?.can_manage_competitions || userData.is_staff || userData.is_superuser;
+    if (isManager) {
+        registerBtn.style.display = 'none';
+    } else {
+        registerBtn.style.display = 'block';
+    }
     
     document.getElementById('competitionModal').classList.remove('hidden');
+}
+
+// Open signup form
+function openSignupForm() {
+    if (!currentCompetitionId) return;
+    
+    const comp = allCompetitions.find(c => c.id === currentCompetitionId);
+    if (!comp) return;
+    
+    document.getElementById('signupCompId').value = comp.id;
+    document.getElementById('signupCompName').textContent = `Sign Up for ${comp.name}`;
+    document.getElementById('competitionModal').classList.add('hidden');
+    document.getElementById('signupModal').classList.remove('hidden');
+}
+
+// Close signup form
+function closeSignupForm() {
+    document.getElementById('signupModal').classList.add('hidden');
+    document.getElementById('signupForm').reset();
+    document.getElementById('signupSuccess').classList.add('hidden');
+    document.getElementById('signupError').classList.add('hidden');
+    currentCompetitionId = null;
 }
 
 // Close modal
@@ -395,13 +510,139 @@ document.getElementById('searchCompetitions').addEventListener('input', (e) => {
 async function checkManagePermission() {
     if (userData.is_staff || userData.is_superuser) {
         document.getElementById('addCompetitionSection').style.display = 'block';
+        document.getElementById('competitionSignupsButtonContainer').classList.remove('hidden');
         return;
     }
     
     if (userData.role_detail && userData.role_detail.can_manage_competitions) {
         document.getElementById('addCompetitionSection').style.display = 'block';
+        document.getElementById('competitionSignupsButtonContainer').classList.remove('hidden');
     }
 }
+
+// Handle signup form submission
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const compId = document.getElementById('signupCompId').value;
+    const studentName = document.getElementById('signupStudentName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const phone = document.getElementById('signupPhone').value.trim();
+    const teamName = document.getElementById('signupTeamName').value.trim();
+    const message = document.getElementById('signupMessage').value.trim();
+    
+    const successDiv = document.getElementById('signupSuccess');
+    const errorDiv = document.getElementById('signupError');
+    successDiv.classList.add('hidden');
+    errorDiv.classList.add('hidden');
+    
+    if (!studentName || !email) {
+        errorDiv.textContent = 'Please fill in all required fields';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/competitions/${compId}/signup/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                student_name: studentName,
+                email: email,
+                phone: phone,
+                team_name: teamName,
+                message: message
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            successDiv.textContent = data.message || 'Successfully signed up!';
+            successDiv.classList.remove('hidden');
+            document.getElementById('signupForm').reset();
+            setTimeout(() => closeSignupForm(), 2000);
+        } else {
+            errorDiv.textContent = data.error || 'Failed to sign up';
+            errorDiv.classList.remove('hidden');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        errorDiv.textContent = 'An error occurred. Please try again.';
+        errorDiv.classList.remove('hidden');
+    }
+});
+
+
+// Show competition dropdown menu
+function showCompDropdown(button, compId) {
+    // Remove any existing dropdowns
+    document.querySelectorAll('.comp-dropdown-menu').forEach(m => m.remove());
+    
+    // Get the competition
+    const comp = allCompetitions.find(c => c.id === compId);
+    if (!comp) return;
+    
+    // Clone the template
+    const template = document.getElementById('compDropdownTemplate').content.cloneNode(true);
+    const menu = template.querySelector('.comp-dropdown-menu');
+    
+    // Set up edit option
+    const editOption = template.querySelector('.edit-option');
+    if (editOption) {
+        editOption.href = `/competitions/edit/${compId}/`;
+    }
+    
+    // Set up delete option
+    const deleteOption = template.querySelector('.delete-option');
+    if (deleteOption) {
+        deleteOption.onclick = (e) => {
+            e.preventDefault();
+            if (confirm(`Are you sure you want to delete "${comp.name}"?`)) {
+                deleteCompetition(compId);
+            }
+        };
+    }
+    
+    // Position and insert the menu
+    button.parentElement.appendChild(menu);
+    menu.classList.remove('hidden');
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function closeDropdown(e) {
+        if (!button.contains(e.target) && !menu.contains(e.target)) {
+            menu.remove();
+            document.removeEventListener('click', closeDropdown);
+        }
+    });
+}
+
+// Delete competition
+async function deleteCompetition(compId) {
+    try {
+        const token = localStorage.getItem('access_token');
+        const response = await fetch(`/api/competitions/${compId}/`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            alert('Competition deleted successfully');
+            loadCompetitions();
+        } else {
+            alert('Failed to delete competition');
+        }
+    } catch (error) {
+        console.error('Error deleting competition:', error);
+        alert('An error occurred while deleting');
+    }
+}
+
 
 // Initialize page
 async function initCompetitions() {

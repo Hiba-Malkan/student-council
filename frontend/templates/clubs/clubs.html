@@ -12,6 +12,14 @@
 {% block page_subtitle %}Manage and view all registered student organizations.{% endblock %}
 
 {% block content %}
+<!-- View Signups Button -->
+<div id="clubSignupsButtonContainer" class="mb-6 hidden">
+    <a href="/clubs/signups/" class="inline-flex items-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+        <span class="material-icons-round text-sm mr-2">assessment</span>
+        View Club Signups
+    </a>
+</div>
+
 <!-- Search and Filter -->
 <section class="mb-6">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
@@ -69,6 +77,18 @@
     </div>
 </section>
 
+<!-- Club Actions Dropdown Template -->
+<template id="clubDropdownTemplate">
+    <div class="club-dropdown-menu hidden absolute right-0 top-0 mt-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+        <a href="#" class="edit-option w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors">
+            <span class="material-icons-round text-lg">edit</span> Edit
+        </a>
+        <button class="delete-option w-full text-left px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center gap-3 transition-colors">
+            <span class="material-icons-round text-lg">delete</span> Delete
+        </button>
+    </div>
+</template>
+
 <!-- Join Club Modal -->
 <div id="joinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="display: none;">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 max-w-md w-full shadow-lg">
@@ -119,8 +139,10 @@ let hasPrev = false;
 // Check if user can manage clubs
 async function checkManagePermission() {
     await loadUserProfile();
-    if (userData.is_superuser || userData.role_detail?.can_add_clubs) {
+    const canManage = userData.is_superuser || userData.role_detail?.can_add_clubs;
+    if (canManage) {
         document.getElementById('createClubSection').style.display = 'block';
+        document.getElementById('clubSignupsButtonContainer').classList.remove('hidden');
     }
 }
 
@@ -224,16 +246,15 @@ function displayClubs(clubs) {
                             </div>
                             <div class="flex gap-2">
                                 ${canManage ? `
-                                    <a href="/clubs/edit/${club.id}/" class="text-white hover:bg-primary/10 p-2 rounded-lg transition-colors">
-                                        <span class="material-icons-round">edit</span>
-                                    </a>
-                                    <button onclick="deleteClub(${club.id})" class="text-white hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-colors">
-                                        <span class="material-icons-round">delete</span>
+                                    <button class="p-2 club-more-btn relative" data-club-id="${club.id}" onclick="event.stopPropagation(); showClubDropdown(this, ${club.id})">
+                                        <span class="material-icons-round text-white hover:bg-white/10 p-1 rounded-lg transition-colors">more_vert</span>
                                     </button>
                                 ` : ''}
+                                ${!canManage ? `
                                 <button onclick="openJoinModal(${club.id}, '${escapeHtml(club.name)}')" class="text-white hover:bg-blue-600/10 p-2 rounded-lg transition-colors ml-auto">
                                     <span class="material-icons-round">person_add</span>
                                 </button>
+                                ` : ''}
                             </div>
                         </div>
                         
@@ -311,6 +332,41 @@ async function deleteClub(clubId) {
         console.error('Error deleting club:', error);
         showError('An error occurred while deleting the club');
     }
+}
+
+// Show club dropdown menu
+function showClubDropdown(button, clubId) {
+    // Remove any existing dropdowns
+    document.querySelectorAll('.club-dropdown-menu').forEach(m => m.remove());
+    
+    // Clone template
+    const template = document.getElementById('clubDropdownTemplate').content.cloneNode(true);
+    const menu = template.querySelector('.club-dropdown-menu');
+    
+    const editBtn = menu.querySelector('.edit-option');
+    const deleteBtn = menu.querySelector('.delete-option');
+    
+    // Set edit link
+    editBtn.href = `/clubs/edit/${clubId}/`;
+    
+    // Delete handler
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteClub(clubId);
+        menu.remove();
+    });
+    
+    // Position and append
+    button.parentElement.appendChild(menu);
+    menu.classList.remove('hidden');
+    
+    // Close on outside click
+    document.addEventListener('click', function closeDropdown(e) {
+        if (!menu.contains(e.target) && !button.contains(e.target)) {
+            menu.remove();
+            document.removeEventListener('click', closeDropdown);
+        }
+    });
 }
 
 // Join Club Modal Functions

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Competition
+from .models import Competition, CompetitionSignup
 
 
 class CompetitionSerializer(serializers.ModelSerializer):
@@ -49,3 +49,38 @@ class CompetitionListSerializer(serializers.ModelSerializer):
             'additional_info', 'event_date', 'event_time', 'location', 
             'team_size', 'description', 'is_active'
         ]
+
+
+class CompetitionSignupSerializer(serializers.ModelSerializer):
+    """Serializer for competition signups"""
+    
+    class Meta:
+        model = CompetitionSignup
+        fields = [
+            'id',
+            'competition',
+            'student_name',
+            'email',
+            'phone',
+            'team_name',
+            'message',
+            'created_at',
+        ]
+        read_only_fields = ['id', 'created_at']
+    
+    def create(self, validated_data):
+        # Handle duplicate email for same competition - update instead of create
+        competition = validated_data.get('competition')
+        email = validated_data.get('email')
+        
+        signup, created = CompetitionSignup.objects.update_or_create(
+            competition=competition,
+            email=email,
+            defaults={
+                'student_name': validated_data.get('student_name'),
+                'phone': validated_data.get('phone', ''),
+                'team_name': validated_data.get('team_name', ''),
+                'message': validated_data.get('message', ''),
+            }
+        )
+        return signup
