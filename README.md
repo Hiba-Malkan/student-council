@@ -299,8 +299,6 @@ This project uses a source-available license. See `docs/LICENSE.md` for full ter
 
 ## Support
 
-## Support
-
 Comprehensive documentation lives in the `docs/` folder and should be reviewed carefully before requesting assistance. Most setup, usage, and troubleshooting issues are resolved at this step. If followed properly, you will not need to escalate 99% of the time (¬_¬).
 
 For bug reports, open an issue on GitHub. For questions, emergencies, or other inquiries, email hiba.malkan@gmail.com. Support is provided on a selective, best-effort basis. Clear, detailed, and well-prepared requests receive priority. Extra effort or creative persuasion is always appreciated <3.
