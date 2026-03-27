@@ -13,7 +13,7 @@
 <!-- Competition Selection -->
 <section class="mb-8">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
-        <label for="competitionSelect" class="block text-sm font-semibold text-lbg-main-light dark:text-lbg-main-dark mb-4">Select a Competition</label>
+        <label for="competitionSelect" class="block text-sm font-semibold text-white dark:text-lbg-main-dark mb-4">Select a Competition</label>
         <select id="competitionSelect" class="w-full px-4 py-3 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-lbg-main-light dark:text-lbg-main-dark focus:ring-2 focus:ring-primary focus:border-transparent">
             <option value="">-- Choose a competition --</option>
         </select>
@@ -39,8 +39,8 @@
                 </thead>
                 <tbody id="signupsTableBody" class="divide-y divide-gray-100 dark:divide-gray-800 bg-card-light dark:bg-card-dark">
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-lbg-main-light dark:text-lbg-main-dark">
-                            <span class="material-icons-round text-gray-400 text-4xl mb-2 block">info</span>
+                        <td colspan="7" class="px-6 py-12 text-center text-white dark:text-lbg-main-dark">
+                            <span class="material-icons-round text-white text-4xl mb-2 block">info</span>
                             Select a competition to view signups
                         </td>
                     </tr>
@@ -76,20 +76,20 @@
 </section>
 
 <!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-xl max-w-sm mx-4 border border-gray-200 dark:border-gray-700">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-bold text-lbg-main-light dark:text-lbg-main-dark">Remove Signup</h3>
+<div id="deleteModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
+    <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-lg border border-gray-200 dark:border-gray-700">
+        <div style="padding: 32px 40px; border-bottom: 1px solid #e5e7eb;" class="dark:border-gray-700">
+            <h3 style="font-size: 1.5rem; font-weight: 700;" class="text-gray-900 dark:text-white">Remove Signup</h3>
         </div>
-        <div class="px-6 py-4">
-            <p class="text-lbg-main-light dark:text-lbg-main-dark">Remove <span id="deleteSignupName" class="font-semibold text-red-500"></span> from this competition?</p>
-            <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-2">This cannot be undone.</p>
+        <div style="padding: 32px 40px;">
+            <p style="font-size: 1.1rem;" class="text-gray-900 dark:text-white">Remove <span id="deleteSignupName" style="font-weight: 700; color: #ef4444;"></span> from this competition?</p>
+            <p style="margin-top: 12px;" class="text-gray-600 dark:text-gray-400">This action cannot be undone.</p>
         </div>
-        <div class="px-6 py-4 bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
-            <button id="deleteCancelBtn" class="px-4 py-2 bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-600 transition text-sm font-medium">
+        <div style="padding: 24px 40px; display: flex; justify-content: center; gap: 16px;">
+            <button id="deleteCancelBtn" style="width: 140px; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 1rem; border: none; cursor: pointer;" class="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
                 Cancel
             </button>
-            <button id="deleteConfirmBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition text-sm font-medium">
+            <button id="deleteConfirmBtn" style="width: 140px; padding: 12px; background: #dc2626; color: white; border-radius: 12px; font-weight: 600; font-size: 1rem; border: none; cursor: pointer;" class="hover:bg-red-700 transition">
                 Delete
             </button>
         </div>
@@ -97,16 +97,16 @@
 </div>
 
 <!-- Message Viewer Modal -->
-<div id="messageModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-xl w-full max-w-2xl mx-4 border border-gray-200 dark:border-gray-700 flex flex-col" style="height: 420px;">
+<div id="messageModal" class="hidden fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-xl w-full max-w-2xl mx-4 border border-gray-200 dark:border-gray-700 flex flex-col" style="height: 250px;">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-            <h3 class="text-lg font-bold text-lbg-main-light dark:text-lbg-main-dark">Message</h3>
+            <h3 class="text-lg font-bold text-white dark:text-lbg-main-dark">Message</h3>
             <button id="messageCloseBtn" class="text-white hover:bg-green-600 dark:hover:bg-green-700 p-1 rounded transition">
                 <span class="material-icons-round">close</span>
             </button>
         </div>
-        <div class="px-6 py-4 overflow-y-auto flex-1">
-            <p id="messageContent" class="text-lbg-main-light dark:text-lbg-main-dark whitespace-pre-wrap break-words leading-relaxed"></p>
+        <div class="px-4 py-4 overflow-y-auto flex-1">
+            <p id="messageContent" class="text-white dark:text-lbg-main-dark whitespace-pre-wrap break-words leading-relaxed"></p>
         </div>
     </div>
 </div>
