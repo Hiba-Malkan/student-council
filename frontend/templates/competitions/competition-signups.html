@@ -25,21 +25,21 @@
 <section>
     <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+            <table class="w-full bg-card-light dark:bg-card-dark">
+                <thead class="bg-green-600 dark:bg-green-700 border-b border-green-700 dark:border-green-800">
                     <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-lbg-main-light dark:text-lbg-main-dark uppercase tracking-wider">Name</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-lbg-main-light dark:text-lbg-main-dark uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-lbg-main-light dark:text-lbg-main-dark uppercase tracking-wider">Phone</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-lbg-main-light dark:text-lbg-main-dark uppercase tracking-wider">Team Name</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-lbg-main-light dark:text-lbg-main-dark uppercase tracking-wider">Message</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-lbg-main-light dark:text-lbg-main-dark uppercase tracking-wider">Signed Up</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-lbg-main-light dark:text-lbg-main-dark uppercase tracking-wider">Action</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Phone</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Team Name</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Message</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Signed Up</th>
+                        <th class="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">Action</th>
                     </tr>
                 </thead>
-                <tbody id="signupsTableBody" class="divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody id="signupsTableBody" class="divide-y divide-gray-100 dark:divide-gray-800 bg-card-light dark:bg-card-dark">
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-lbg-sub-light dark:text-lbg-sub-dark">
+                        <td colspan="7" class="px-6 py-12 text-center text-lbg-main-light dark:text-lbg-main-dark">
                             <span class="material-icons-round text-gray-400 text-4xl mb-2 block">info</span>
                             Select a competition to view signups
                         </td>
@@ -98,14 +98,14 @@
 
 <!-- Message Viewer Modal -->
 <div id="messageModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-xl max-w-md mx-4 border border-gray-200 dark:border-gray-700">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-xl w-full max-w-2xl mx-4 border border-gray-200 dark:border-gray-700 flex flex-col" style="height: 420px;">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <h3 class="text-lg font-bold text-lbg-main-light dark:text-lbg-main-dark">Message</h3>
-            <button id="messageCloseBtn" class="text-lbg-sub-light dark:text-lbg-sub-dark hover:text-lbg-main-light dark:hover:text-white">
+            <button id="messageCloseBtn" class="text-white hover:bg-green-600 dark:hover:bg-green-700 p-1 rounded transition">
                 <span class="material-icons-round">close</span>
             </button>
         </div>
-        <div class="px-6 py-4">
+        <div class="px-6 py-4 overflow-y-auto flex-1">
             <p id="messageContent" class="text-lbg-main-light dark:text-lbg-main-dark whitespace-pre-wrap break-words leading-relaxed"></p>
         </div>
     </div>
@@ -158,8 +158,8 @@ async function loadSignups(competitionId) {
     if (!competitionId) {
         document.getElementById('signupsTableBody').innerHTML = `
             <tr>
-                <td colspan="7" class="px-6 py-12 text-center text-lbg-sub-light dark:text-lbg-sub-dark">
-                    <span class="material-icons-round text-gray-400 text-4xl mb-2 block">info</span>
+                <td colspan="7" class="px-6 py-12 text-center text-white">
+                    <span class="material-icons-round text-white text-4xl mb-2 block">info</span>
                     Select a competition to view signups
                 </td>
             </tr>
@@ -220,18 +220,18 @@ function displaySignupsPage() {
     const pageSignups = allSignups.slice(start, end);
     
     tbody.innerHTML = pageSignups.map(s => `
-        <tr class="hover:bg-gray-100 dark:hover:bg-gray-700/50 transition">
-            <td class="px-6 py-4 font-medium text-lbg-main-light dark:text-lbg-main-dark">${escapeHtml(s.student_name)}</td>
-            <td class="px-6 py-4 text-primary hover:underline"><a href="mailto:${escapeHtml(s.email)}">${escapeHtml(s.email)}</a></td>
-            <td class="px-6 py-4 text-lbg-main-light dark:text-lbg-main-dark">${s.phone || '-'}</td>
-            <td class="px-6 py-4 text-lbg-main-light dark:text-lbg-main-dark">${s.team_name || '-'}</td>
-            <td class="px-6 py-4 text-sm text-lbg-sub-light dark:text-lbg-sub-dark max-w-xs truncate cursor-pointer hover:text-primary" onclick="showMessage('${escapeHtml(s.message || 'No message provided')}')" title="Click to view full message">
+        <tr>
+            <td class="px-6 py-4 font-medium text-white">${escapeHtml(s.student_name)}</td>
+            <td class="px-6 py-4 text-white">${escapeHtml(s.email)}</td>
+            <td class="px-6 py-4 text-white">${s.phone || '-'}</td>
+            <td class="px-6 py-4 text-white">${s.team_name || '-'}</td>
+            <td class="px-6 py-4 text-sm text-white max-w-xs truncate cursor-pointer" onclick="showMessage('${escapeHtml(s.message || 'No message provided')}')" title="Click to view full message">
                 ${s.message ? escapeHtml(s.message) : '-'}
             </td>
-            <td class="px-6 py-4 text-sm text-lbg-sub-light dark:text-lbg-sub-dark">${new Date(s.created_at).toLocaleDateString()}</td>
+            <td class="px-6 py-4 text-sm text-white">${new Date(s.created_at).toLocaleDateString()}</td>
             <td class="px-6 py-4">
                 <button onclick="confirmDelete(${s.id}, '${escapeHtml(s.student_name)}', ${allSignups[0].competition || 'null'})" 
-                        class="text-red-500 hover:text-red-700 dark:hover:text-red-400 text-sm font-medium transition">
+                        class="text-red-300 hover:text-red-100 text-sm font-medium transition flex items-center gap-1">
                     <span class="material-icons-round text-base align-middle">delete</span>
                 </button>
             </td>

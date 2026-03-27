@@ -14,7 +14,7 @@
 {% block content %}
 <!-- View Signups Button -->
 <div id="clubSignupsButtonContainer" class="mb-6 hidden">
-    <a href="/clubs/signups/" class="inline-flex items-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+    <a href="/clubs/signups/" class="inline-flex items-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors" style="background-color: #256a3f !important; color: #ffffff !important;">
         <span class="material-icons-round text-sm mr-2">assessment</span>
         View Club Signups
     </a>
@@ -26,7 +26,7 @@
         <div class="flex flex-col md:flex-row gap-4">
             <div class="flex-1 relative mb-2">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span class="material-icons-round text-white text-lg">search</span>
+                    <span class="material-icons-round text-gray-400 dark:text-gray-300 text-lg">search</span>
                 </div>
                 <input type="text" id="searchClubs" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="Search by name, founders, or tutors...">
             </div>
@@ -36,7 +36,7 @@
                 <option value="under_review">Under Review</option>
                 <option value="inactive">Inactive</option>
             </select>
-            <section id="createClubSection">
+            <section id="createClubSection" style="display: none;">
                 <div class="flex justify-end">
                     <a href="/clubs/new/" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
                         <span class="material-icons-round text-lg">add</span>
@@ -79,7 +79,7 @@
 
 <!-- Club Actions Dropdown Template -->
 <template id="clubDropdownTemplate">
-    <div class="club-dropdown-menu hidden absolute right-0 top-0 mt-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+    <div class="club-dropdown-menu hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
         <a href="#" class="edit-option w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors">
             <span class="material-icons-round text-lg">edit</span> Edit
         </a>
@@ -90,13 +90,13 @@
 </template>
 
 <!-- Join Club Modal -->
-<div id="joinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="display: none;">
+<div id="joinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-green-600 bg-opacity-90" style="display: none;">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 max-w-md w-full shadow-lg">
         <h3 class="text-xl font-bold text-white mb-4" id="joinClubName">Join Club</h3>
         <form id="joinForm" class="space-y-4">
             <input type="hidden" id="joinClubId">
             <div>
-                <label for="joinStudentName" class="text-sm font-medium text-white">Your Name</label>
+                <label for="joinStudentName" class="text-sm font-medium text-white">Name</label>
                 <input type="text" id="joinStudentName" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark" required>
             </div>
             <div>
@@ -112,7 +112,7 @@
                 <textarea id="joinMessage" rows="3" class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark"></textarea>
             </div>
             <div class="flex flex-col gap-2">
-                <button type="submit" class="px-4 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+                <button type="submit" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
                     <span class="material-icons-round text-lg">send</span>
                     Send Join Request
                 </button>
@@ -121,9 +121,8 @@
             </div>
         </form>
         <div class="mt-4">
-            <button onclick="closeJoinModal()" class="w-full px-4 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg shadow-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                <span class="material-icons-round">close</span>
-                Close
+            <button onclick="closeJoinModal()" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg shadow-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                Cancel
             </button>
         </div>
     </div>
@@ -238,7 +237,7 @@ function displayClubs(clubs) {
                             <div>
                                 <div class="flex items-center gap-3 mb-2">
                                     <h3 class="text-xl font-bold text-white dark:text-white">${club.name}</h3>
-                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusColors[club.status]} uppercase tracking-wide">
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusColors[club.status]} uppercase tracking-wide transform -translate-y-0.5">
                                         ${statusText[club.status]}
                                     </span>
                                 </div>
@@ -251,8 +250,10 @@ function displayClubs(clubs) {
                                     </button>
                                 ` : ''}
                                 ${!canManage ? `
-                                <button onclick="openJoinModal(${club.id}, '${escapeHtml(club.name)}')" class="text-white hover:bg-blue-600/10 p-2 rounded-lg transition-colors ml-auto">
-                                    <span class="material-icons-round">person_add</span>
+                                <button onclick="openJoinModal(${club.id}, '${escapeHtml(club.name)}')" class="inline-flex items-center justify-center rounded-lg bg-primary
+                                 hover:bg-green-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors">
+                                    <span class="material-icons-round text-base mr-2">person_add</span>
+                                    Join Club
                                 </button>
                                 ` : ''}
                             </div>
@@ -280,7 +281,7 @@ function displayClubs(clubs) {
                                 <span class="material-icons-round text-white text-lg mt-0.5">badge</span>
                                 <div>
                                     <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Founders</p>
-                                    <p class="text-sm font-semibold text-white dark:text-white truncate">${club.founders_list.join(', ')}</p>
+                                    <p class="text-sm font-semibold text-white dark:text-white break-words">${club.founders_list.join(', ')}</p>
                                 </div>
                             </div>
                             
@@ -288,7 +289,7 @@ function displayClubs(clubs) {
                                 <span class="material-icons-round text-white text-lg mt-0.5">school</span>
                                 <div>
                                     <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Tutors</p>
-                                    <p class="text-sm font-semibold text-white dark:text-white truncate">${club.tutors_list.join(', ')}</p>
+                                    <p class="text-sm font-semibold text-white dark:text-white break-words">${club.tutors_list.join(', ')}</p>
                                 </div>
                             </div>
                         </div>
@@ -356,8 +357,8 @@ function showClubDropdown(button, clubId) {
         menu.remove();
     });
     
-    // Position and append
-    button.parentElement.appendChild(menu);
+    // Position and append to the button so absolute positioning (top-full/right-0) is relative to the button
+    button.appendChild(menu);
     menu.classList.remove('hidden');
     
     // Close on outside click

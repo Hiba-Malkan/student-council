@@ -123,12 +123,17 @@
                 </nav>
             </div>
             <div class="p-4 border-t border-gray-100 dark:border-gray-800">
-                <div class="flex items-center gap-3">
-                    <div class="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold" id="sidebarAvatar">U</div>
-                    <div>
-                        <p class="text-sm font-semibold text-white dark:text-white" id="sidebarUserName">Loading...</p>
-                        <p class="text-xs text-text-sub-light dark:text-text-sub-dark" id="sidebarUserRole">Member</p>
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 flex-1">
+                        <div class="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold" id="sidebarAvatar">U</div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-white dark:text-white truncate" id="sidebarUserName">Loading...</p>
+                            <p class="text-xs text-white dark:text-white" id="sidebarUserRole">Member</p>
+                        </div>
                     </div>
+                    <button id="logoutBtn" class="p-2 rounded-lg hover:bg-white/10 text-white transition-colors" title="Logout">
+                        <span class="material-icons-round text-lg">logout</span>
+                    </button>
                 </div>
             </div>
         </aside>
@@ -297,6 +302,33 @@
         loadUserProfile();
         // Small delay to ensure async loadUserProfile completes
         setTimeout(() => checkPermissions(), 100);
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            try {
+                const response = await fetch('/api/accounts/logout/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify({
+                        refresh_token: localStorage.getItem('refresh_token') || ''
+                    })
+                });
+
+                // Clear localStorage regardless of response
+                localStorage.clear();
+                
+                // Redirect to login page
+                window.location.href = '/';
+            } catch (error) {
+                console.error('Logout error:', error);
+                // Even if logout fails on server, clear client-side data
+                localStorage.clear();
+                window.location.href = '/';
+            }
+        });
     </script>
     {% block extra_js %}{% endblock %}
 </body>

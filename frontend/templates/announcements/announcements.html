@@ -15,7 +15,7 @@
 <div class="mt-6">
     <!-- Search and New Announcement Button -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div class="relative flex-1 max-w-md">
+        <div class="relative flex-1">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="material-icons-round text-gray-400 text-lg">search</span>
             </div>
@@ -37,74 +37,34 @@
     </div>
 
     <div class="flex flex-wrap items-center justify-between gap-4 mb-8 bg-card-light dark:bg-card-dark p-2 rounded-xl border border-gray-200 dark:border-gray-700">
-  <!-- Filter Buttons -->
- <div class="flex flex-wrap items-center gap-2">
-    <button 
-      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
-      data-type="all"
-    >
-      All
-    </button>
+        <!-- Filter Buttons -->
+        <div class="flex flex-wrap items-center gap-2">
+            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="all">All</button>
+            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="GENERAL">General</button>
+            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="EVENT">School Events</button>
+            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="URGENT">Urgent</button>
+            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="CULTURAL">Cultural</button>
+            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="IH_SCHEDULE">Inter-House</button>
+        </div>
 
-    <button 
-      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
-      data-type="GENERAL"
-    >
-      General
-    </button>
-
-    <button 
-      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
-      data-type="EVENT"
-    >
-      School Events
-    </button>
-
-    <button 
-      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
-      data-type="URGENT"
-    >
-      Urgent
-    </button>
-
-    <button 
-      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
-      data-type="CULTURAL"
-    >
-      Cultural
-    </button>
-
-    <button 
-      class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200"
-      data-type="IH_SCHEDULE"
-    >
-      Inter-House
-    </button>
-  </div>
-
-  <!-- Sort Dropdown -->
+        <!-- Sort Dropdown -->
         <div class="flex items-center gap-3 text-sm">
-        <span class="text-white dark:text-gray-400 font-medium">Sort by:</span>
-        <div class="relative">
-        <select 
-            id="sortSelect" 
-            class="appearance-none bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 
-                rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-800 dark:text-gray-100
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                cursor-pointer transition-all">
-            <option value="pinned">Pinned First</option>
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-        </select>
-        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
+            <span class="text-white dark:text-gray-400 font-medium">Sort by:</span>
+            <div class="relative">
+                <select id="sortSelect" class="appearance-none bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer transition-all">
+                    <option value="pinned">Pinned First</option>
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+            </div>
         </div>
-        </div>
-  </div>
-</div>
+    </div>
+
     <!-- Loading State -->
     <div id="loadingState" class="text-center py-12">
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -133,6 +93,7 @@
         </nav>
     </div>
 </div>
+
 <template id="dropdownTemplate">
     <div class="dropdown-menu hidden absolute right-0 top-0 mt-0 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
         <button class="edit-option w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors">
@@ -152,16 +113,10 @@
         <h3 class="text-xl font-semibold text-text-main-light dark:text-lbg-main-dark mb-4">Confirm Delete</h3>
         <p class="text-text-main-light dark:text-lbg-main-dark mb-6">Are you sure you want to delete this announcement? This action cannot be undone.</p>
         <div class="flex gap-3 justify-end">
-            <button 
-                onclick="closeDeleteModal()"
-                class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-text-main-light dark:text-lbg-main-dark rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-            >
+            <button onclick="closeDeleteModal()" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-text-main-light dark:text-lbg-main-dark rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
                 Cancel
             </button>
-            <button 
-                id="confirmDeleteBtn"
-                class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-            >
+            <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
                 Delete
             </button>
         </div>
@@ -196,7 +151,6 @@
     background-color: #163d2f;
   }
 
-  /* Dark mode */
   @media (prefers-color-scheme: dark) {
     .filter-btn {
       color: black;
@@ -240,33 +194,33 @@
         document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.add('hidden'));
     });
 
-    function openDelteModal(id){
+    function openDelteModal(id) {
         announcementToDelete = id;
-        document.getElementById('deleteModal').classList.remove('hidden')
+        document.getElementById('deleteModal').classList.remove('hidden');
     }
 
-    function closeDeleteModal(id) {
-        document.getElementById('deleteModal').classList.add('hidden')
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
         announcementToDelete = null;
     }
 
     document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
         if (!announcementToDelete) return;
         try {
-            const res = await apiCall(`/announcements/${announcementToDelete}/`, {method:'DELETE'})
+            const res = await apiCall(`/announcements/${announcementToDelete}/`, { method: 'DELETE' });
             if (res?.ok) {
-                showSuccess('Announcement deleted')
-                closeDeleteModal()
-                loadAnnouncements()
+                showSuccess('Announcement deleted');
+                closeDeleteModal();
+                loadAnnouncements();
             }
-        } catch(err) {
-            showError('Failed to delete!!')
+        } catch (err) {
+            showError('Failed to delete!!');
         }
-    })
+    });
 
     document.getElementById('deleteModal').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) closeDeleteModal;
-    })
+        if (e.target === e.currentTarget) closeDeleteModal();
+    });
 
     function showDropdown(button, announcement) {
         document.querySelectorAll('.dropdown-menu').forEach(m => m.remove());
@@ -279,7 +233,7 @@
         const pinText = menu.querySelector('.pin-text');
         const deleteBtn = menu.querySelector('.delete-option');
 
-        const canEdit = userData.is_c_suite || userData.is_superuser || 
+        const canEdit = userData.is_c_suite || userData.is_superuser ||
                         (userData.role_detail?.can_edit_announcements && announcement.created_by === userData.id);
         const canManage = userData.is_c_suite || userData.is_superuser;
 
@@ -304,8 +258,8 @@
         });
 
         deleteBtn?.addEventListener('click', e => {
-            e.stopPropagation()
-            openDelteModal(announcement.id)
+            e.stopPropagation();
+            openDelteModal(announcement.id);
         });
 
         button.parentElement.appendChild(menu);
@@ -343,8 +297,8 @@
         const term = document.getElementById('searchInput').value.toLowerCase();
         filteredAnnouncements = allAnnouncements.filter(a => {
             const typeMatch = currentFilter === 'all' || a.announcement_type === currentFilter;
-            const searchMatch = !term || 
-                a.title.toLowerCase().includes(term) || 
+            const searchMatch = !term ||
+                a.title.toLowerCase().includes(term) ||
                 a.content.toLowerCase().includes(term);
             return typeMatch && searchMatch;
         });
@@ -385,12 +339,12 @@
             const badge = typeBadges[a.announcement_type] || typeBadges['GENERAL'];
             const date = new Date(a.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
             const creator = a.created_by_detail?.full_name || a.created_by_detail?.first_name || a.created_by_detail?.username || 'Unknown';
-            const canManage = userData.is_c_suite || userData.is_superuser || 
+            const canManage = userData.is_c_suite || userData.is_superuser ||
                               (userData.role_detail?.can_edit_announcements && a.created_by === userData.id);
 
             return `
                 <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 ${a.is_pinned ? 'border-l-4 ' + badge.border : ''} cursor-pointer a-card group relative" data-id="${a.id}" style="border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); cursor: pointer; transition: all 0.3s;">
-                    <div class="flex justify-between items-start">
+                    <div class="flex justify-between items-start mb-3">
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text}">
                                 ${a.announcement_type_display || a.announcement_type}
@@ -398,7 +352,6 @@
                             ${a.is_pinned ? `<span class="text-xs font-medium text-lbg-main-dark dark:text-white flex items-center gap-1"><span class="material-icons-round text-sm">push_pin</span>Pinned</span>` : ''}
                             ${!a.is_read_by_user ? `<span class="px-2 py-1 text-xs font-bold bg-primary text-white rounded-full">NEW</span>` : ''}
                         </div>
-
                         ${canManage ? `
                             <button class="p-2 more-btn" data-id="${a.id}" onclick="event.stopPropagation(); showDropdown(this, ${JSON.stringify(a).replace(/"/g, '&quot;')})">
                                 <span class="material-icons-round text-xl text-lbg-main-dark dark:text-gray-500">more_vert</span>
@@ -475,7 +428,6 @@
         next.disabled = currentPage === total;
     }
 
-
     document.getElementById('searchInput').addEventListener('input', applyFilters);
     document.getElementById('sortSelect').addEventListener('change', () => { applySorting(); renderAnnouncements(); });
     document.getElementById('newAnnouncementBtn').addEventListener('click', () => window.location.href = '/announcements/new/');
@@ -497,7 +449,6 @@
         if (currentPage < total) { currentPage++; renderAnnouncements(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
     });
 
-    // Initialize: Set "All" filter as active by default
     document.querySelector('.filter-btn[data-type="all"]')?.classList.add('active');
 
     loadAnnouncements();
