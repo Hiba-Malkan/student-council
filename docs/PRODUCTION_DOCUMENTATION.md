@@ -101,6 +101,44 @@ python manage.py collectstatic --noinput
 python manage.py check --deploy
 ```
 
+After initial setup, create the required roles in production. Your superuser account has administrative access but needs a role assigned. The system supports five role types: Student (default for all new users), Captain, Class Representative, and C-Suite roles (President, Vice President, Secretary, Treasurer).
+
+To set up roles in production, use the Django admin panel at `https://yourdomain.com/admin/`. Only superusers can create and manage roles initially. Create the standard roles first, then assign a C-Suite role to your superuser account. Once a C-Suite user exists, they can assign roles to other users through the API or admin panel.
+
+Alternatively, create roles via the shell:
+
+```bash
+python manage.py shell
+```
+
+Then in the Python shell:
+
+```python
+from accounts.models import Role
+
+# Create standard roles
+student = Role.objects.create(name='Student', is_normal_student=True)
+captain = Role.objects.create(name='Captain', can_manage_competitions=True)
+class_rep = Role.objects.create(name='Class Rep')
+president = Role.objects.create(
+    name='President',
+    can_edit_duty_roster=True,
+    can_schedule_meetings=True,
+    can_create_announcements=True,
+    can_edit_announcements=True,
+    can_view_discipline=True,
+    can_manage_competitions=True
+)
+
+# Assign President role to your superuser
+from accounts.models import User
+user = User.objects.get(username='yourusername')
+user.role = president
+user.save()
+
+exit()
+```
+
 ## Configuration
 
 Create `backend/.env` with production settings:
@@ -264,6 +302,27 @@ Verify Django security settings in `settings.py`:
 - CSRF_COOKIE_SECURE is True
 - SECURE_HSTS_SECONDS is 31536000
 - SECURE_BROWSER_XSS_FILTER is True
+
+## Signup Management in Production
+
+In production, the signup management pages (`/competitions/signups/` and `/clubs/signups/`) require C-Suite role access. Only administrators with President, Vice President, Secretary, or Treasurer roles can view and manage signups. Students and other roles see a 403 Forbidden error when accessing these pages.
+
+The pages display paginated lists of all signups for a selected competition or club. Administrators can remove signups using the delete action, which opens a confirmation modal asking the user to verify the removal.
+
+The modal styling is designed for reliability across different browsers and environments. It uses a combination of inline styles for structural properties (padding, font sizing, borders) and Tailwind CSS classes for color variants that change with dark mode. This hybrid approach avoids CSS specificity issues and ensures the modal displays correctly under all conditions.
+
+When monitoring production, watch for failed DELETE requests to the signup endpoints. Check the error logs for:
+- 403 Forbidden errors indicating insufficient permissions
+- 404 Not Found errors indicating the signup or resource doesn't exist
+- 500 Internal Server errors indicating database or server issues
+
+The signup deletion endpoints are protected by C-Suite role checks:
+- `DELETE /api/competitions/{id}/delete_signup/?signup_id={signup_id}` — Requires C-Suite role
+- `DELETE /api/clubs/{id}/delete_signup/?signup_id={signup_id}` — Requires C-Suite role
+
+Both endpoints require authentication and appropriate admin permissions. Include your JWT token in the Authorization header for requests.
+
+Check production logs at `/var/log/student-council/django.log` for signup deletion errors and permission denials.
 
 ## Monitoring & Logging
 

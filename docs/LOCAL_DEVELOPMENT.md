@@ -124,6 +124,44 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
+Your superuser account has full admin access. New registered users automatically get the Student role by default. To assign roles to other users, only C-Suite members (President, Vice President, Secretary, Treasurer) can do so.
+
+The role system includes:
+
+**Student** — The default role. Students can view clubs, announcements, and sign up for competitions and clubs. They see the public dashboard but cannot create or edit content.
+
+**Captain** — Assigned to team or event leaders. Captains can manage competition signups and view participant details.
+
+**Class Representative** — Assigned to student class leaders. Has access to view class-specific organizational data.
+
+**C-Suite Roles** (President, Vice President, Secretary, Treasurer) — Full administrative access. Can create and edit announcements, schedule meetings, edit the duty roster, manage competitions, view discipline records, and assign or change roles for other users.
+
+To assign a role to a user through the Django admin:
+
+1. Navigate to http://localhost:8000/admin/
+2. Log in with your superuser credentials
+3. Click "Users" in the left sidebar
+4. Select the user whose role you want to change
+5. Find the "Role" dropdown and select the new role
+6. Click "Save"
+
+To assign a role via the API (C-Suite only):
+
+```bash
+curl -X POST http://localhost:8000/api/accounts/{user_id}/assign_role/ \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"role_id": 2}'
+```
+
+Replace `{user_id}` with the target user's ID and `role_id` with the ID of the role you're assigning. Query the roles list to find role IDs:
+
+```bash
+curl http://localhost:8000/api/roles/
+```
+
+Only users with C-Suite roles can use the assign_role endpoint. Attempting to assign roles without C-Suite status returns a 403 Forbidden error.
+
 Verify the database has all 42 tables:
 
 ```bash
@@ -369,6 +407,26 @@ Click "Send Request" above each endpoint to execute it. Responses appear in a si
 ### Using Postman
 
 Download Postman and create a collection called "Student Council". Add requests for each endpoint. Use the Authorization tab to set Bearer tokens. Save responses to your collection for reference.
+
+## Managing Signups
+
+Competitions and clubs have signup management pages. Access them through the admin dashboard.
+
+Navigate to `/competitions/signups/` to see who signed up for competitions. You can see their name, email, phone number, team assignment, and any message they left. Select a competition from the dropdown to filter signups.
+
+Navigate to `/clubs/signups/` to see who signed up for clubs. The view is similar but without the team name column.
+
+To remove someone from a signup list, click the trash icon on their row. A confirmation modal appears asking you to confirm the removal. The modal displays in white with dark text on light backgrounds, and switches to dark gray with white text in dark mode. Click "Delete" to confirm or "Cancel" to go back.
+
+The confirmation modal uses a hybrid styling approach combining inline styles with Tailwind dark: prefix classes. This ensures readability in both light and dark modes. If you need to modify modal styling, keep inline styles for padding, font size, and borders, and use Tailwind classes for color variants that change with dark mode.
+
+### Signup Page Features
+
+Signups are paginated with 10 entries per page. Use the pagination controls at the bottom to navigate.
+
+The message modal shows the full text that a signup left. Click on a message button to open it. The modal has a maximum width and fixed height with scrolling for longer messages.
+
+Search and filter signups by selecting a competition or club from the dropdown at the top of the page.
 
 ## Database Management
 

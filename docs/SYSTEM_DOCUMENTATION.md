@@ -12,7 +12,7 @@ This is an enterprise-grade web application built with Django REST Framework and
 
 The system centralizes student council operations, improves communication between council and students, automates routine administrative tasks, maintains organized records of all council activities, and provides transparent public information about club listings.
 
-The architecture uses an API-first approach with 20+ RESTful endpoints, PostgreSQL with 42 optimized tables, Celery with Redis for asynchronous processing, and a responsive Tailwind CSS frontend with JWT authentication and role-based access control.
+The architecture uses an API-first approach with 20+ RESTful endpoints, PostgreSQL 12+ with 42 optimized tables, Celery 5.3.6 with Celery Beat 2.5.0 for asynchronous processing, Redis 5.0+ for message brokering, and a responsive Tailwind CSS frontend with JWT authentication and role-based access control.
 
 ---
 
@@ -70,7 +70,7 @@ The architecture uses an API-first approach with 20+ RESTful endpoints, PostgreS
 └────────────────────────────┘  └───────────────────────────────┘
 ```
 
-The frontend runs on HTML5 with CSS3 for structure and styling, using Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity. The backend is built with Django 4.2.7 and Django REST Framework to deliver the API. PostgreSQL 12+ serves as the primary data store with 42 optimized tables. Redis handles message brokering while Celery manages background tasks with a scheduler via Celery Beat. Authentication relies on JWT tokens for stateless request validation. Gunicorn serves the Django application in production, and Nginx acts as a reverse proxy handling HTTPS/SSL termination and static file serving.
+The frontend runs on HTML5 with CSS3 for structure and styling, using Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity. The backend is built with Django 4.2.11 and Django REST Framework 3.14.0 to deliver the API. PostgreSQL 12+ serves as the primary data store with 42 optimized tables. Redis 5.0+ handles message brokering while Celery 5.3.6 manages background tasks with Celery Beat 2.5.0 scheduler. Authentication relies on JWT tokens via djangorestframework-simplejwt 5.5.1 for stateless request validation. Gunicorn serves the Django application in production, and Nginx acts as a reverse proxy handling HTTPS/SSL termination and static file serving.
 
 ---
 
@@ -223,9 +223,19 @@ student-council/
 
 ### Accounts Module
 
-The accounts module handles user authentication and role management. It implements JWT token-based authentication with role-based access control supporting five customizable role types. Users can log in with their credentials to receive access and refresh tokens for subsequent API requests.
+The accounts module handles user authentication and role management. It implements JWT token-based authentication with role-based access control. Users can log in with their credentials to receive access and refresh tokens for subsequent API requests.
 
-The module contains the User and Role models. Users have usernames, emails, and hashed passwords. Roles define what actions users can perform in the system, such as creating clubs, managing duties, or posting announcements. The UserRole model maps users to their assigned roles.
+The system supports the following role types:
+
+**Student** — The default role for all registered users. Students can view the public club listing, browse announcements, and sign up for competitions and clubs. They cannot create or edit any content.
+
+**Captain** — Assigned to team captains or event leaders. Captains have all Student permissions plus the ability to manage competitions and view participant signups.
+
+**Class Representative** — Assigned to student class representatives. Class Representatives have all Student permissions plus extended organizational capabilities depending on custom permissions assigned.
+
+**C-Suite** — Includes President, Vice President, Secretary, and Treasurer roles. C-Suite members can edit the duty roster, schedule meetings, create and edit announcements, view discipline records, manage competitions and signups, and perform user role assignments. Only C-Suite can assign or change roles for other users.
+
+The module contains the User and Role models. Users have usernames, emails, and hashed passwords. Roles define what actions users can perform in the system through a set of granular permissions including `can_edit_duty_roster`, `can_schedule_meetings`, `can_create_announcements`, `can_edit_announcements`, `can_record_discipline`, `can_view_discipline`, `can_add_clubs`, and `can_manage_competitions`.
 
 View endpoints allow users to log in, retrieve their profile, and manage their account settings. Permission classes in `permissions.py` check whether a user has the necessary role permissions before allowing access to protected endpoints.
 
@@ -280,9 +290,35 @@ Database tables:
 
 The competitions module lets administrators create and manage student competitions. Each competition has a title, description, start and end dates, and participation requirements. The system tracks which students have entered each competition.
 
+Students sign up for competitions and can provide additional information like team names or messages. Administrators access the signup management page to view all participants and remove registrations when needed.
+
+The signup confirmation modal displays in both light mode (white background with dark text) and dark mode (gray-900 background with white text). When removing a signup, a confirmation modal appears asking the user to verify the deletion. The implementation uses inline styles for layout properties combined with Tailwind dark: prefix classes for color variants. This hybrid approach ensures reliable styling that works across all browsers and themes.
+
 Database tables:
 - `competitions_competition` — Stores competition information and deadlines
-- `competitions_participant` — Tracks student entries for each competition
+- `competitions_competitor` or similar — Tracks student entries for each competition
+
+### Signup Management
+
+The signup management system handles registrations for both competitions and clubs. Students can enter competitions and clubs by filling out a form that includes their name, email, phone number, optional team name (competitions only), and optional message.
+
+Administrators view all signups through `/competitions/signups/` and `/clubs/signups/` pages. The signup list is paginated with 10 entries per page. Each signup row shows name, email, phone, team name (competitions), message button, signup date, and a delete action button.
+
+Clicking the delete button opens a confirmation modal. The modal displays the student's name in red text and asks for confirmation before removal. The modal has three sections: header with title, body with confirmation text and warning, and footer with Cancel and Delete buttons centered horizontally.
+
+The modal styling ensures accessibility in both light and dark modes:
+- Light mode: White background with dark gray (#111827) text
+- Dark mode: Gray-900 background with white text
+- Buttons: Gray-100 (light) / gray-800 (dark) for Cancel, red-600 for Delete
+- Borders: Gray-200 (light) / gray-700 (dark)
+
+When you need to create similar modals, follow this pattern:
+1. Use fixed positioning with `inset-0` and `flex items-center justify-center` for centering
+2. Add `p-6` padding to the outer container for mobile safety
+3. Apply white/dark:gray-900 background to the modal container
+4. Use inline styles for padding, font sizing, and borders
+5. Use Tailwind dark: prefix classes on text and button elements for dark mode support
+6. Keep button widths consistent and center them with `justify-content: center`
 
 ### Meetings Module
 
@@ -311,15 +347,27 @@ Database tables:
 │ • username (unique)                                         │
 │ • email                                                     │
 │ • password (hashed)                                         │
+│ • role_id (FK → accounts_role)                              │
+│ • grade, section, house (student info)                      │
+│ • phone, avatar, bio                                        │
 │ • is_active, is_staff, is_superuser                         │
-│ • date_joined                                               │
+│ • date_joined, created_at, updated_at                       │
 │                                                             │
 │ accounts_role                                               │
 │ • id (PK)                                                   │
-│ • name (Admin, President, etc.)                             │
-│ • permissions (can_add_clubs, can_manage_duties, etc.)      │
+│ • name (Student, Captain, Class Rep, President, etc.)       │
+│ • is_normal_student (bool)                                  │
+│ • can_edit_duty_roster (bool)                               │
+│ • can_schedule_meetings (bool)                              │
+│ • can_create_announcements (bool)                           │
+│ • can_edit_announcements (bool)                             │
+│ • can_record_discipline (bool)                              │
+│ • can_view_discipline (bool)                                │
+│ • can_add_clubs (bool)                                      │
+│ • can_manage_competitions (bool)                            │
+│ • created_at, updated_at                                    │
 │                                                             │
-│ accounts_userrole                                           │
+│ accounts_userrole (for future multi-role support)           │
 │ • id (PK)                                                   │
 │ • user_id (FK → accounts_user)                              │
 │ • role_id (FK → accounts_role)                              │
@@ -438,13 +486,23 @@ GET /api/accounts/me/              # Current user's profile
 GET /api/duty-roster/              # User's assigned duties
 GET /api/announcements/            # All announcements visible to user
 GET /api/announcements/3/          # Single announcement details
+
+# Signup Management (admin only)
+GET /api/competitions/             # List competitions
+GET /api/competitions/5/signups/   # List signups for competition 5
+POST /api/competitions/            # Create competition (requires permission)
+DELETE /api/competitions/5/delete_signup/?signup_id=123   # Remove signup from competition
+
+GET /api/clubs/                    # List all clubs
+GET /api/clubs/8/signups/          # List signups for club 8
 POST /api/clubs/                   # Create club (requires admin role)
+DELETE /api/clubs/8/delete_signup/?signup_id=456          # Remove signup from club
+
+# Admin operations
 PUT /api/clubs/5/                  # Update club (requires admin role)
 DELETE /api/clubs/5/               # Delete club (requires admin role)
 GET /api/meetings/                 # List scheduled meetings
 POST /api/meetings/                # Create new meeting (requires permission)
-GET /api/competitions/             # List competitions
-POST /api/competitions/            # Create competition (requires permission)
 ```
 
 ---

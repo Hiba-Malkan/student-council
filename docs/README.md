@@ -4,15 +4,15 @@ This is a web application for managing student council operations. It handles cl
 
 ## Features
 
-The application supports clubs management with creation, updates, deletion, and status tracking. A public endpoint lists active clubs so students can discover organizations without authentication. The duty roster system automatically cycles maintenance duties to students each month and alerts administrators to overdue tasks.
+The application handles clubs with creation, updates, deletion, and status tracking. Students discover clubs on a public page without needing to log in first. The duty roster system cycles maintenance assignments each month and alerts administrators when tasks are overdue.
 
-Announcements go to specific roles or the entire student council. Competition management tracks participants and enforces deadlines. Meetings can be scheduled with attendees and reminder emails sent automatically. Discipline records document policy violations with severity levels and action tracking. Notifications are sent via email on a schedule (7 AM and 4 PM) and triggered by events.
+Announcements reach specific roles or the entire council. Competitions track who's signed up, manage team assignments, and enforce deadlines. You can remove participants directly from signup pages with a confirmation modal that works in light and dark mode. Meetings get scheduled with attendees and automatic reminder emails. Discipline records log policy violations with severity and action tracking. Email notifications go out on a schedule (7 AM and 4 PM) and also trigger immediately when events happen.
 
-The system uses five customizable roles to control what users can do. Authentication via JWT tokens keeps sessions stateless. The dashboard is responsive and includes dark mode support for students accessing the system on mobile devices.
+The system uses customizable roles to control access including Student, Captain, Class Representative, and C-Suite roles (President, Vice President, Secretary, Treasurer). Students can view clubs, announcements, and sign up for competitions and clubs. The Student role is the default for all registered users. Captains and Class Representatives get additional permissions to manage specific areas. C-Suite members can edit duty rosters, schedule meetings, create and edit announcements, manage competitions, and perform administrative functions. Authentication uses JWT tokens so sessions are stateless. The interface is responsive and includes dark mode for students accessing it on mobile.
 
 ## Tech Stack
 
-The backend uses Django 4.2.7 with Django REST Framework delivering 20+ API endpoints. PostgreSQL 12+ serves as the database with 42 optimized tables. Redis handles message brokering while Celery processes background tasks via a Beat scheduler. The frontend is HTML5 with Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity.
+The backend uses Django 4.2.11 with Django REST Framework 3.14.0 delivering 20+ API endpoints. PostgreSQL 12+ serves as the database with 42 optimized tables. Redis 5.0+ handles message brokering while Celery 5.3.6 processes background tasks via Celery Beat 2.5.0 scheduler. The frontend is HTML5 with Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity.
 
 Gunicorn serves the application in production behind Nginx as a reverse proxy handling HTTPS/SSL termination. Git manages version control. The application runs on macOS, Linux, or Windows with WSL2. Let's Encrypt provides free SSL certificates for HTTPS.
 
@@ -144,12 +144,20 @@ POST /api/accounts/login/       # Login and receive token
 GET /api/accounts/me/           # Current user's profile
 GET /api/duty-roster/           # User's assigned duties
 GET /api/announcements/         # All announcements
-POST /api/clubs/                # Create club (admin only)
-PUT /api/clubs/{id}/            # Update club (admin only)
-DELETE /api/clubs/{id}/         # Delete club (admin only)
+
+# Signup Management (admin only)
+GET /api/competitions/{id}/signups/          # List signups for a competition
+GET /api/clubs/{id}/signups/                 # List signups for a club
+DELETE /api/competitions/{id}/delete_signup/ # Remove signup from competition
+DELETE /api/clubs/{id}/delete_signup/        # Remove signup from club
+
+# Admin operations
+POST /api/clubs/                # Create club
+PUT /api/clubs/{id}/            # Update club
+DELETE /api/clubs/{id}/         # Delete club
 ```
 
-To test the API, first log in to receive a JWT token:
+To test the API, first log in to get a JWT token:
 
 ```bash
 curl -X POST http://localhost:8000/api/accounts/login/ \
@@ -175,22 +183,24 @@ cd frontend
 npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css
 ```
 
-Backend changes to models, views, or serializers take effect immediately because Django reloads on file changes. Refresh your browser to see the updates.
+Backend changes to models, views, or serializers reload automatically. Refresh your browser to see them.
 
-When you modify database models, create and apply migrations:
+When you modify database models, generate and apply migrations:
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-Run the test suite with:
+Run tests with:
 
 ```bash
 python manage.py test
 ```
 
-Write code following PEP 8 for Python, ES6+ for JavaScript, and Tailwind best practices for CSS. Keep comments explaining why code exists, not what it does.
+Write Python code following PEP 8. Write JavaScript as ES6+. Use Tailwind best practices for CSS. Comments should explain why code exists, not what it does.
+
+Modals in the signup pages use a hybrid styling approach: inline styles for base properties (padding, font size, borders) combined with Tailwind dark: prefix classes for dark mode variants. This ensures styling works reliably in both light and dark modes. If you add new modals, follow this pattern rather than relying on Tailwind classes alone.
 
 ## Deployment Checklist
 
@@ -232,7 +242,7 @@ EMAIL_HOST_PASSWORD=your_sendgrid_key
 
 ## Dependencies
 
-Python packages include Django 4.2.7, Django REST Framework, Celery, Redis, psycopg2 for PostgreSQL connection, and python-decouple for environment variables. See `backend/requirements.txt` for the complete list.
+Python packages include Django 4.2.11, Django REST Framework 3.14.0, djangorestframework-simplejwt 5.5.1, Celery 5.3.6, Celery Beat 2.5.0, Redis 5.0.1, django-cors-headers 4.3.1, Pillow 11.0.0, psycopg 3.1.18 for PostgreSQL connection, python-decouple 3.8 for environment variables, and django-filter 24.1 for query filtering. See `backend/requirements.txt` for the complete list.
 
 System dependencies are PostgreSQL 12+, Redis 6+, Python 3.13+, and Node.js 18+.
 
