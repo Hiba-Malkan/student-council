@@ -62,7 +62,9 @@ def send_pending_email_notifications():
             send_notification_email(notification)
             sent_count += 1
         except Exception as e:
-            print(f"Failed to send email for notification {notification.id}: {e}")
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to send email for notification {notification.id}: {e}", exc_info=True)
     
     return f"Sent {sent_count} email notifications"
 
@@ -153,7 +155,9 @@ def send_discipline_reports():
             send_daily_discipline_report(phase_head)
             reports_sent += 1
         except Exception as e:
-            print(f"Failed to send discipline report to {phase_head.email}: {e}")
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to send discipline report to {phase_head.email}: {e}", exc_info=True)
     
     return f"Sent discipline reports to {reports_sent} phase heads"
 

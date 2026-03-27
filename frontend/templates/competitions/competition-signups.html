@@ -239,7 +239,8 @@ function displaySignupsPage() {
     `).join('');
     
     document.getElementById('currentPageNum').textContent = currentPage;
-    document.getElementById('signupCountTotal').textContent = `Showing ${Math.min(end, allSignups.length)} of ${allSignups.length} signups`;
+    const signupText = `Showing ${Math.min(end, allSignups.length)} of ${allSignups.length} signups`;
+    document.getElementById('signupCountTotal').textContent = signupText;
 }
 
 function updatePaginationButtons() {

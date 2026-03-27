@@ -68,7 +68,10 @@ class LogoutView(generics.GenericAPIView):
                 token.blacklist()
             return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f'Logout error: {str(e)}', exc_info=True)
+            return Response({'error': 'Failed to logout. Please try again.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CurrentUserView(generics.RetrieveUpdateAPIView):
@@ -212,9 +215,11 @@ Student Council Team
         except Exception as e:
             # Delete the OTP if email fails
             otp_obj.delete()
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f'OTP email error: {str(e)}', exc_info=True)
             return Response({
-                'error': 'Failed to send email. Please try again later.',
-                'detail': str(e)
+                'error': 'Failed to send email. Please try again later.'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

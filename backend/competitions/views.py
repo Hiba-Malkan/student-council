@@ -144,8 +144,12 @@ class CompetitionViewSet(viewsets.ModelViewSet):
                 'competition_name': competition.name
             }, status=status.HTTP_201_CREATED)
         except Exception as e:
+            # Log the error for debugging but don't expose details to users
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f'Competition signup error: {str(e)}', exc_info=True)
             return Response(
-                {'error': f'Failed to process signup: {str(e)}'},
+                {'error': 'Failed to process signup. Please try again later.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
     

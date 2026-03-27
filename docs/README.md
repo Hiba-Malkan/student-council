@@ -12,7 +12,7 @@ The system uses customizable roles to control access including Student, Captain,
 
 ## Tech Stack
 
-The backend uses Django 4.2.11 with Django REST Framework 3.14.0 delivering 20+ API endpoints. PostgreSQL 12+ serves as the database with 42 optimized tables. Redis 5.0+ handles message brokering while Celery 5.3.6 processes background tasks via Celery Beat 2.5.0 scheduler. The frontend is HTML5 with Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity.
+The backend uses Django 4.2.29 with Django REST Framework 3.15.2 delivering 20+ API endpoints. PostgreSQL 12+ serves as the database with 42 optimized tables. Redis 5.0+ handles message brokering while Celery 5.3.6 processes background tasks via Celery Beat 2.5.0 scheduler. The frontend is HTML5 with Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity.
 
 Gunicorn serves the application in production behind Nginx as a reverse proxy handling HTTPS/SSL termination. Git manages version control. The application runs on macOS, Linux, or Windows with WSL2. Let's Encrypt provides free SSL certificates for HTTPS.
 
@@ -242,7 +242,7 @@ EMAIL_HOST_PASSWORD=your_sendgrid_key
 
 ## Dependencies
 
-Python packages include Django 4.2.11, Django REST Framework 3.14.0, djangorestframework-simplejwt 5.5.1, Celery 5.3.6, Celery Beat 2.5.0, Redis 5.0.1, django-cors-headers 4.3.1, Pillow 11.0.0, psycopg 3.1.18 for PostgreSQL connection, python-decouple 3.8 for environment variables, and django-filter 24.1 for query filtering. See `backend/requirements.txt` for the complete list.
+Python packages include Django 4.2.29, Django REST Framework 3.15.2, djangorestframework-simplejwt 5.5.1, Celery 5.3.6, Celery Beat 2.5.0, Redis 5.0.1, django-cors-headers 4.3.1, Pillow 12.1.1, psycopg 3.1.18 for PostgreSQL connection, python-decouple 3.8 for environment variables, and django-filter 24.1 for query filtering. See `backend/requirements.txt` for the complete list.
 
 System dependencies are PostgreSQL 12+, Redis 6+, Python 3.13+, and Node.js 18+.
 

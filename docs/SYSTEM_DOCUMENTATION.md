@@ -70,7 +70,7 @@ The architecture uses an API-first approach with 20+ RESTful endpoints, PostgreS
 └────────────────────────────┘  └───────────────────────────────┘
 ```
 
-The frontend runs on HTML5 with CSS3 for structure and styling, using Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity. The backend is built with Django 4.2.11 and Django REST Framework 3.14.0 to deliver the API. PostgreSQL 12+ serves as the primary data store with 42 optimized tables. Redis 5.0+ handles message brokering while Celery 5.3.6 manages background tasks with Celery Beat 2.5.0 scheduler. Authentication relies on JWT tokens via djangorestframework-simplejwt 5.5.1 for stateless request validation. Gunicorn serves the Django application in production, and Nginx acts as a reverse proxy handling HTTPS/SSL termination and static file serving.
+The frontend runs on HTML5 with CSS3 for structure and styling, using Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity. The backend is built with Django 4.2.29 and Django REST Framework 3.15.2 to deliver the API. PostgreSQL 12+ serves as the primary data store with 42 optimized tables. Redis 5.0+ handles message brokering while Celery 5.3.6 manages background tasks with Celery Beat 2.5.0 scheduler. Authentication relies on JWT tokens via djangorestframework-simplejwt 5.5.1 for stateless request validation. Gunicorn serves the Django application in production, and Nginx acts as a reverse proxy handling HTTPS/SSL termination and static file serving.
 
 ---
 

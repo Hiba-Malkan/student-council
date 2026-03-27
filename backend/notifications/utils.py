@@ -45,7 +45,9 @@ def send_notification_email(notification):
         
         return True
     except Exception as e:
-        print(f"Failed to send email to {notification.recipient.email}: {str(e)}")
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Failed to send email to {notification.recipient.email}: {str(e)}", exc_info=True)
         return False
 
 
@@ -137,4 +139,6 @@ The following students reached 3 or more offenses on {date.strftime("%B %d, %Y")
             email.attach_alternative(html_message, "text/html")
             email.send()
         except Exception as e:
-            print(f"Failed to send discipline report to {phase_head.email}: {str(e)}")
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Failed to send discipline report to {phase_head.email}: {str(e)}", exc_info=True)
