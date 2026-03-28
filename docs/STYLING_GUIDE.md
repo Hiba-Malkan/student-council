@@ -315,22 +315,6 @@ To test dark mode during development:
 
 The page will instantly switch to dark mode. Test all components to ensure text is readable and colors look correct.
 
-## Common Mistakes
-
-**Don't:**
-- Mix Tailwind classes with custom CSS class names in the same element
-- Use hardcoded colors in `style` attributes without dark mode variants
-- Forget `dark:` prefix for text colors (text becomes invisible)
-- Use only light mode colors for backgrounds (cards become invisible)
-- Override Tailwind with custom CSS unless necessary
-
-**Do:**
-- Use Tailwind classes as much as possible
-- Pair light mode colors with dark mode variants: `bg-white dark:bg-gray-900`
-- Use inline styles only for layout properties (padding, sizing, borders)
-- Test in dark mode before committing changes
-- Keep color changes consistent across similar components
-
 ## Resources
 
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
@@ -340,4 +324,4 @@ The page will instantly switch to dark mode. Test all components to ensure text 
 
 ## Questions?
 
-For styling questions or to report styling issues, check the design patterns used in existing components before creating new ones. Consistency matters more than perfection.
+For styling questions or to report styling issues, read the support section of the readme, also, check the design patterns used in existing components before creating new ones. 
