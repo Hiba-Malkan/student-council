@@ -14,7 +14,9 @@ The frontend uses three layers of styling:
 
 ### Building CSS
 
-Tailwind CSS must be rebuilt whenever you add or modify templates:```bash
+Tailwind CSS must be rebuilt whenever you add or modify templates:
+
+```bash
 cd frontend
 npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css
 ```
@@ -23,6 +25,7 @@ For development, use watch mode to rebuild automatically:
 
 ```bash
 npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --watch
+
 ```
 
 Watch mode runs in the background and rebuilds on every save. This is the preferred way to work during development.
@@ -46,7 +49,9 @@ The application supports automatic light and dark mode switching based on system
 
 ### Dark Mode Syntax
 
-Use the `dark:` prefix on any Tailwind class to define dark mode styles:```html
+Use the `dark:` prefix on any Tailwind class to define dark mode styles:
+
+```html
 <div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
     Content
 </div>
@@ -84,7 +89,9 @@ Modals are the most complex styled elements in the project. They require a speci
 
 ### Structure
 
-Modals use fixed positioning to overlay the page:```html
+Modals use fixed positioning to overlay the page:
+
+```html
 <!-- Outer container: fixed overlay -->
 <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
     
@@ -146,7 +153,9 @@ The inline `style` defines layout and sizing. The Tailwind `class` defines color
 
 ### Text Colors in Dark Mode
 
-All text must have a dark mode variant to avoid disappearing:```html
+All text must have a dark mode variant to avoid disappearing:
+
+```html
 <!-- Good: light and dark variants -->
 <p class="text-gray-900 dark:text-white">Visible in both modes</p>
 
