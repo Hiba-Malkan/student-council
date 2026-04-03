@@ -232,8 +232,10 @@ function displaySignupsPage() {
     `).join('');
     
     document.getElementById('currentPageNum').textContent = currentPage;
-    const signupText = `Showing ${Math.min(end, allSignups.length)} of ${allSignups.length} signups`;
-    document.getElementById('signupCountTotal').textContent = signupText;
+    const showingCount = Math.min(end, allSignups.length);
+    const totalCount = allSignups.length;
+    const countElement = document.getElementById('signupCountTotal');
+    countElement.textContent = `Showing ${showingCount} of ${totalCount} signups`;
 }
 
 function updatePaginationButtons() {
