@@ -4,7 +4,25 @@
 {% block title %}Gate Pass - CouncilApp{% endblock %}
 {% block nav_gatepass %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
 {% block page_title %}Gate Pass{% endblock %}
-{% block page_subtitle %}Request and manage gate pass approvals.{% endblock %}
+{% async function loadManagerView() {
+    try {
+        const response = await fetch('/api/gatepass/', {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+        });
+        if (response.ok) {
+            allRequests = await response.json();
+            console.log('Manager requests loaded:', allRequests);
+            displayPendingRequests();
+            displayApprovedRequests();
+        } else {
+            console.error('Error response:', response.status);
+            document.getElementById('pendingRequestsContainer').innerHTML = '<div class="text-center py-8 text-red-600 dark:text-red-400">Failed to load requests</div>';
+        }
+    } catch (error) {
+        console.error('Error loading requests:', error);
+        document.getElementById('pendingRequestsContainer').innerHTML = '<div class="text-center py-8 text-red-600 dark:text-red-400">Error: ' + error.message + '</div>';
+    }
+}e %}Request and manage gate pass approvals.{% endblock %}
 
 {% block content %}
 <!-- Role-based content display -->
@@ -210,6 +228,7 @@ async function loadUserData() {
         });
         if (response.ok) {
             userData = await response.json();
+            console.log('User data loaded:', userData);
             
             // Show appropriate view based on role
             if (userData.role?.name === 'Gate Pass Manager') {
@@ -219,6 +238,8 @@ async function loadUserData() {
             } else {
                 loadStudentView();
             }
+        } else {
+            console.error('Failed to load user data:', response.status);
         }
     } catch (error) {
         console.error('Error loading user data:', error);
@@ -227,20 +248,25 @@ async function loadUserData() {
 
 async function loadStudentView() {
     try {
+        const container = document.getElementById('myRequestsContainer');
         const response = await fetch('/api/gatepass/my_requests/', {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
         });
         if (response.ok) {
             allRequests = await response.json();
             console.log('Student requests loaded:', allRequests);
-            displayStudentRequests();
+            if (allRequests.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">No requests yet. Submit one above to get started!</div>';
+            } else {
+                displayStudentRequests();
+            }
         } else {
             console.error('Error response:', response.status);
-            document.getElementById('myRequestsContainer').innerHTML = '<div class="text-center py-8 text-red-600">Failed to load requests</div>';
+            container.innerHTML = '<div class="text-center py-8 text-red-600 dark:text-red-400">Failed to load requests (Status: ' + response.status + ')</div>';
         }
     } catch (error) {
         console.error('Error loading requests:', error);
-        document.getElementById('myRequestsContainer').innerHTML = '<div class="text-center py-8 text-red-600">Error: ' + error.message + '</div>';
+        document.getElementById('myRequestsContainer').innerHTML = '<div class="text-center py-8 text-red-600 dark:text-red-400">Error: ' + error.message + '</div>';
     }
 }
 
@@ -442,14 +468,16 @@ document.getElementById('gatepassForm')?.addEventListener('submit', async (e) =>
         
         if (response.ok) {
             document.getElementById('gatepassForm').reset();
-            loadStudentView();
+            // Reload immediately after submission
+            await loadStudentView();
             alert('Gate pass request submitted successfully');
         } else {
-            alert('Failed to submit gate pass request');
+            const errorData = await response.json();
+            alert('Failed to submit gate pass request: ' + (errorData.error || 'Unknown error'));
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Error submitting request');
+        alert('Error submitting request: ' + error.message);
     }
 });
 
