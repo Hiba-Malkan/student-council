@@ -17,7 +17,8 @@ class Role(models.Model):
     can_record_discipline = models.BooleanField(default=False)
     can_view_discipline = models.BooleanField(default=False)
     can_add_clubs = models.BooleanField(default=False)
-    can_manage_competitions = models.BooleanField(default=False) 
+    can_manage_competitions = models.BooleanField(default=False)
+    can_manage_gatepass = models.BooleanField(default=False)
     
     # Hierarchy    
     created_at = models.DateTimeField(auto_now_add=True)

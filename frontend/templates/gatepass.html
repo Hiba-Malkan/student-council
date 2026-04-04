@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Gate Pass - CouncilApp{% endblock %}
+{% block nav_gatepass %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
+{% block page_title %}Gate Pass{% endblock %}
+{% block page_subtitle %}Request and manage gate pass approvals.{% endblock %}
+
+{% block content %}
+<!-- Role-based content display -->
+<div id="studentView">
+    <!-- Student Request Form -->
+    <section class="mt-4">
+        <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold text-text-main-light dark:text-text-main-dark flex items-center gap-2">
+                    <span class="material-icons-round">request_quote</span>
+                    Request Gate Pass
+                </h2>
+            </div>
+            
+            <form id="gatepassForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-2">Reason for Gate Pass</label>
+                    <textarea 
+                        name="reason" 
+                        class="w-full px-4 py-3 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-text-main-light dark:text-lbg-main-dark focus:ring-2 focus:ring-primary focus:border-transparent resize-none" 
+                        rows="4" 
+                        placeholder="Explain why you need a gate pass..." 
+                        required>
+                    </textarea>
+                </div>
+                
+                <div class="flex justify-end gap-3">
+                    <button type="submit" class="px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-sm transition-colors">
+                        Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+    
+    <!-- My Requests -->
+    <section class="mt-8">
+        <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold text-text-main-light dark:text-text-main-dark flex items-center gap-2">
+                    <span class="material-icons-round">history</span>
+                    My Requests
+                </h2>
+            </div>
+            
+            <div id="myRequestsContainer" class="space-y-4">
+                <div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">
+                    Loading your requests...
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Manager View -->
+<div id="managerView" class="hidden">
+    <section class="mt-4">
+        <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold text-text-main-light dark:text-text-main-dark flex items-center gap-2">
+                    <span class="material-icons-round">pending_actions</span>
+                    Pending Requests
+                </h2>
+            </div>
+            
+            <div id="pendingRequestsContainer" class="space-y-4">
+                <div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">
+                    Loading pending requests...
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Approved Requests -->
+    <section class="mt-8">
+        <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-semibold text-text-main-light dark:text-text-main-dark flex items-center gap-2">
+                    <span class="material-icons-round">done_all</span>
+                    Approved Requests
+                </h2>
+            </div>
+            
+            <div id="approvedRequestsContainer" class="space-y-4">
+                <div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">
+                    Loading approved requests...
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Approval Modal -->
+<div id="approvalModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-lg w-full">
+        <div style="padding: 32px 40px; border-bottom: 1px solid #e5e7eb;" class="dark:border-gray-700">
+            <h3 class="text-xl font-semibold text-text-main-light dark:text-text-main-dark">Approve/Deny Gate Pass</h3>
+        </div>
+        
+        <div style="padding: 32px 40px;">
+            <div id="modalStudentName" class="font-medium text-text-main-light dark:text-text-main-dark mb-2"></div>
+            <div id="modalReason" class="text-sm text-text-sub-light dark:text-text-sub-dark mb-6"></div>
+            
+            <form id="approvalForm" class="space-y-4">
+                <input type="hidden" id="gatepassId">
+                
+                <div>
+                    <label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-2">Decision</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="status" value="approved" class="mr-2" required>
+                            <span class="text-text-main-light dark:text-text-main-dark">Approve</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="status" value="denied" class="mr-2">
+                            <span class="text-text-main-light dark:text-text-main-dark">Deny</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-text-main-light dark:text-text-main-dark mb-2">Note (Optional)</label>
+                    <textarea 
+                        name="note" 
+                        class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-text-main-light dark:text-lbg-main-dark focus:ring-2 focus:ring-primary focus:border-transparent resize-none" 
+                        rows="3" 
+                        placeholder="Add a note...">
+                    </textarea>
+                </div>
+            </form>
+        </div>
+        
+        <div style="padding: 24px 40px; display: flex; justify-content: center; gap: 16px;">
+            <button onclick="closeApprovalModal()" class="px-4 py-2.5 text-sm font-medium text-text-main-light dark:text-text-main-dark bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600 rounded-lg transition-colors">
+                Cancel
+            </button>
+            <button onclick="submitApproval()" class="px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-sm transition-colors">
+                Submit
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let userData = null;
+let allRequests = [];
+
+async function loadUserData() {
+    try {
+        const response = await fetch('/api/accounts/me/', {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+        });
+        if (response.ok) {
+            userData = await response.json();
+            
+            // Show appropriate view based on role
+            if (userData.role?.name === 'Gate Pass Manager') {
+                document.getElementById('studentView').classList.add('hidden');
+                document.getElementById('managerView').classList.remove('hidden');
+                loadManagerView();
+            } else {
+                loadStudentView();
+            }
+        }
+    } catch (error) {
+        console.error('Error loading user data:', error);
+    }
+}
+
+async function loadStudentView() {
+    try {
+        const response = await fetch('/api/gatepass/my_requests/', {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+        });
+        if (response.ok) {
+            allRequests = await response.json();
+            displayStudentRequests();
+        }
+    } catch (error) {
+        console.error('Error loading requests:', error);
+        document.getElementById('myRequestsContainer').innerHTML = '<div class="text-center py-8 text-red-600">Failed to load requests</div>';
+    }
+}
+
+async function loadManagerView() {
+    try {
+        const response = await fetch('/api/gatepass/', {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('access_token')}` }
+        });
+        if (response.ok) {
+            allRequests = await response.json();
+            displayPendingRequests();
+            displayApprovedRequests();
+        }
+    } catch (error) {
+        console.error('Error loading requests:', error);
+    }
+}
+
+function displayStudentRequests() {
+    const container = document.getElementById('myRequestsContainer');
+    if (allRequests.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">No requests yet</div>';
+        return;
+    }
+    
+    container.innerHTML = allRequests.map(req => `
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <div class="flex justify-between items-start mb-2">
+                <span class="font-medium text-text-main-light dark:text-text-main-dark">Status: ${req.status_display}</span>
+                <span class="px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(req.status)}">
+                    ${req.status_display}
+                </span>
+            </div>
+            <p class="text-sm text-text-sub-light dark:text-text-sub-dark mb-2">${req.reason}</p>
+            <div class="text-xs text-text-sub-light dark:text-text-sub-dark">
+                Requested: ${new Date(req.requested_at).toLocaleDateString()}
+            </div>
+            ${req.approval_note ? `<div class="mt-2 p-2 bg-gray-50 dark:bg-gray-800 rounded text-sm text-text-main-light dark:text-text-main-dark">Note: ${req.approval_note}</div>` : ''}
+        </div>
+    `).join('');
+}
+
+function displayPendingRequests() {
+    const container = document.getElementById('pendingRequestsContainer');
+    const pending = allRequests.filter(r => r.status === 'pending');
+    
+    if (pending.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">No pending requests</div>';
+        return;
+    }
+    
+    container.innerHTML = pending.map(req => `
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <div class="font-medium text-text-main-light dark:text-text-main-dark">${req.student.first_name} ${req.student.last_name}</div>
+                    <div class="text-sm text-text-sub-light dark:text-text-sub-dark">${req.student.email}</div>
+                </div>
+                <button onclick="openApprovalModal(${req.id}, '${req.student.first_name} ${req.student.last_name}', '${req.reason.replace(/'/g, "\\'")}')" class="px-3 py-1 bg-primary text-white rounded text-sm font-medium hover:bg-primary-hover">
+                    Review
+                </button>
+            </div>
+            <p class="text-sm text-text-main-light dark:text-text-main-dark">${req.reason}</p>
+        </div>
+    `).join('');
+}
+
+function displayApprovedRequests() {
+    const container = document.getElementById('approvedRequestsContainer');
+    const approved = allRequests.filter(r => r.status !== 'pending');
+    
+    if (approved.length === 0) {
+        container.innerHTML = '<div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">No processed requests</div>';
+        return;
+    }
+    
+    container.innerHTML = approved.map(req => `
+        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <div class="font-medium text-text-main-light dark:text-text-main-dark">${req.student.first_name} ${req.student.last_name}</div>
+                    <span class="px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(req.status)}">
+                        ${req.status_display}
+                    </span>
+                </div>
+                <div class="text-sm text-text-sub-light dark:text-text-sub-dark">
+                    ${new Date(req.approval_timestamp).toLocaleDateString()}
+                </div>
+            </div>
+            ${req.approval_note ? `<div class="text-sm text-text-main-light dark:text-text-main-dark mt-2">Note: ${req.approval_note}</div>` : ''}
+        </div>
+    `).join('');
+}
+
+function getStatusColor(status) {
+    if (status === 'approved') return 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200';
+    if (status === 'denied') return 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200';
+    return 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200';
+}
+
+function openApprovalModal(id, name, reason) {
+    document.getElementById('gatepassId').value = id;
+    document.getElementById('modalStudentName').textContent = name;
+    document.getElementById('modalReason').textContent = `Reason: ${reason}`;
+    document.getElementById('approvalModal').classList.remove('hidden');
+}
+
+function closeApprovalModal() {
+    document.getElementById('approvalModal').classList.add('hidden');
+    document.getElementById('approvalForm').reset();
+}
+
+async function submitApproval() {
+    const id = document.getElementById('gatepassId').value;
+    const status = document.querySelector('input[name="status"]:checked')?.value;
+    const note = document.querySelector('textarea[name="note"]')?.value || '';
+    
+    if (!status) {
+        alert('Please select an approval status');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/gatepass/${id}/approve_or_deny/`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status, note })
+        });
+        
+        if (response.ok) {
+            closeApprovalModal();
+            loadManagerView();
+            alert('Gate pass decision submitted successfully');
+        } else {
+            alert('Failed to process approval');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error submitting approval');
+    }
+}
+
+document.getElementById('gatepassForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const reason = document.querySelector('textarea[name="reason"]').value;
+    
+    try {
+        const response = await fetch('/api/gatepass/', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ reason })
+        });
+        
+        if (response.ok) {
+            document.getElementById('gatepassForm').reset();
+            loadStudentView();
+            alert('Gate pass request submitted successfully');
+        } else {
+            alert('Failed to submit gate pass request');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error submitting request');
+    }
+});
+
+loadUserData();
+</script>
+{% endblock %}

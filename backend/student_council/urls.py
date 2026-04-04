@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/notifications/', include('notifications.urls')),
     path('api/clubs/', include('clubs.urls')),  # ← Clubs API
     path('api/', include('competitions.urls')),  # ← Competitions API
+    path('api/gatepass/', include('gatepass.urls')),  # ← Gate Pass API
     
     # ============================================
     # HTML PAGES (All CSS/JS inline in templates)
@@ -58,6 +59,9 @@ urlpatterns = [
     
     # Meetings
     path('meetings/', TemplateView.as_view(template_name='meetings/meetings.html'), name='meetings'),
+    
+    # Gate Pass
+    path('gatepass/', TemplateView.as_view(template_name='gatepass.html'), name='gatepass'),
     
     # Discipline
     path('discipline/', TemplateView.as_view(template_name='discipline/discipline.html'), name='discipline'),
