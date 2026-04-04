@@ -232,11 +232,15 @@ async function loadStudentView() {
         });
         if (response.ok) {
             allRequests = await response.json();
+            console.log('Student requests loaded:', allRequests);
             displayStudentRequests();
+        } else {
+            console.error('Error response:', response.status);
+            document.getElementById('myRequestsContainer').innerHTML = '<div class="text-center py-8 text-red-600">Failed to load requests</div>';
         }
     } catch (error) {
         console.error('Error loading requests:', error);
-        document.getElementById('myRequestsContainer').innerHTML = '<div class="text-center py-8 text-red-600">Failed to load requests</div>';
+        document.getElementById('myRequestsContainer').innerHTML = '<div class="text-center py-8 text-red-600">Error: ' + error.message + '</div>';
     }
 }
 
@@ -247,11 +251,15 @@ async function loadManagerView() {
         });
         if (response.ok) {
             allRequests = await response.json();
+            console.log('Manager requests loaded:', allRequests);
             displayPendingRequests();
             displayApprovedRequests();
+        } else {
+            console.error('Error response:', response.status);
         }
     } catch (error) {
         console.error('Error loading requests:', error);
+        document.getElementById('pendingRequestsContainer').innerHTML = '<div class="text-center py-8 text-red-600">Error: ' + error.message + '</div>';
     }
 }
 
@@ -263,31 +271,31 @@ function displayStudentRequests() {
     }
     
     container.innerHTML = allRequests.map(req => `
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <div class="border-l-4 ${req.status === 'approved' ? 'border-green-500' : req.status === 'denied' ? 'border-red-500' : 'border-yellow-500'} border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50">
             <div class="flex justify-between items-start mb-3">
                 <div>
-                    <div class="font-medium text-text-main-light dark:text-text-main-dark">${req.name}</div>
+                    <div class="font-semibold text-lg text-text-main-light dark:text-text-main-dark">${req.name}</div>
                     <div class="text-sm text-text-sub-light dark:text-text-sub-dark">D.No: ${req.dno}</div>
                 </div>
-                <span class="px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(req.status)}">
+                <span class="px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide ${getStatusColor(req.status)}">
                     ${req.status_display}
                 </span>
             </div>
-            <div class="grid grid-cols-2 gap-3 text-sm mb-3">
+            <div class="grid grid-cols-2 gap-3 text-sm mb-3 pb-3 border-b border-gray-300 dark:border-gray-600">
                 <div>
-                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs">Requested Date</div>
-                    <div class="text-text-main-light dark:text-text-main-dark">${new Date(req.requested_date).toLocaleDateString()}</div>
+                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium">Requested Date</div>
+                    <div class="text-text-main-light dark:text-text-main-dark font-medium">${new Date(req.requested_date).toLocaleDateString()}</div>
                 </div>
                 <div>
-                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs">Submitted</div>
-                    <div class="text-text-main-light dark:text-text-main-dark">${new Date(req.requested_at).toLocaleDateString()}</div>
+                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium">Submitted</div>
+                    <div class="text-text-main-light dark:text-text-main-dark font-medium">${new Date(req.requested_at).toLocaleDateString()}</div>
                 </div>
             </div>
-            <div class="mb-2">
-                <div class="text-xs text-text-sub-light dark:text-text-sub-dark mb-1">Reason</div>
+            <div class="mb-3">
+                <div class="text-xs font-medium text-text-sub-light dark:text-text-sub-dark mb-1">Reason</div>
                 <p class="text-sm text-text-main-light dark:text-text-main-dark">${req.reason}</p>
             </div>
-            ${req.approval_note ? `<div class="mt-3 p-2 bg-gray-50 dark:bg-gray-800 rounded text-sm text-text-main-light dark:text-text-main-dark"><strong>Manager's Note:</strong> ${req.approval_note}</div>` : ''}
+            ${req.approval_note ? `<div class="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded text-sm text-text-main-light dark:text-text-main-dark"><strong class="text-blue-600 dark:text-blue-300">Manager's Note:</strong> ${req.approval_note}</div>` : ''}
         </div>
     `).join('');
 }
@@ -302,25 +310,25 @@ function displayPendingRequests() {
     }
     
     container.innerHTML = pending.map(req => `
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <div class="border-l-4 border-yellow-500 border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-yellow-50 dark:bg-yellow-900/10">
             <div class="flex justify-between items-start mb-3">
                 <div>
-                    <div class="font-medium text-text-main-light dark:text-text-main-dark">${req.name}</div>
+                    <div class="font-semibold text-text-main-light dark:text-text-main-dark">${req.name}</div>
                     <div class="text-sm text-text-sub-light dark:text-text-sub-dark">${req.student.email}</div>
                     <div class="text-sm text-text-sub-light dark:text-text-sub-dark">D.No: ${req.dno}</div>
                 </div>
-                <button onclick="openApprovalModal(${req.id}, '${req.name}', '${req.reason.replace(/'/g, "\\'")}')" class="px-3 py-1 bg-primary text-white rounded text-sm font-medium hover:bg-primary-hover">
+                <button onclick="openApprovalModal(${req.id}, '${req.name}', '${req.reason.replace(/'/g, "\\'")}')" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-hover transition-colors">
                     Review
                 </button>
             </div>
-            <div class="grid grid-cols-2 gap-3 text-sm mb-2">
+            <div class="grid grid-cols-2 gap-3 text-sm mb-3 pb-3 border-b border-yellow-200 dark:border-yellow-800">
                 <div>
-                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs">Requested Date</div>
-                    <div class="text-text-main-light dark:text-text-main-dark">${new Date(req.requested_date).toLocaleDateString()}</div>
+                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium">Requested Date</div>
+                    <div class="text-text-main-light dark:text-text-main-dark font-medium">${new Date(req.requested_date).toLocaleDateString()}</div>
                 </div>
                 <div>
-                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs">Submitted</div>
-                    <div class="text-text-main-light dark:text-text-main-dark">${new Date(req.requested_at).toLocaleDateString()}</div>
+                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium">Submitted</div>
+                    <div class="text-text-main-light dark:text-text-main-dark font-medium">${new Date(req.requested_at).toLocaleDateString()}</div>
                 </div>
             </div>
             <p class="text-sm text-text-main-light dark:text-text-main-dark">${req.reason}</p>
@@ -338,27 +346,27 @@ function displayApprovedRequests() {
     }
     
     container.innerHTML = approved.map(req => `
-        <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <div class="border-l-4 ${req.status === 'approved' ? 'border-green-500' : 'border-red-500'} border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/50">
             <div class="flex justify-between items-start mb-3">
                 <div>
-                    <div class="font-medium text-text-main-light dark:text-text-main-dark">${req.name}</div>
+                    <div class="font-semibold text-text-main-light dark:text-text-main-dark">${req.name}</div>
                     <div class="text-sm text-text-sub-light dark:text-text-sub-dark">D.No: ${req.dno}</div>
                 </div>
-                <span class="px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(req.status)}">
+                <span class="px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide ${getStatusColor(req.status)}">
                     ${req.status_display}
                 </span>
             </div>
-            <div class="grid grid-cols-2 gap-3 text-sm mb-2">
+            <div class="grid grid-cols-2 gap-3 text-sm mb-3 pb-3 border-b border-gray-300 dark:border-gray-600">
                 <div>
-                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs">Requested Date</div>
-                    <div class="text-text-main-light dark:text-text-main-dark">${new Date(req.requested_date).toLocaleDateString()}</div>
+                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium">Requested Date</div>
+                    <div class="text-text-main-light dark:text-text-main-dark font-medium">${new Date(req.requested_date).toLocaleDateString()}</div>
                 </div>
                 <div>
-                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs">Processed</div>
-                    <div class="text-text-main-light dark:text-text-main-dark">${new Date(req.approval_timestamp).toLocaleDateString()}</div>
+                    <div class="text-text-sub-light dark:text-text-sub-dark text-xs font-medium">Processed</div>
+                    <div class="text-text-main-light dark:text-text-main-dark font-medium">${new Date(req.approval_timestamp).toLocaleDateString()}</div>
                 </div>
             </div>
-            ${req.approval_note ? `<div class="text-sm text-text-main-light dark:text-text-main-dark mt-2 p-2 bg-gray-50 dark:bg-gray-800 rounded"><strong>Note:</strong> ${req.approval_note}</div>` : ''}
+            ${req.approval_note ? `<div class="text-sm text-text-main-light dark:text-text-main-dark mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded"><strong class="text-blue-600 dark:text-blue-300">Note:</strong> ${req.approval_note}</div>` : ''}
         </div>
     `).join('');
 }
