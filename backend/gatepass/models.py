@@ -12,6 +12,10 @@ class GatePass(models.Model):
     ]
     
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='gatepass_requests')
+    dno = models.CharField(max_length=50, verbose_name='D.No / Room Number', default='')
+    name = models.CharField(max_length=255, default='')
+    parent_email = models.EmailField(default='')
+    requested_date = models.DateField(default=timezone.now)
     reason = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     

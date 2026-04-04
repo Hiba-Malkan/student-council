@@ -31,15 +31,28 @@ class GatePassViewSet(viewsets.ModelViewSet):
         try:
             gatepass = GatePass.objects.create(
                 student=request.user,
+                dno=request.data.get('dno'),
+                name=request.data.get('name'),
+                parent_email=request.data.get('parent_email'),
+                requested_date=request.data.get('requested_date'),
                 reason=request.data.get('reason')
             )
             
             # Send email to student
             send_mail(
                 subject='Gate Pass Request Submitted',
-                message=f'Your gate pass request has been submitted.\nReason: {gatepass.reason}',
+                message=f'Your gate pass request has been submitted.\n\nD.No: {gatepass.dno}\nRequested Date: {gatepass.requested_date}\nReason: {gatepass.reason}',
                 from_email='noreply@studentcouncil.com',
                 recipient_list=[request.user.email],
+                fail_silently=True
+            )
+            
+            # Send email to parent
+            send_mail(
+                subject='Gate Pass Request - Child Submission',
+                message=f'Your child {gatepass.name} has submitted a gate pass request.\n\nD.No: {gatepass.dno}\nRequested Date: {gatepass.requested_date}\nReason: {gatepass.reason}',
+                from_email='noreply@studentcouncil.com',
+                recipient_list=[gatepass.parent_email],
                 fail_silently=True
             )
             
@@ -52,7 +65,7 @@ class GatePassViewSet(viewsets.ModelViewSet):
                 if manager_emails:
                     send_mail(
                         subject='New Gate Pass Request',
-                        message=f'New gate pass request from {request.user.get_full_name() or request.user.username}.\nReason: {gatepass.reason}',
+                        message=f'New gate pass request from {gatepass.name}.\n\nD.No: {gatepass.dno}\nRequested Date: {gatepass.requested_date}\nReason: {gatepass.reason}',
                         from_email='noreply@studentcouncil.com',
                         recipient_list=manager_emails,
                         fail_silently=True
@@ -94,6 +107,8 @@ class GatePassViewSet(viewsets.ModelViewSet):
             # Send email to student
             status_text = 'Approved' if gatepass.status == 'approved' else 'Denied'
             message = f'Your gate pass request has been {status_text.lower()}.\n\n'
+            message += f'D.No: {gatepass.dno}\n'
+            message += f'Requested Date: {gatepass.requested_date}\n'
             message += f'Reason for request: {gatepass.reason}\n\n'
             if gatepass.approval_note:
                 message += f'Note from manager: {gatepass.approval_note}'
@@ -103,6 +118,15 @@ class GatePassViewSet(viewsets.ModelViewSet):
                 message=message,
                 from_email='noreply@studentcouncil.com',
                 recipient_list=[gatepass.student.email],
+                fail_silently=True
+            )
+            
+            # Send email to parent
+            send_mail(
+                subject=f'Gate Pass Request {status_text} - {gatepass.name}',
+                message=message,
+                from_email='noreply@studentcouncil.com',
+                recipient_list=[gatepass.parent_email],
                 fail_silently=True
             )
             

@@ -9,7 +9,7 @@ class GatePassSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = GatePass
-        fields = ['id', 'student', 'reason', 'status', 'status_display', 'approved_by', 'approval_note', 'approval_timestamp', 'requested_at', 'updated_at']
+        fields = ['id', 'student', 'dno', 'name', 'parent_email', 'requested_date', 'reason', 'status', 'status_display', 'approved_by', 'approval_note', 'approval_timestamp', 'requested_at', 'updated_at']
         read_only_fields = ['id', 'student', 'approved_by', 'approval_note', 'approval_timestamp', 'requested_at', 'updated_at']
 
 class GatePassApprovalSerializer(serializers.Serializer):
