@@ -328,6 +328,14 @@ setInterval(loadRecentActivity, 60000);
 checkPermissions();
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Check if user is authorized to view dashboard
+    const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
+    
+    if (isNormalStudent) {
+        showError('You do not have permission to access the Dashboard');
+        setTimeout(() => window.location.href = '/announcements/', 1500);
+        return;
+    }
     loadDashboardData();
 });
 </script>

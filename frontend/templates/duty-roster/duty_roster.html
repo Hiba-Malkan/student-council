@@ -596,13 +596,21 @@ async function deleteDuty(dutyId) {
 async function initDutyRoster() {
     await loadUserProfile();
     
+    // Check if user is authorized to access duty roster
+    const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
+    if (isNormalStudent) {
+        showError('You do not have permission to access the Duty Roster');
+        setTimeout(() => window.location.href = '/announcements/', 1500);
+        return;
+    }
+    
     // Update greeting and role badge
     const firstName = userData.first_name || userData.username || 'User';
     document.getElementById('greetingTitle').textContent = `Hello, ${firstName}!`;
     document.getElementById('userRoleBadge').textContent = userData.role_detail?.name || 'Member';
     
     // Show assign duty form if user has permission
-    if (userData.role_detail?.can_edit_duty_roster || userData.is_staff) {
+    if (userData.role?.can_edit_duty_roster || userData.is_staff) {
         document.getElementById('assignDutyCard').style.display = 'block';
         loadUsers();
     }

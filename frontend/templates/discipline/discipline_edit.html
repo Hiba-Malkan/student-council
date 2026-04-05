@@ -173,6 +173,21 @@
     const form = document.getElementById('disciplineForm');
     const dnoInput = document.getElementById('dno');
 
+    // Check authorization first
+    (async () => {
+        await loadUserProfile();
+        const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
+        
+        if (isNormalStudent) {
+            showError('You do not have permission to edit discipline records');
+            setTimeout(() => window.location.href = '/announcements/', 1500);
+            return;
+        }
+        
+        // Load the record after authorization check passes
+        loadRecord();
+    })();
+
     // Auto-format Dno input
     dnoInput.addEventListener('input', (e) => {
         let value = e.target.value.toUpperCase().replace(/[^D0-9]/g, '');
@@ -275,7 +290,5 @@
             showError('Failed to update record. Please try again.');
         }
     });
-
-    loadRecord();
 </script>
 {% endblock %}

@@ -123,6 +123,21 @@ let currentPage = 1;
 let allSignups = [];
 const signupsPerPage = 10;
 
+// Check authorization first
+(async () => {
+    await loadUserProfile();
+    const isAuthorized = userData.is_staff || userData.is_superuser || userData.role?.can_manage_clubs;
+    
+    if (!isAuthorized) {
+        showError('You do not have permission to access Club Signups');
+        setTimeout(() => window.location.href = '/clubs/', 1500);
+        return;
+    }
+    
+    // Load clubs after authorization check passes
+    loadClubs();
+})();
+
 async function loadClubs() {
     try {
         const token = localStorage.getItem('access_token');
@@ -341,7 +356,5 @@ document.getElementById('messageModal').addEventListener('click', (e) => {
         closeMessage();
     }
 });
-
-loadClubs();
 </script>
 {% endblock %}

@@ -216,6 +216,16 @@ async function loadCompetition() {
         return;
     }
     
+    // Check authorization first
+    await loadUserProfile();
+    const isAuthorized = userData.is_superuser || userData.is_staff || userData.role?.can_manage_competitions;
+    
+    if (!isAuthorized) {
+        showError('You do not have permission to edit competitions');
+        setTimeout(() => window.location.href = '/competitions/', 1500);
+        return;
+    }
+    
     try {
         const token = localStorage.getItem('access_token');
         const response = await fetch(`/api/competitions/${competitionId}/`, {

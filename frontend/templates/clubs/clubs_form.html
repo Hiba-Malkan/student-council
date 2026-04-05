@@ -133,6 +133,9 @@
 
 {% block extra_js %}
 <script>
+/**
+ * @type {number|null}
+ */
 const clubId = {% if club_id %}{{ club_id }}{% else %}null{% endif %};
 let currentLogo = null;
 
@@ -251,10 +254,12 @@ async function submitForm() {
 async function initClubForm() {
     await loadUserProfile();
     
-    // Check permission
-    if (!userData.is_superuser && !userData.role_detail?.can_add_clubs) {
+    // Check permission using permission fields
+    const isAuthorized = userData.is_superuser || userData.is_staff || userData.role?.can_add_clubs || userData.role?.can_manage_clubs;
+    
+    if (!isAuthorized) {
         showError('You do not have permission to manage clubs');
-        setTimeout(() => window.location.href = '/clubs/', 2000);
+        setTimeout(() => window.location.href = '/clubs/', 1500);
         return;
     }
     

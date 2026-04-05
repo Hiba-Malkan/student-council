@@ -112,11 +112,20 @@
 
     async function loadRecords() {
         try {
+            // Check if user is authorized to view discipline
+            await loadUserProfile();
+            const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
+            
+            if (isNormalStudent) {
+                showError('You do not have permission to access Discipline Records');
+                setTimeout(() => window.location.href = '/announcements/', 1500);
+                return;
+            }
+
             const response = await apiCall('/discipline/');
             if (response && response.ok) {
                 const data = await response.json();
                 allRecords = Array.isArray(data) ? data : (data.results || []);
-                checkPermissions();
                 checkPermissions();
                 renderRecords(allRecords);
             } else {
@@ -128,9 +137,7 @@
     }
 
     function checkPermissions() {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        canManageRecords = user.is_staff || user.is_superuser || 
-            (user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name));
+        canManageRecords = userData.is_staff || userData.is_superuser || userData.role?.can_record_discipline;
         
         if (!canManageRecords) {
             document.getElementById('addRecordBtn').style.display = 'none';

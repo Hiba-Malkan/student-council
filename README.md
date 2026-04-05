@@ -6,13 +6,13 @@ This is a web application for managing student council operations. It handles cl
 
 The application supports clubs management with creation, updates, deletion, and status tracking. A public endpoint lists active clubs so students can discover organizations without authentication. The duty roster system automatically cycles maintenance duties to students each month and alerts administrators to overdue tasks.
 
-Announcements go to specific roles or the entire student council. Competition management tracks participants and enforces deadlines. Meetings can be scheduled with attendees and reminder emails sent automatically. Discipline records document policy violations with severity levels and action tracking. Notifications are sent via email on a schedule (7 AM and 4 PM) and triggered by events.
+Announcements go to specific roles or the entire student council. Competition management tracks participants and enforces deadlines. Meetings can be scheduled with attendees and reminder emails sent automatically. Discipline records document policy violations with severity levels and action tracking. Gate pass requests allow students to submit requests that council administrators approve or deny with email notifications to students, parents, and teachers.
 
-The system uses five customizable roles to control what users can do. Authentication via JWT tokens keeps sessions stateless. The dashboard is responsive and includes dark mode support for students accessing the system on mobile devices.
+Notifications are sent via email on a schedule (7 AM and 4 PM) and triggered by events. The system uses customizable roles with granular permissions to control what users can do. Authentication via JWT tokens keeps sessions stateless. The dashboard is responsive and includes dark mode support for students accessing the system on mobile devices. All restricted pages are protected by both frontend and backend authorization checks preventing unauthorized access.
 
 ## Tech Stack
 
-The backend uses Django 4.2.7 with Django REST Framework delivering 20+ API endpoints. PostgreSQL 12+ serves as the database with 42 optimized tables. Redis handles message brokering while Celery processes background tasks via a Beat scheduler. The frontend is HTML5 with Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity.
+The backend uses Django 4.2.7 with Django REST Framework delivering 20+ API endpoints. PostgreSQL 12+ serves as the database with 43 optimized tables. Redis handles message brokering while Celery processes background tasks via a Beat scheduler. The frontend is HTML5 with Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity.
 
 Gunicorn serves the application in production behind Nginx as a reverse proxy handling HTTPS/SSL termination. Git manages version control. The application runs on macOS, Linux, or Windows with WSL2. Let's Encrypt provides free SSL certificates for HTTPS.
 
@@ -97,6 +97,7 @@ student-council/
 │   ├── competitions/           # Competitions
 │   ├── meetings/               # Meetings
 │   ├── discipline/             # Discipline records
+│   ├── gatepass/               # Gate pass requests
 │   ├── notifications/          # Email notifications
 │   ├── media/                  # Uploaded files
 │   └── venv/                   # Virtual environment
@@ -138,13 +139,17 @@ GET /public/clubs/              # Public clubs page
 Protected endpoints require a valid JWT token:
 
 ```bash
-POST /api/accounts/login/       # Login and receive token
-GET /api/accounts/me/           # Current user's profile
-GET /api/duty-roster/           # User's assigned duties
-GET /api/announcements/         # All announcements
-POST /api/clubs/                # Create club (admin only)
-PUT /api/clubs/{id}/            # Update club (admin only)
-DELETE /api/clubs/{id}/         # Delete club (admin only)
+POST /api/accounts/login/           # Login and receive token
+GET /api/accounts/me/               # Current user's profile
+GET /api/duty-roster/               # User's assigned duties
+GET /api/announcements/             # All announcements
+POST /api/clubs/                    # Create club (admin only)
+PUT /api/clubs/{id}/                # Update club (admin only)
+DELETE /api/clubs/{id}/             # Delete club (admin only)
+GET /api/gatepass/                  # List gate pass requests
+POST /api/gatepass/                 # Submit new gate pass request
+POST /api/gatepass/{id}/approve_or_deny/  # Approve/deny gate pass (admin only)
+GET /api/gatepass/my_requests/      # Get user's own requests
 ```
 
 To test the API, first log in to receive a JWT token:
@@ -242,7 +247,7 @@ Always use HTTPS in production. Keep SECRET_KEY secret and rotate it periodicall
 
 ## Database
 
-The system uses 42 PostgreSQL tables for storage including accounts_user, accounts_role, accounts_userrole for user management; clubs_club, clubs_clubmember for organizations; duty_roster_duty for assignments; announcements_announcement for posts; competitions_competition for events; meetings_meeting for schedules; discipline_record for violations; and notifications_notification for emails.
+The system uses 43 PostgreSQL tables for storage including accounts_user, accounts_role, accounts_userrole for user management; clubs_club, clubs_clubmember for organizations; duty_roster_duty for assignments; announcements_announcement for posts; competitions_competition for events; meetings_meeting for schedules; discipline_record for violations; gatepass_gatepass for gate pass requests; and notifications_notification for emails.
 
 Backup the database regularly:
 
@@ -307,7 +312,7 @@ Requests that skip steps or ignore the documentation may not receive a response.
 
 ## Status
 
-The backend is production ready, the frontend is production ready, the database uses PostgreSQL with 42 tables, the API has 20+ tested endpoints, documentation is complete, security is hardened, and performance is optimized.
+The backend is production ready, the frontend is production ready, the database uses PostgreSQL with 43 tables, the API has 20+ tested endpoints, documentation is complete, security is hardened, and performance is optimized.
 
 ## Quick Links
 
@@ -324,5 +329,5 @@ The application is built with Django and Django REST Framework, styled with Tail
 
 **Written by Hiba**
 
-Last Updated: March 26, 2026  
-Version: 1.0
+Last Updated: April 5, 2026  
+Version: 1.1

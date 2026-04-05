@@ -280,18 +280,20 @@
                 }
             }
 
-            // Hide dashboard and other features for normal students
-            if (userData.role_detail?.is_normal_student) {
+            // Hide dashboard, meetings, duty roster, and discipline for normal students (use permission fields)
+            const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
+            
+            if (isNormalStudent) {
                 if (dashButton) dashButton.style.display = 'none';
+                if (meetingButton) meetingButton.style.display = 'none';
                 if (dutyButton) dutyButton.style.display = 'none';
                 if (disciplineButton) disciplineButton.style.display = 'none';
-                if (meetingButton) meetingButton.style.display = 'none';
-                // Students can only see: announcements, clubs, competitions, about
+                // Students can only see: announcements, clubs, competitions, about, gatepass
             }
 
             // Show signup management pages only to users with appropriate permissions
-            const canManageClubs = userData.is_superuser || userData.is_staff || userData.role_detail?.can_add_clubs || userData.role_detail?.can_manage_clubs;
-            const canManageCompetitions = userData.is_superuser || userData.is_staff || userData.role_detail?.can_manage_competitions;
+            const canManageClubs = userData.is_superuser || userData.is_staff || userData.role?.can_add_clubs || userData.role?.can_manage_clubs;
+            const canManageCompetitions = userData.is_superuser || userData.is_staff || userData.role?.can_manage_competitions;
             
             if (canManageClubs) {
                 const clubSignupsButton = document.getElementById('clubSignupsButton');

@@ -313,6 +313,9 @@
                     localStorage.setItem('refresh_token', result.tokens.refresh);
                     localStorage.setItem('user', JSON.stringify(result.user));
                     
+                    // Set light mode as default on login
+                    localStorage.setItem('darkMode', 'disabled');
+                    
                     // Show success message
                     successMessage.textContent = 'Login successful! Redirecting...';
                     successMessage.style.display = 'block';
@@ -320,7 +323,7 @@
                     // Redirect based on user role
                     let redirectUrl = '/dashboard/';
                     if (result.user.role_detail?.is_normal_student) {
-                        redirectUrl = '/clubs/';
+                        redirectUrl = '/announcements/';
                     }
                     
                     setTimeout(() => {

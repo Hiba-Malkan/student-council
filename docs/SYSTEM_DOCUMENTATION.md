@@ -1,8 +1,8 @@
 # Student Council Management System
 ## Technical Documentation
 
-**Version:** 1.0  
-**Date:** March 26, 2026  
+**Version:** 1.1  
+**Date:** April 5, 2026  
 **Organization:** Student Council  
 **Status:** Production Ready
 
@@ -71,6 +71,163 @@ The architecture uses an API-first approach with 20+ RESTful endpoints, PostgreS
 ```
 
 The frontend runs on HTML5 with CSS3 for structure and styling, using Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity. The backend is built with Django 4.2.29 and Django REST Framework 3.15.2 to deliver the API. PostgreSQL 12+ serves as the primary data store with 42 optimized tables. Redis 5.0+ handles message brokering while Celery 5.3.6 manages background tasks with Celery Beat 2.5.0 scheduler. Authentication relies on JWT tokens via djangorestframework-simplejwt 5.5.1 for stateless request validation. Gunicorn serves the Django application in production, and Nginx acts as a reverse proxy handling HTTPS/SSL termination and static file serving.
+
+---
+
+## Authentication & Authorization System
+
+### Overview
+
+The system uses JWT (JSON Web Tokens) for stateless authentication combined with a permission-based Role model for fine-grained authorization. All restricted operations are protected by both frontend permission checks and backend API validation.
+
+### JWT Authentication Flow
+
+1. **Login**: User submits username/password to `/api/accounts/login/`
+2. **Token Generation**: Backend validates credentials and returns access/refresh tokens
+3. **Token Storage**: Frontend stores tokens in localStorage
+4. **API Requests**: Frontend includes token in Authorization header: `Bearer {access_token}`
+5. **Token Validation**: Backend validates JWT signature and expiration on every request
+6. **Token Refresh**: Expired access tokens are refreshed using the refresh token
+7. **Logout**: User clears localStorage and tokens become invalid
+
+### Role-Based Permission System
+
+The `accounts_role` model uses boolean permission fields instead of hardcoded role names. This provides flexible, maintainable access control:
+
+**Permission Fields:**
+- `is_normal_student` — Identifies regular students (blocks access to restricted features)
+- `can_edit_duty_roster` — Permission to create/edit duty assignments
+- `can_schedule_meetings` — Permission to schedule meetings
+- `can_record_discipline` — Permission to add/edit discipline records
+- `can_view_discipline` — Permission to view discipline records
+- `can_manage_announcements` — Permission to create/edit announcements
+- `can_manage_gatepass` — Permission to manage gate pass requests
+- `can_add_clubs` — Permission to create clubs
+- `can_manage_clubs` — Permission to manage club signups
+- `can_manage_competitions` — Permission to create/edit competitions
+
+### Frontend Authorization Pattern
+
+All protected pages use this authorization pattern:
+
+```javascript
+// Check authorization on page load
+await loadUserProfile();
+const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
+
+if (isNormalStudent) {
+    showError('You do not have permission to access this page');
+    setTimeout(() => window.location.href = '/announcements/', 1500);
+    return;
+}
+
+// Check specific feature permissions
+if (userData.role?.can_schedule_meetings || userData.is_staff) {
+    // Show meeting scheduling feature
+}
+```
+
+### Protected Pages & Features
+
+**Council Dashboard** (`/dashboard/`)
+- Restricted: Normal students blocked
+- Shows: Upcoming meetings, duty roster, announcements
+- Requires: Non-student status
+
+**Meetings** (`/meetings/`)
+- Restricted: Normal students blocked
+- Features: View meetings, upload minutes of meetings
+- Requires: `can_schedule_meetings` to schedule new meetings
+
+**Duty Roster** (`/duty-roster/`)
+- Restricted: Normal students blocked
+- Features: View today's duty, manage assignments
+- Requires: `can_edit_duty_roster` to assign duties
+
+**Discipline Records** (`/discipline/`, `/discipline/detail/{id}/`)
+- Restricted: Normal students blocked
+- Features: View student records, add/edit offenses
+- Requires: `can_record_discipline` or staff status
+
+**Club Management** (`/clubs/signups/`, `/clubs/new/`)
+- Restricted: Club signup viewing requires permission
+- Features: Create new clubs, manage signups
+- Requires: `can_add_clubs` or `can_manage_clubs`
+
+**Competition Management** (`/competitions/signups/`, `/competitions/new/`, `/competitions/edit/{id}/`)
+- Restricted: Competition signup viewing requires permission
+- Features: Create competitions, manage signups
+- Requires: `can_manage_competitions` or staff status
+
+### Navigation & Visibility Control
+
+**Sidebar Navigation** (`base.html`)
+- Dashboard link: Hidden if `is_normal_student`
+- Meetings link: Hidden if `is_normal_student`
+- Duty Roster link: Hidden if `is_normal_student`
+- Discipline link: Hidden if `is_normal_student` or lacks permission
+- Club/Competition links: Always visible (public access)
+- Admin Panel: Only visible to staff/superusers
+
+**Login Redirect** (`login.html`)
+- Normal students redirect to `/announcements/`
+- Council members redirect to `/dashboard/`
+- Light mode set as default on login
+
+### Backend Permission Classes
+
+All API endpoints enforce permissions via Django REST Framework permission classes:
+
+```python
+# Example permission class usage
+class CanRecordDiscipline(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_staff or \
+               request.user.role.can_record_discipline
+
+# Applied to viewset
+class DisciplineViewSet(viewsets.ModelViewSet):
+    permission_classes = [CanRecordDiscipline]
+```
+
+### Security Considerations
+
+1. **Double Validation**: Frontend permission checks AND backend API validation
+2. **Direct URL Access**: Users cannot bypass authorization by typing URLs
+3. **Permission Inheritance**: Staff/superusers bypass permission checks
+4. **Token Expiration**: Access tokens expire (configurable, default 5 minutes)
+5. **HTTPS Only**: All production deployments must use HTTPS
+6. **CORS Restriction**: API only accessible from configured domains
+
+### Authorization Flow Diagram
+
+```
+User Login
+    ↓
+Backend validates credentials
+    ↓
+Returns JWT tokens + User data with Role
+    ↓
+Frontend stores tokens in localStorage
+    ↓
+User accesses protected page
+    ↓
+Frontend checks userData.role.is_normal_student
+    ├─ YES → Show error + redirect to /announcements/
+    └─ NO → Load page content
+    ↓
+Frontend checks specific permissions (can_schedule_meetings, etc.)
+    ├─ YES → Show feature
+    └─ NO → Hide feature
+    ↓
+API requests include Authorization header with JWT
+    ↓
+Backend validates token signature + expiration
+    ├─ Valid → Check endpoint permission class
+    │   ├─ Authorized → Execute request
+    │   └─ Denied → Return 403 Forbidden
+    └─ Invalid/Expired → Return 401 Unauthorized
+```
 
 ---
 
@@ -333,6 +490,230 @@ The discipline module records instances where students violate council policies 
 
 Database tables:
 - `discipline_record` — Stores discipline case information and action history
+
+### Gate Pass Module
+
+The gate pass module manages student requests for gate pass approvals. Students can submit gate pass requests for specific dates with their details (D.No, class, section) and reasons. Council administrators with the `can_manage_gatepass` permission review submitted requests and either approve or deny them. The system automatically sends email notifications to students, parents, class teachers, and administrators at each step of the workflow.
+
+**Key Features:**
+
+**Request Submission** — Students fill out a gate pass request form with their personal information (name, D.No, class, section), parent email, optional class teacher email, requested date, and reason for the gate pass. The system validates the form and sends confirmation emails to the student, parent, and class teacher upon submission. Gate pass managers are also notified of new requests via email.
+
+**Request Management** — Administrators access the Gate Pass dashboard to view all submitted requests filtered by status (pending, approved, or denied). A paginated list shows request details with action buttons to approve or deny each request. When approving or denying, administrators can add optional notes explaining their decision.
+
+**Approval Workflow** — Once an administrator approves or denies a gate pass, the system records the decision, approval timestamp, and approving administrator. Emails are automatically sent to the student, parent, and class teacher notifying them of the decision outcome and any notes from the administrator.
+
+**Email Notifications** — The system uses Celery background tasks to asynchronously send emails:
+- **Submission email**: Sent to student, parent, and optional class teacher when request is submitted; also sent to all gate pass managers
+- **Decision email**: Sent to student, parent, and optional class teacher when request is approved or denied with decision details and administrator notes
+
+**Access Control** — Only users with the `can_manage_gatepass` permission can view all requests and approve/deny them. Students can only view their own submitted requests. This permission is set on the Role model and checked both on the frontend and backend.
+
+**Frontend Components:**
+- `/gatepass/` — Main page with student request form (for all users) and admin request management section (visible only to users with `can_manage_gatepass`)
+- Student view shows: Request form with all required fields, history of own submitted requests with status
+- Admin view shows: All pending requests in a list, approved requests in paginated results, denied requests in paginated results, with approve/deny buttons and note fields
+
+**API Endpoints:**
+
+```
+GET /api/gatepass/
+    Permissions: IsAuthenticated
+    Returns: List of gate pass requests
+    - For admin users (can_manage_gatepass): All requests
+    - For students: Only their own requests
+    Query params: ?status=pending|approved|denied (filters by status)
+    Pagination: 5 results per page
+
+POST /api/gatepass/
+    Permissions: IsAuthenticated
+    Request body: {
+        "dno": "A-101",
+        "name": "John Doe",
+        "student_class": "10",
+        "student_section": "A",
+        "parent_email": "parent@example.com",
+        "ct_email": "teacher@example.com",  // optional
+        "requested_date": "2026-04-20",
+        "reason": "Medical appointment"
+    }
+    Returns: Created gate pass object with status 201
+    Triggers: Submission emails via Celery
+
+POST /api/gatepass/{id}/approve_or_deny/
+    Permissions: IsAuthenticated + can_manage_gatepass
+    Request body: {
+        "status": "approved" | "denied",
+        "note": "Optional approval/denial note"
+    }
+    Returns: Updated gate pass object with status 200
+    Triggers: Decision emails via Celery
+    Error: 403 Forbidden if user lacks can_manage_gatepass
+
+GET /api/gatepass/my_requests/
+    Permissions: IsAuthenticated
+    Returns: All gate pass requests submitted by current user
+
+GET /api/gatepass/processed-requests/
+    Permissions: IsAuthenticated + can_manage_gatepass
+    Returns: Paginated list of approved and denied requests
+    Pagination: 5 results per page, ordered by approval timestamp
+    Error: 403 Forbidden if user lacks can_manage_gatepass
+```
+
+**Database Tables:**
+
+```
+gatepass_gatepass
+• id (PK)
+• student_id (FK → accounts_user) — Student who submitted the request
+• dno (varchar) — D.No 
+• name (varchar) — Student's full name
+• student_class (varchar) — Class/grade 
+• student_section (varchar) — Section 
+• parent_email (email) — Parent's email address
+• ct_email (email, nullable) — Class teacher's email (optional)
+• requested_date (date) — Date gate pass is needed
+• reason (text) — Reason for gate pass request
+• status (varchar) — One of: 'pending', 'approved', 'denied'
+• approved_by_id (FK → accounts_user, nullable) — Administrator who approved/denied
+• approval_note (text, nullable) — Optional note from administrator
+• approval_timestamp (datetime, nullable) — When decision was made
+• requested_at (datetime) — When request was submitted
+• updated_at (datetime) — Last modification timestamp
+```
+
+**Request/Response Examples:**
+
+Submitting a new gate pass request:
+```
+POST /api/gatepass/
+Content-Type: application/json
+
+{
+    "dno": "D10060",
+    "name": "Alice Johnson",
+    "student_class": "11",
+    "student_section": "B",
+    "parent_email": "alice.parent@email.com",
+    "ct_email": "ct@school.com",
+    "requested_date": "2026-04-25",
+    "reason": "Medical appointment with specialist"
+}
+
+Response (201 Created):
+{
+    "id": 42,
+    "student": {
+        "id": 15,
+        "username": "alice123",
+        "email": "alice@school.com",
+        ...
+    },
+    "dno": "D7765",
+    "name": "Alice Johnson",
+    "student_class": "11",
+    "student_section": "B",
+    "parent_email": "alice.parent@email.com",
+    "ct_email": "ct@school.com",
+    "requested_date": "2026-04-25",
+    "reason": "Medical appointment with specialist",
+    "status": "pending",
+    "status_display": "Pending",
+    "approved_by": null,
+    "approval_note": "",
+    "approval_timestamp": null,
+    "requested_at": "2026-04-18T10:30:00Z",
+    "updated_at": "2026-04-18T10:30:00Z"
+}
+```
+
+Approving a gate pass request:
+```
+POST /api/gatepass/42/approve_or_deny/
+Content-Type: application/json
+
+{
+    "status": "approved",
+    "note": "Approved. Please collect gate pass from office."
+}
+
+Response (200 OK):
+{
+    "id": 42,
+    "student": {...},
+    "dno": "A-205",
+    "name": "Alice Johnson",
+    ...
+    "status": "approved",
+    "status_display": "Approved",
+    "approved_by": {
+        "id": 3,
+        "username": "president",
+        ...
+    },
+    "approval_note": "Approved. Please collect gate pass from office.",
+    "approval_timestamp": "2026-04-18T11:15:00Z",
+    "requested_at": "2026-04-18T10:30:00Z",
+    "updated_at": "2026-04-18T11:15:00Z"
+}
+```
+
+Retrieving processed (approved/denied) requests:
+```
+GET /api/gatepass/processed-requests/?page=1
+Authorization: Bearer {token}
+
+Response (200 OK):
+{
+    "count": 25,
+    "next": "/api/gatepass/processed-requests/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 42,
+            "student": {...},
+            "status": "approved",
+            "status_display": "Approved",
+            "approval_timestamp": "2026-04-18T11:15:00Z",
+            ...
+        },
+        ...
+    ]
+}
+```
+
+**Permission Requirements:**
+
+- **Students** — Can submit gate pass requests, view their own request history
+- **Gate Pass Managers** — Users with `can_manage_gatepass` permission can view all requests, filter by status, approve/deny requests with optional notes, view processed requests
+
+**Integration Points:**
+
+The gate pass module integrates with:
+- **Accounts Module** — User authentication and role/permission validation
+- **Notifications Module** — Triggers Celery tasks to send emails on submission and decision
+- **Email System** — Uses Django's `send_mail()` to notify students, parents, teachers, and administrators
+
+**Frontend-Backend Validation Pattern:**
+
+```javascript
+// Frontend validation before API call
+if (!userData.role || !userData.role.can_manage_gatepass) {
+    // Hide admin section, show error, or redirect
+    adminSection.style.display = 'none';
+}
+
+// Backend validation in view
+def approve_or_deny(self, request, pk=None):
+    if not self._can_manage_gatepass(request.user):
+        return Response(
+            {'error': 'You do not have permission...'},
+            status=status.HTTP_403_FORBIDDEN
+        )
+```
+
+This dual-validation approach ensures that unauthorized users cannot bypass the system even if they find API endpoints directly or manipulate the frontend.
 
 ## Data Models
 
@@ -908,9 +1289,9 @@ Documentation is located in `/path/to/docs/`. Report issues on GitHub. Contact h
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** March 26, 2026  
-**Next Review:** June 26, 2026
+**Document Version:** 1.1  
+**Last Updated:** April 5, 2026  
+**Next Review:** July 5, 2026
 
 ---
 

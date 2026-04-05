@@ -123,6 +123,21 @@ let currentPage = 1;
 let allSignups = [];
 const signupsPerPage = 10;
 
+// Check authorization first
+(async () => {
+    await loadUserProfile();
+    const isAuthorized = userData.is_staff || userData.is_superuser || userData.role?.can_manage_competitions;
+    
+    if (!isAuthorized) {
+        showError('You do not have permission to access Competition Signups');
+        setTimeout(() => window.location.href = '/competitions/', 1500);
+        return;
+    }
+    
+    // Load competitions after authorization check passes
+    loadCompetitions();
+})();
+
 async function loadCompetitions() {
     try {
         console.log('Loading competitions from:', `${apiBase}/competitions/?limit=1000`);
@@ -348,7 +363,5 @@ document.getElementById('messageModal').addEventListener('click', (e) => {
         closeMessage();
     }
 });
-
-loadCompetitions();
 </script>
 {% endblock %}

@@ -144,6 +144,22 @@ const recordId = window.location.pathname.split('/').filter(Boolean).pop();
 
 async function loadRecord() {
     try {
+        // First check if user is authorized to view discipline records
+        const userResponse = await apiCall(`/accounts/me/`);
+        if (!userResponse || !userResponse.ok) {
+            window.location.href = '/';
+            return;
+        }
+        
+        const userData = await userResponse.json();
+        const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
+        
+        if (isNormalStudent) {
+            showError('You do not have permission to access Discipline Records');
+            setTimeout(() => window.location.href = '/', 1500);
+            return;
+        }
+
         const response = await apiCall(`/discipline/${recordId}/`);
         if (!response || !response.ok) {
             showError('Failed to load record');

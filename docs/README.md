@@ -1,6 +1,6 @@
 # Student Council Management System
 
-This is a web application for managing student council operations. It handles clubs, competitions, meetings, duty rosters, announcements, and discipline tracking. The system provides a responsive dashboard for council administrators and public pages showing available clubs to all students without login required.
+This is a web application for managing student council operations. It handles clubs, competitions, meetings, duty rosters, announcements, and discipline tracking. The system provides a responsive dashboard for council administrators and public pages showing available clubs to all students. **Security-first design prevents unauthorized access to restricted features** through both frontend permission checks and backend API validation.
 
 ## Features
 
@@ -8,7 +8,32 @@ The application handles clubs with creation, updates, deletion, and status track
 
 Announcements reach specific roles or the entire council. Competitions track who's signed up, manage team assignments, and enforce deadlines. You can remove participants directly from signup pages with a confirmation modal that works in light and dark mode. Meetings get scheduled with attendees and automatic reminder emails. Discipline records log policy violations with severity and action tracking. Email notifications go out on a schedule (7 AM and 4 PM) and also trigger immediately when events happen.
 
-The system uses customizable roles to control access including Student, Captain, Class Representative, and C-Suite roles (President, Vice President, Secretary, Treasurer). Students can view clubs, announcements, and sign up for competitions and clubs. The Student role is the default for all registered users. Captains and Class Representatives get additional permissions to manage specific areas. C-Suite members can edit duty rosters, schedule meetings, create and edit announcements, manage competitions, and perform administrative functions. Authentication uses JWT tokens so sessions are stateless. The interface is responsive and includes dark mode for students accessing it on mobile.
+### Security & Access Control
+
+The system uses **permission-based role management** to control access:
+- **Normal Students**: Can view announcements, sign up for clubs/competitions, and access gate pass
+- **Council Members**: Can view dashboard, schedule meetings, manage duty rosters, and view discipline records
+- **Administrators**: Have full access to all features and can manage everything
+
+**Authorization Protection**:
+- Direct URL access is blocked for unauthorized users with automatic redirects
+- Frontend permission checks provide immediate feedback with error messages
+- Backend API endpoints enforce permissions on every request
+- Light mode is the default on login for a fresh user experience
+
+### Role-Based Access Control
+
+The system uses customizable roles with granular permission fields:
+- `is_normal_student` — Restricts access to restricted features
+- `can_edit_duty_roster` — Allows duty roster management
+- `can_schedule_meetings` — Allows meeting creation
+- `can_record_discipline` — Allows discipline record management
+- `can_manage_announcements` — Allows announcement creation
+- `can_manage_competitions` — Allows competition management
+- `can_add_clubs` — Allows club creation
+- Additional role-specific permissions for fine-grained control
+
+Authentication uses JWT tokens so sessions are stateless. The interface is responsive and includes dark mode for students accessing it on mobile.
 
 ## Tech Stack
 
