@@ -1,94 +1,89 @@
+from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.utils import timezone
-from django.core.mail import send_mail
 from .models import GatePass
 from .serializers import GatePassSerializer, GatePassApprovalSerializer
+from .tasks import send_gate_pass_decision_email, send_gate_pass_submission_email
+from rest_framework.exceptions import ValidationError
+import logging
+
+logger = logging.getLogger(__name__)
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 class GatePassViewSet(viewsets.ModelViewSet):
     serializer_class = GatePassSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
     
     def get_queryset(self):
         user = self.request.user
         
-        # Gate Pass Manager sees all requests
-        if self.is_gatepass_manager(user):
-            return GatePass.objects.all()
+        # Users with permission see filtered requests based on status query param
+        if self._can_manage_gatepass(user):
+            queryset = GatePass.objects.all()
+            
+            # Filter by status if provided in query params
+            status = self.request.query_params.get('status')
+            if status:
+                queryset = queryset.filter(status=status)
+            
+            return queryset
         
         # Students see only their own requests
         return GatePass.objects.filter(student=user)
     
-    def is_gatepass_manager(self, user):
-        return user.role and user.role.name == 'Gate Pass Manager'
+    def _can_manage_gatepass(self, user):
+        """Check if the user has the permission to manage gate passes."""
+        return user.role and user.role.can_manage_gatepass
     
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            logger.error(f"Validation error on gate pass creation: {e.detail}", exc_info=True)
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
         
         try:
             gatepass = GatePass.objects.create(
                 student=request.user,
                 dno=request.data.get('dno'),
                 name=request.data.get('name'),
+                student_class=request.data.get('student_class'),
+                student_section=request.data.get('student_section'),
                 parent_email=request.data.get('parent_email'),
+                ct_email=request.data.get('ct_email'),
                 requested_date=request.data.get('requested_date'),
                 reason=request.data.get('reason')
             )
-            
-            # Send email to student
-            send_mail(
-                subject='Gate Pass Request Submitted',
-                message=f'Your gate pass request has been submitted.\n\nD.No: {gatepass.dno}\nRequested Date: {gatepass.requested_date}\nReason: {gatepass.reason}',
-                from_email='noreply@studentcouncil.com',
-                recipient_list=[request.user.email],
-                fail_silently=True
-            )
-            
-            # Send email to parent
-            send_mail(
-                subject='Gate Pass Request - Child Submission',
-                message=f'Your child {gatepass.name} has submitted a gate pass request.\n\nD.No: {gatepass.dno}\nRequested Date: {gatepass.requested_date}\nReason: {gatepass.reason}',
-                from_email='noreply@studentcouncil.com',
-                recipient_list=[gatepass.parent_email],
-                fail_silently=True
-            )
-            
-            # Send email to gate pass managers
-            from accounts.models import Role
-            try:
-                manager_role = Role.objects.get(name='Gate Pass Manager')
-                managers = manager_role.users.all()
-                manager_emails = [m.email for m in managers]
-                if manager_emails:
-                    send_mail(
-                        subject='New Gate Pass Request',
-                        message=f'New gate pass request from {gatepass.name}.\n\nD.No: {gatepass.dno}\nRequested Date: {gatepass.requested_date}\nReason: {gatepass.reason}',
-                        from_email='noreply@studentcouncil.com',
-                        recipient_list=manager_emails,
-                        fail_silently=True
-                    )
-            except Role.DoesNotExist:
-                pass
-            
-            return Response(
-                GatePassSerializer(gatepass).data,
-                status=status.HTTP_201_CREATED
-            )
         except Exception as e:
+            logger.error(f"Error creating gatepass object: {e}", exc_info=True)
             return Response(
-                {'error': 'Failed to submit gate pass request. Please try again later.'},
+                {'error': 'There was a problem creating the gate pass. Please check the data and try again.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        # Offload email sending to Celery
+        send_gate_pass_submission_email.delay(gatepass.id)
+            
+        return Response(
+            GatePassSerializer(gatepass).data,
+            status=status.HTTP_201_CREATED
+        )
     
     @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def approve_or_deny(self, request, pk=None):
         gatepass = self.get_object()
         
-        # Only gate pass managers can approve/deny
-        if not self.is_gatepass_manager(request.user):
+        # Only users with the permission can approve/deny
+        if not self._can_manage_gatepass(request.user):
             return Response(
                 {'error': 'You do not have permission to approve gate pass requests.'},
                 status=status.HTTP_403_FORBIDDEN
@@ -104,31 +99,8 @@ class GatePassViewSet(viewsets.ModelViewSet):
             gatepass.approval_timestamp = timezone.now()
             gatepass.save()
             
-            # Send email to student
-            status_text = 'Approved' if gatepass.status == 'approved' else 'Denied'
-            message = f'Your gate pass request has been {status_text.lower()}.\n\n'
-            message += f'D.No: {gatepass.dno}\n'
-            message += f'Requested Date: {gatepass.requested_date}\n'
-            message += f'Reason for request: {gatepass.reason}\n\n'
-            if gatepass.approval_note:
-                message += f'Note from manager: {gatepass.approval_note}'
-            
-            send_mail(
-                subject=f'Gate Pass Request {status_text}',
-                message=message,
-                from_email='noreply@studentcouncil.com',
-                recipient_list=[gatepass.student.email],
-                fail_silently=True
-            )
-            
-            # Send email to parent
-            send_mail(
-                subject=f'Gate Pass Request {status_text} - {gatepass.name}',
-                message=message,
-                from_email='noreply@studentcouncil.com',
-                recipient_list=[gatepass.parent_email],
-                fail_silently=True
-            )
+            # Asynchronously send email notifications
+            send_gate_pass_decision_email.delay(gatepass.id)
             
             return Response(
                 GatePassSerializer(gatepass).data,
@@ -144,4 +116,26 @@ class GatePassViewSet(viewsets.ModelViewSet):
     def my_requests(self, request):
         requests = GatePass.objects.filter(student=request.user)
         serializer = self.get_serializer(requests, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated], url_path='processed-requests')
+    def processed_requests(self, request):
+        """
+        Returns paginated, processed (approved or denied) gate pass requests.
+        """
+        if not self._can_manage_gatepass(request.user):
+            return Response(
+                {'error': 'You do not have permission to view these requests.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        processed = GatePass.objects.filter(status__in=['approved', 'denied']).order_by('-approval_timestamp')
+        
+        # Paginate the queryset
+        page = self.paginate_queryset(processed)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(processed, many=True)
         return Response(serializer.data)

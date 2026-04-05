@@ -43,7 +43,7 @@
     <!-- Offense History -->
     <div class="bg-card-light dark:bg-card-dark rounded-xl shadow overflow-hidden">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-            <h2 class="text-xl font-semibold text-text-main-dark dark:text-lbg-main-dark">Offense History (<span id="historyCount">0</span>)</h2>
+            <h2 class="text-xl font-semibold text-white dark:text-lbg-main-dark">Offense History (<span id="historyCount">0</span>)</h2>
             <div class="flex items-center gap-3">
                 <span class="text-sm font-medium text-text-sub-light dark:text-lbg-sub-dark">Sort by:</span>
                 <select id="sortSelect" class="px-4 py-2 border rounded-lg bg-input-bg-light dark:bg-input-bg-dark text-lbg-main-light dark:text-lbg-main-dark border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary">
@@ -210,14 +210,14 @@ function renderOffenseLogs() {
                 <div class="flex justify-between items-start gap-6">
                     <div class="flex-1">
                         <div class="flex items-center gap-4 mb-2">
-                            <span class="text-sm font-medium text-text-sub-light dark:text-lbg-sub-dark">
+                            <span class="text-sm font-medium text-white dark:text-lbg-sub-dark">
                                 ${formattedDate}
                             </span>
                             <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-xs font-medium text-lbg-main-light dark:text-lbg-main-dark">
                                 ${log.category_display}
                             </span>
                         </div>
-                        <p class="text-text-main-light dark:text-lbg-main-dark mt-1">
+                        <p class="text-white dark:text-lbg-main-dark mt-1">
                             ${log.reason || 'No reason provided'}
                         </p>
                     </div>

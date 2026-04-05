@@ -9,8 +9,8 @@ class GatePassSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = GatePass
-        fields = ['id', 'student', 'dno', 'name', 'parent_email', 'requested_date', 'reason', 'status', 'status_display', 'approved_by', 'approval_note', 'approval_timestamp', 'requested_at', 'updated_at']
-        read_only_fields = ['id', 'student', 'approved_by', 'approval_note', 'approval_timestamp', 'requested_at', 'updated_at']
+        fields = ['id', 'student', 'dno', 'name', 'student_class', 'student_section', 'parent_email', 'ct_email', 'requested_date', 'reason', 'status', 'status_display', 'approved_by', 'approval_note', 'approval_timestamp', 'requested_at', 'updated_at']
+        read_only_fields = ['id', 'student', 'status', 'status_display', 'approved_by', 'approval_note', 'approval_timestamp', 'requested_at', 'updated_at']
 
 class GatePassApprovalSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=['approved', 'denied'])

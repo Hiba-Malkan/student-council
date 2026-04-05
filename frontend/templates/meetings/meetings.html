@@ -533,41 +533,28 @@ async function viewMom(meetingId) {
             const mom = meeting.mom;
              
             if (mom) {
-                const content = `
-                    <div class="space-y-4">
-                    <div>
-                        <h4 class="text-sm font-semibold text-white dark:text-lbg-main-dark mb-2">Content</h4>
-                        <div class="text-sm text-text-main-light dark:text-lbg-main-dark whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            ${mom.content || 'No content available'}
-                        </div>
-                    </div>
-                     
-                    ${mom.action_items ? `
-                        <div>
-                            <h4 class="text-sm font-semibold text-white dark:text-lbg-main-dark mb-2">Action Items</h4>
-                            <div class="text-sm text-text-main-light dark:text-lbg-main-dark whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200">
-                                ${mom.action_items}
-                            </div>
-                        </div>
-                    ` : ''}
-                     
-                    ${mom.document ? `
-                        <div>
-                            <h4 class="text-sm font-semibold text-white dark:text-lbg-main-dark mb-2">Attached Document</h4>
-                            <a href="${mom.document}" target="_blank" class="inline-flex items-center gap-2 text-sm text-primary hover:underline">
-                                <span class="material-icons-round text-base">description</span>
-                                Download Document
-                            </a>
-                        </div>
-                    ` : ''}
-                     
-                    <div class="text-xs text-white dark:text-lbg-main-dark pt-2 border-t border-gray-200">
-                        Uploaded by ${mom.uploaded_by_detail?.first_name || mom.uploaded_by_detail?.username || 'Unknown'} on ${new Date(mom.uploaded_at).toLocaleDateString()}
-                    </div>
-                    </div>
-                `;
+                const contentHtml = `<div class="space-y-4">
+<div>
+<h4 class="text-sm font-semibold text-white dark:text-lbg-main-dark mb-2">Content</h4>
+<div class="text-sm text-text-main-light dark:text-lbg-main-dark whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200">${mom.content || 'No content available'}</div>
+</div>
+${mom.action_items ? `<div>
+<h4 class="text-sm font-semibold text-white dark:text-lbg-main-dark mb-2">Action Items</h4>
+<div class="text-sm text-text-main-light dark:text-lbg-main-dark whitespace-pre-wrap bg-gray-50 p-4 rounded-lg border border-gray-200">${mom.action_items}</div>
+</div>` : ''}
+${mom.document ? `<div>
+<h4 class="text-sm font-semibold text-white dark:text-lbg-main-dark mb-2">Attached Document</h4>
+<a href="${mom.document}" target="_blank" class="inline-flex items-center gap-2 text-sm text-primary hover:underline">
+<span class="material-icons-round text-base">description</span>
+Download Document
+</a>
+</div>` : ''}
+<div class="text-xs text-white dark:text-lbg-main-dark pt-2 border-t border-gray-200">
+Uploaded by ${mom.uploaded_by_detail?.first_name || mom.uploaded_by_detail?.username || 'Unknown'} on ${new Date(mom.uploaded_at).toLocaleDateString()}
+</div>
+</div>`;
                  
-                document.getElementById('viewMomContent').innerHTML = content;
+                document.getElementById('viewMomContent').innerHTML = contentHtml;
                 document.getElementById('viewMomModal').classList.remove('hidden');
             }
         }
@@ -693,7 +680,7 @@ document.getElementById('uploadMomForm').addEventListener('submit', async (e) =>
             response = await fetch(`${API_BASE}/meetings/${meetingId}/mom/`, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${accessToken}`
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                     // Don't set Content-Type - browser will set it with boundary for multipart/form-data
                 },
                 body: formData

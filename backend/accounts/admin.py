@@ -25,6 +25,7 @@ class RoleAdmin(admin.ModelAdmin):
                 'can_view_discipline',
                 'can_add_clubs',
                 'can_manage_competitions',
+                'can_manage_gatepass',
             )
         }),
         ('Timestamps', {

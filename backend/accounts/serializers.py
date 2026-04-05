@@ -12,7 +12,7 @@ class RoleSerializer(serializers.ModelSerializer):
             'can_edit_duty_roster', 'can_schedule_meetings',
             'can_create_announcements', 'can_edit_announcements',
             'can_record_discipline', 'can_view_discipline',
-            'can_add_clubs', 'can_manage_competitions',
+            'can_add_clubs', 'can_manage_competitions', 'can_manage_gatepass',
             'user_count', 'created_at', 'updated_at'
         ]
         read_only_fields = ['created_at', 'updated_at']
@@ -22,7 +22,7 @@ class RoleSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    role_detail = RoleSerializer(source='role', read_only=True)
+    role = RoleSerializer(read_only=True)
     full_name = serializers.SerializerMethodField()
     is_c_suite = serializers.ReadOnlyField()
     is_captain = serializers.ReadOnlyField()
@@ -32,7 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name',
-            'full_name', 'role', 'role_detail', 'phone', 'grade',
+            'full_name', 'role', 'phone', 'grade',
             'section', 'house', 'is_phase_head', 'avatar',
             'bio', 'is_active', 'is_staff', 'is_superuser', 'is_c_suite', 'is_captain',
             'is_class_rep', 'date_joined', 'created_at', 'updated_at'
