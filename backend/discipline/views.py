@@ -1,5 +1,6 @@
 # discipline/views.py
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import DisciplineRecord, OffenseLog  # Added OffenseLog
@@ -57,10 +58,16 @@ class DisciplineRecordViewSet(viewsets.ModelViewSet):
         # NEW: Create initial offense log
         category = self.request.data.get('category', 'OTHER')
         reason = self.request.data.get('reason', '')
+        
+        # Validate category before creating
+        valid_choices = [choice[0] for choice in OffenseLog.CATEGORY_CHOICES]
+        if category not in valid_choices:
+            category = 'OTHER'
+        
         OffenseLog.objects.create(
             record=instance,
             category=category,
-            reason=reason
+            reason=reason if reason else ''
         )
 
     def perform_update(self, serializer):
@@ -69,14 +76,22 @@ class DisciplineRecordViewSet(viewsets.ModelViewSet):
         """
         instance = serializer.instance
         old_count = instance.offense_count
+        
+        # Save the changes
         instance = serializer.save()
         
         # NEW: If count increased, add new log
         if instance.offense_count > old_count:
             category = self.request.data.get('category', 'OTHER')
             reason = self.request.data.get('reason', '')
+            
+            # Validate category before creating
+            valid_choices = [choice[0] for choice in OffenseLog.CATEGORY_CHOICES]
+            if category not in valid_choices:
+                category = 'OTHER'
+            
             OffenseLog.objects.create(
                 record=instance,
                 category=category,
-                reason=reason
+                reason=reason if reason else ''
             )

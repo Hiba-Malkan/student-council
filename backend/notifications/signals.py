@@ -136,7 +136,7 @@ def notify_discipline_offense(sender, instance, created, **kwargs):
                     recipient=recipient,
                     notification_type='DISCIPLINE_WARNING',
                     title=f'⚠️ Discipline Alert: {record.student_name}',
-                    message=f'{record.student_name} (Class {record.class_section}, DNO: {record.dno}) has reached {record.offense_count} offenses. Latest: {instance.category_display}',
+                    message=f'{record.student_name} (Class {record.class_section}, DNO: {record.dno}) has reached {record.offense_count} offenses. Latest: {instance.get_category_display()}',
                     action_url=f'/discipline/{record.id}/',
                     send_email=True
                 )

@@ -170,29 +170,6 @@
         e.target.value = value;
     });
 
-    // NEW: Auto-fill if D.No exists (on blur)
-    dnoInput.addEventListener('blur', async () => {
-        const dno = dnoInput.value.trim();
-        if (!/^D\d{4,8}$/.test(dno)) return;
-
-        try {
-            const checkResp = await apiCall(`/discipline/?dno=${dno}`);
-            if (!checkResp.ok) return;
-
-            const checkData = await checkResp.json();
-            if (checkData.length > 0) {
-                const rec = checkData[0];
-                document.getElementById('studentName').value = rec.student_name;
-                document.getElementById('classSection').value = rec.class_section;
-                submitBtn.innerHTML = '<span class="material-icons-round text-xl">add</span> Add Offense';  // Change button text
-            } else {
-                submitBtn.innerHTML = '<span class="material-icons-round text-xl">save</span> Save Record';  // Reset
-            }
-        } catch (err) {
-            console.error('Auto-fill error:', err);
-        }
-    });
-
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -212,28 +189,27 @@
         }
 
         try {
-            // NEW: Check if exists, update if so (increment offense_count + add log via backend)
+            let response;
+            
+            // Check if this D.No already exists
             const checkResp = await apiCall(`/discipline/?dno=${formData.dno}`);
             if (!checkResp.ok) throw new Error('Check failed');
 
             const checkData = await checkResp.json();
-            let response;
 
             if (checkData.length > 0) {
+                // Record exists - just increment offense_count and add a log
                 const existing = checkData[0];
-                const updateData = {
-                    student_name: formData.student_name || existing.student_name,  // Use new if provided
-                    class_section: formData.class_section || existing.class_section,
-                    dno: formData.dno,
-                    offense_count: existing.offense_count + formData.offense_count,  // Increment by 1
-                    category: formData.category,
-                    reason: formData.reason
-                };
                 response = await apiCall(`/discipline/${existing.id}/`, {
-                    method: 'PUT',
-                    body: JSON.stringify(updateData)
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        offense_count: existing.offense_count + 1,
+                        category: formData.category,
+                        reason: formData.reason
+                    })
                 });
             } else {
+                // New record - create it with initial offense log
                 response = await apiCall('/discipline/', {
                     method: 'POST',
                     body: JSON.stringify(formData)
@@ -241,14 +217,15 @@
             }
 
             if (response.ok) {
-                showSuccess('Record created/updated successfully!');
+                showSuccess('Offense logged successfully!');
                 setTimeout(() => window.location.href = '/discipline/', 1000);
             } else {
                 const err = await response.json();
-                showError(Object.values(err).flat().join(', '));
+                showError(Object.values(err).flat().join(', ') || 'Failed to log offense');
             }
         } catch (err) {
-            showError('Network error');
+            console.error('Error:', err);
+            showError('Network error: ' + err.message);
         }
     });
 </script>

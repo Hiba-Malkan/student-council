@@ -9,10 +9,19 @@ class OffenseLogSerializer(serializers.ModelSerializer):
         model = OffenseLog
         fields = ['id', 'category', 'category_display', 'reason', 'created_at']
         read_only_fields = ['created_at']
+    
+    def validate_category(self, value):
+        """Validate that category is one of the allowed choices"""
+        valid_choices = [choice[0] for choice in OffenseLog.CATEGORY_CHOICES]
+        if value not in valid_choices:
+            raise serializers.ValidationError(f"Invalid category. Must be one of: {', '.join(valid_choices)}")
+        return value
 
 
 class DisciplineRecordSerializer(serializers.ModelSerializer):
     created_by_name = serializers.SerializerMethodField(read_only=True)
+    category = serializers.CharField(write_only=True, required=False, allow_blank=True)  # For creating offense logs
+    reason = serializers.CharField(write_only=True, required=False, allow_blank=True)    # For creating offense logs
     
     def get_created_by_name(self, obj):
         """Return full name or username as fallback"""
@@ -50,11 +59,25 @@ class DisciplineRecordSerializer(serializers.ModelSerializer):
             'updated_at',
             'offense_logs',        
             'latest_category',     
-            'last_offense_date',   
+            'last_offense_date',
+            'category',             # Write-only
+            'reason',               # Write-only
         ]
         read_only_fields = ['id', 'created_by', 'created_at', 'updated_at']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # If this is a partial update (PATCH or PUT for update), make fields not required
+        if self.instance is not None:
+            for field_name, field in self.fields.items():
+                if field_name not in self.Meta.read_only_fields:
+                    field.required = False
 
     def validate_dno(self, value):
+        """Validate dno format and uniqueness"""
+        if not value:  # Allow empty for partial updates
+            return value
+            
         value = value.upper()
         if not value.startswith('D'):
             raise serializers.ValidationError("Dno must start with 'D'")
@@ -62,6 +85,15 @@ class DisciplineRecordSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Dno must be 5-9 characters (D + 4-8 digits)")
         if not value[1:].isdigit():
             raise serializers.ValidationError("Only digits allowed after 'D'")
+        
+        # Allow the same dno for updates (exclude current instance)
+        if self.instance and self.instance.dno == value:
+            return value
+        
+        # Check if this dno already exists (for creates)
+        if DisciplineRecord.objects.filter(dno=value).exclude(pk=self.instance.pk if self.instance else None).exists():
+            raise serializers.ValidationError("A record with this D.No already exists")
+        
         return value
 
     def validate_offense_count(self, value):

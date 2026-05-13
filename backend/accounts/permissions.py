@@ -133,10 +133,11 @@ class CanManageAnnouncements(permissions.BasePermission):
         if getattr(request.user, 'is_c_suite', False):
             return True
         
-        # Check role permission (supports both 'role' and 'role_detail')
+        # Check role permissions (can_create_announcements or can_edit_announcements)
         role = getattr(request.user, 'role', None) or getattr(request.user, 'role_detail', None)
         if role:
-            return getattr(role, 'can_manage_announcements', False)
+            return (getattr(role, 'can_create_announcements', False) or 
+                    getattr(role, 'can_edit_announcements', False))
         
         return False
 

@@ -46,7 +46,8 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def create(self, request, *args, **kwargs):
-        if not (request.user.is_superuser or (request.user.role and request.user.role.can_create_announcements)):
+        # Allow superuser or C-Suite members
+        if not (request.user.is_superuser or request.user.is_c_suite):
             return Response(
                 {'error': 'You do not have permission to create announcements'},
                 status=status.HTTP_403_FORBIDDEN
@@ -74,10 +75,14 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         announcement = self.get_object()
         
-        # Superuser, C-Suite, or announcement creator with edit permissions can update
-        if not (request.user.is_superuser or 
-                request.user.is_c_suite or 
-                (request.user.role and request.user.role.can_edit_announcements and announcement.created_by == request.user)):
+        # Allow superuser, C-Suite, or announcement creator with edit permissions
+        has_permission = (
+            request.user.is_superuser or 
+            request.user.is_c_suite or
+            (announcement.created_by == request.user and request.user.role and request.user.role.can_edit_announcements)
+        )
+        
+        if not has_permission:
             return Response(
                 {'error': 'You do not have permission to update this announcement'},
                 status=status.HTTP_403_FORBIDDEN
@@ -159,7 +164,7 @@ class EventParticipantViewSet(viewsets.ModelViewSet):
         # Users can register themselves, captains can assign others
         if 'user' not in request.data or request.data['user'] == request.user.id:
             request.data['user'] = request.user.id
-        elif not request.user.role.can_manage_events:
+        elif not (request.user.is_c_suite or request.user.is_captain):
             return Response(
                 {'error': 'You do not have permission to assign participants'},
                 status=status.HTTP_403_FORBIDDEN
@@ -194,7 +199,7 @@ class EventParticipantViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def confirm(self, request, pk=None):
         """Confirm participation (Captains)"""
-        if not request.user.role.can_manage_events:
+        if not (request.user.is_c_suite or request.user.is_captain):
             return Response(
                 {'error': 'You do not have permission to confirm participations'},
                 status=status.HTTP_403_FORBIDDEN
@@ -210,7 +215,7 @@ class EventParticipantViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def mark_attendance(self, request, pk=None):
         """Mark attendance for event (Captains)"""
-        if not request.user.role.can_manage_events:
+        if not (request.user.is_c_suite or request.user.is_captain):
             return Response(
                 {'error': 'You do not have permission to mark attendance'},
                 status=status.HTTP_403_FORBIDDEN

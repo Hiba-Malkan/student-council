@@ -480,7 +480,7 @@
     }
 
     // Check if user has permission to create announcements
-    if (!userData.role_detail?.can_create_announcements) {
+    if (!userData.is_superuser && !userData.is_c_suite && !userData.role?.can_create_announcements) {
         showError('You do not have permission to create announcements');
         setTimeout(() => {
             window.location.href = '/announcements/';
