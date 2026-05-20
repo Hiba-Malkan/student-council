@@ -1,12 +1,14 @@
 # Student Council Management System
 
-This is a web application for managing student council operations. It handles clubs, competitions, meetings, duty rosters, announcements, and discipline tracking. The system provides a responsive dashboard for council administrators and public pages showing available clubs to all students without login required.
+This is a web application for managing student council operations. It handles clubs, competitions, meetings, duty rosters, announcements, discipline tracking, and user feedback. The system provides a responsive dashboard for council administrators and public pages showing available clubs to all students without login required.
 
 ## Features
 
 The application supports clubs management with creation, updates, deletion, and status tracking. A public endpoint lists active clubs so students can discover organizations without authentication. The duty roster system automatically cycles maintenance duties to students each month and alerts administrators to overdue tasks.
 
 Announcements go to specific roles or the entire student council. Competition management tracks participants and enforces deadlines. Meetings can be scheduled with attendees and reminder emails sent automatically. Discipline records document policy violations with severity levels and action tracking. Gate pass requests allow students to submit requests that council administrators approve or deny with email notifications to students, parents, and teachers.
+
+Feedback & Issues module allows users to submit feedback, report bugs, and request features. Users can track feedback status while administrators can manage and respond to submissions. This helps the council understand user experience and prioritize improvements.
 
 Notifications are sent via email on a schedule (7 AM and 4 PM) and triggered by events. The system uses customizable roles with granular permissions to control what users can do. Authentication via JWT tokens keeps sessions stateless. The dashboard is responsive and includes dark mode support for students accessing the system on mobile devices. All restricted pages are protected by both frontend and backend authorization checks preventing unauthorized access.
 

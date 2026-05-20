@@ -23,6 +23,7 @@ class RoleSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     role = RoleSerializer(read_only=True)
+    role_detail = RoleSerializer(source='role', read_only=True)
     full_name = serializers.SerializerMethodField()
     is_c_suite = serializers.ReadOnlyField()
     is_captain = serializers.ReadOnlyField()
@@ -32,7 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name',
-            'full_name', 'role', 'phone', 'grade',
+            'full_name', 'role', 'role_detail', 'phone', 'grade',
             'section', 'house', 'is_phase_head', 'avatar',
             'bio', 'is_active', 'is_staff', 'is_superuser', 'is_c_suite', 'is_captain',
             'is_class_rep', 'date_joined', 'created_at', 'updated_at'

@@ -50,6 +50,122 @@
             border-color: #1F4D3C;
             background-color: #374151;
         }
+
+        /* Mobile Sidebar Styles */
+        @media (max-width: 768px) {
+            #mobileMenuBtn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            #sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                width: 256px;
+                z-index: 40;
+                transform: translateX(-100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+                overflow-y: auto;
+                will-change: transform;
+            }
+
+            #sidebar.open {
+                transform: translateX(0);
+            }
+
+            #sidebarOverlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 35;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+            }
+
+            #sidebarOverlay.open {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            /* Smooth scrolling inside sidebar */
+            #sidebar {
+                scrollbar-width: thin;
+                scrollbar-color: rgba(209, 213, 219, 0.6) transparent;
+            }
+
+            #sidebar::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            #sidebar::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            #sidebar::-webkit-scrollbar-thumb {
+                background: rgba(209, 213, 219, 0.6);
+                border-radius: 3px;
+            }
+
+            #sidebar::-webkit-scrollbar-thumb:hover {
+                background: rgba(209, 213, 219, 0.9);
+            }
+
+            .dark #sidebar::-webkit-scrollbar-thumb {
+                background: rgba(75, 85, 99, 0.6);
+            }
+
+            .dark #sidebar::-webkit-scrollbar-thumb:hover {
+                background: rgba(75, 85, 99, 0.9);
+            }
+
+            /* Main content full width on mobile */
+            .flex > main {
+                width: 100%;
+                position: relative;
+                z-index: 10;
+            }
+
+            main {
+                width: 100%;
+            }
+
+            header {
+                padding-right: 1rem;
+                padding-left: 1rem;
+                padding-top: 3rem;
+            }
+
+            #mobileMenuBtn {
+                top: 0.75rem;
+                left: 0.75rem;
+            }
+
+            .flex-1 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            #mobileMenuBtn {
+                display: none;
+            }
+
+            #sidebarOverlay {
+                display: none;
+            }
+
+            #sidebar {
+                position: relative !important;
+                transform: translateX(0) !important;
+                width: 256px;
+            }
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -71,8 +187,16 @@
         })();
     </script>
     <div class="flex h-screen overflow-hidden">
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="fixed top-4 left-4 z-50 p-2 rounded-lg bg-primary hover:bg-primary-hover text-white transition-colors md:hidden">
+            <span class="material-icons-round">menu</span>
+        </button>
+
+        <!-- Mobile Sidebar Overlay -->
+        <div id="sidebarOverlay" class="md:hidden"></div>
+
         <!-- Sidebar -->
-        <aside class="w-64 flex-shrink-0 bg-sidebar dark:bg-card-dark border-r border-gray-200 dark:border-gray-700 flex flex-col justify-between transition-colors duration-200">
+        <aside id="sidebar" class="w-64 flex-shrink-0 bg-sidebar dark:bg-card-dark border-r border-gray-200 dark:border-gray-700 flex flex-col justify-between transition-colors duration-200">
             <div>
                 <div class="h-16 flex items-center px-6 border-b border-gray-100 dark:border-gray-800">
                 <a href="/dashboard/">       
@@ -118,6 +242,10 @@
                     <a id="aboutButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_about %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/about/">
                         <span class="material-icons-round mr-3 text-xl transition-colors">info</span>
                         About Us
+                    </a>
+                    <a id="feedbackButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_feedback %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/feedback/">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">feedback</span>
+                        Feedback
                     </a>
                     <a id="adminpanelButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_admin %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/admin/" id="adminPanelLink" style="display: none;">
                         <span class="material-icons-round mr-3 text-xl transition-colors">admin_panel_settings</span>
@@ -178,6 +306,24 @@
         if (!accessToken) {
             window.location.href = '/';
         }
+
+        // Route guard: Prevent normal students from accessing restricted pages
+        function applyRouteGuard() {
+            const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
+            if (!isNormalStudent) return; // Only apply to normal students
+
+            const currentPath = window.location.pathname;
+            const restrictedPaths = ['/dashboard/', '/meetings/', '/duty-roster/', '/discipline/'];
+            
+            // Check if current page is restricted
+            const isRestricted = restrictedPaths.some(path => currentPath.startsWith(path));
+            if (isRestricted) {
+                window.location.href = '/announcements/';
+            }
+        }
+
+        // Apply guard early
+        applyRouteGuard();
 
         // Dark mode toggle functionality with persistence
         document.getElementById('darkModeToggle').addEventListener('click', function() {
@@ -334,6 +480,65 @@
                 localStorage.clear();
                 window.location.href = '/';
             }
+        });
+
+        // Mobile Sidebar Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.classList.toggle('open');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('open');
+        }
+
+        // Menu button click
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSidebar();
+        });
+
+        // Overlay click to close
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Close sidebar when a nav link is clicked
+        const navLinks = sidebar.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', closeSidebar);
+        });
+
+        // Close sidebar when clicking outside (including on content area)
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                if (window.innerWidth < 768) {
+                    closeSidebar();
+                }
+            }
+        });
+
+        // Close sidebar on window resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                closeSidebar();
+            }
+        });
+
+        // Prevent body scroll when sidebar is open
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new MutationObserver(() => {
+                if (sidebar.classList.contains('open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+
+            observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
         });
     </script>
     {% block extra_js %}{% endblock %}

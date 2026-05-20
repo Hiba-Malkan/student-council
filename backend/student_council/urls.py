@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/clubs/', include('clubs.urls')),  # ← Clubs API
     path('api/', include('competitions.urls')),  # ← Competitions API
     path('api/gatepass/', include('gatepass.urls')),  # ← Gate Pass API
+    path('api/feedback/', include('feedback.urls')),  # ← Feedback API
     
     # ============================================
     # HTML PAGES (All CSS/JS inline in templates)
@@ -75,6 +76,9 @@ urlpatterns = [
     
     # Notifications
     path('notifications/', TemplateView.as_view(template_name='notifications.html'), name='notifications'),
+    
+    # Feedback & Issues
+    path('feedback/', TemplateView.as_view(template_name='feedback.html'), name='feedback'),
 ]
 
 # Serve media files in development

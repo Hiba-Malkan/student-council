@@ -21,7 +21,7 @@
                 <p class="text-sm text-white dark:text-lbg-sub-dark mt-1">Here's your duty information for today.</p>
             </div>
             <span class="badge badge-primary" id="userRoleBadge">
-                Member
+                <span id="roleBadgeText">Member</span>
             </span>
         </div>
 
@@ -127,19 +127,19 @@
 <!-- All Duties List -->
 <section class="mt-8">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 transition-colors duration-200">
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-6 gap-4">
             <div>
                 <h2 class="text-lg font-semibold text-white dark:text-white">All Duties</h2>
                 <p class="text-sm text-white dark:text-lbg-sub-dark mt-1">View and manage all assigned duties.</p>
             </div>
-            <div class="flex items-center gap-3">
-                <div class="relative">
+            <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+                <div class="relative w-full sm:flex-1 lg:w-auto">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">search</span>
                     </div>
-                    <input type="text" id="searchDuties" class="pl-10 pr-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 w-64" placeholder="Search duties...">
+                    <input type="text" id="searchDuties" class="w-full pl-10 pr-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 lg:w-64" placeholder="Search duties...">
                 </div>
-                <select id="filterDate" class="px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
+                <select id="filterDate" class="w-full sm:w-auto px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
                     <option value="all">All Dates</option>
                     <option value="today">Today</option>
                     <option value="tomorrow">Tomorrow</option>
@@ -607,7 +607,7 @@ async function initDutyRoster() {
     // Update greeting and role badge
     const firstName = userData.first_name || userData.username || 'User';
     document.getElementById('greetingTitle').textContent = `Hello, ${firstName}!`;
-    document.getElementById('userRoleBadge').textContent = userData.role_detail?.name || 'Member';
+    document.getElementById('roleBadgeText').textContent = userData.role_detail?.name || userData.role?.name || 'Member';
     
     // Show assign duty form if user has permission
     if (userData.role?.can_edit_duty_roster || userData.is_staff) {

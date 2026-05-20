@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'clubs',
     'competitions',
     'gatepass',
+    'feedback',
 ]
 
 MIDDLEWARE = [
