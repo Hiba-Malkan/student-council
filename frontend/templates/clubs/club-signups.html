@@ -228,23 +228,71 @@ function displaySignupsPage() {
     const end = start + signupsPerPage;
     const pageSignups = allSignups.slice(start, end);
     
-    tbody.innerHTML = pageSignups.map(s => `
-        <tr>
-            <td class="px-6 py-4 font-medium text-white">${escapeHtml(s.student_name)}</td>
-            <td class="px-6 py-4 text-white">${escapeHtml(s.email)}</td>
-            <td class="px-6 py-4 text-white">${s.phone || '-'}</td>
-            <td class="px-6 py-4 text-sm text-white max-w-xs truncate cursor-pointer" onclick="showMessage('${escapeHtml(s.message || 'No message provided')}')" title="Click to view full message">
-                ${s.message ? escapeHtml(s.message) : '-'}
-            </td>
-            <td class="px-6 py-4 text-sm text-white">${new Date(s.created_at).toLocaleDateString()}</td>
-            <td class="px-6 py-4">
-                <button onclick="confirmDelete(${s.id}, '${escapeHtml(s.student_name)}', ${currentClubId})" 
-                        class="text-red-300 hover:text-red-100 text-sm font-medium transition flex items-center gap-1">
-                    <span class="material-icons-round text-base align-middle">delete</span>
-                </button>
-            </td>
-        </tr>
-    `).join('');
+    // Clear existing rows
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+
+    pageSignups.forEach((s) => {
+        const tr = document.createElement('tr');
+
+        // Student name
+        const nameTd = document.createElement('td');
+        nameTd.className = 'px-6 py-4 font-medium text-white';
+        nameTd.textContent = s.student_name;
+        tr.appendChild(nameTd);
+
+        // Email
+        const emailTd = document.createElement('td');
+        emailTd.className = 'px-6 py-4 text-white';
+        emailTd.textContent = s.email;
+        tr.appendChild(emailTd);
+
+        // Phone
+        const phoneTd = document.createElement('td');
+        phoneTd.className = 'px-6 py-4 text-white';
+        phoneTd.textContent = s.phone || '-';
+        tr.appendChild(phoneTd);
+
+        // Message
+        const messageTd = document.createElement('td');
+        messageTd.className = 'px-6 py-4 text-sm text-white max-w-xs truncate cursor-pointer';
+        messageTd.title = 'Click to view full message';
+        messageTd.textContent = s.message ? s.message : '-';
+        if (s.message) {
+            messageTd.addEventListener('click', () => {
+                showMessage(s.message);
+            });
+        }
+        tr.appendChild(messageTd);
+
+        // Created at
+        const dateTd = document.createElement('td');
+        dateTd.className = 'px-6 py-4 text-sm text-white';
+        dateTd.textContent = new Date(s.created_at).toLocaleDateString();
+        tr.appendChild(dateTd);
+
+        // Actions (delete button)
+        const actionsTd = document.createElement('td');
+        actionsTd.className = 'px-6 py-4';
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'text-red-300 hover:text-red-100 text-sm font-medium transition flex items-center gap-1';
+        deleteBtn.type = 'button';
+        deleteBtn.addEventListener('click', () => {
+            confirmDelete(s.id, s.student_name, currentClubId);
+        });
+
+        const deleteIcon = document.createElement('span');
+        deleteIcon.className = 'material-icons-round text-base align-middle';
+        deleteIcon.textContent = 'delete';
+
+        deleteBtn.appendChild(deleteIcon);
+        actionsTd.appendChild(deleteBtn);
+        tr.appendChild(actionsTd);
+
+        tbody.appendChild(tr);
+    });
     
     document.getElementById('currentPageNum').textContent = currentPage;
     const showingCount = Math.min(end, allSignups.length);
