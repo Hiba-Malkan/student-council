@@ -84,17 +84,46 @@ class CurrentUserView(generics.RetrieveUpdateAPIView):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    """CRUD operations for users (C-Suite only)"""
+    """CRUD operations for users"""
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     filterset_fields = ['role', 'grade', 'section', 'house']
     search_fields = ['username', 'email', 'first_name', 'last_name']
     
+    def _can_manage_users(self, user):
+        return user.is_c_suite or user.is_staff or user.is_superuser
+
+    def _can_edit_duty_roster(self, user):
+        """True for anyone who has duty-roster edit rights (no is_staff required)."""
+        return (
+            user.is_staff or
+            user.is_superuser or
+            user.is_c_suite or
+            user.is_captain or
+            (user.role and user.role.can_edit_duty_roster)
+        )
+
     def get_queryset(self):
-        if self.request.user.is_c_suite or self.request.user.is_staff:
-            return User.objects.all()
-        return User.objects.filter(id=self.request.user.id)
+        request = self.request
+        duty_roster_only = request.query_params.get('duty_roster_only')
+
+        # Base queryset
+        if self._can_manage_users(request.user) or self._can_edit_duty_roster(request.user):
+            queryset = User.objects.all()
+        else:
+            queryset = User.objects.filter(id=request.user.id)
+
+        # When the frontend asks only for duty-roster-visible users (e.g. to populate the
+        # "assign duty" dropdown), filter to those whose resolved visibility is True.
+        # We resolve this in Python because it involves a nullable field + FK fallback.
+        if duty_roster_only == 'true':
+            # Pull the IDs of users whose resolved is_visible_in_duty_roster is True.
+            # We annotate/filter in two steps to keep the logic in one place.
+            visible_ids = [u.id for u in queryset if u.is_visible_in_duty_roster]
+            queryset = queryset.filter(id__in=visible_ids)
+
+        return queryset
     
     @action(detail=True, methods=['post'])
     def assign_role(self, request, pk=None):
@@ -157,9 +186,6 @@ class RoleViewSet(viewsets.ModelViewSet):
 
 
 class ForgotPasswordView(generics.GenericAPIView):
-    """
-    Send OTP to user's email for password reset
-    """
     serializer_class = ForgotPasswordSerializer
     permission_classes = [AllowAny]
     
@@ -178,10 +204,8 @@ class ForgotPasswordView(generics.GenericAPIView):
         user = serializer.validated_data['user']
         ip_address = self.get_client_ip(request)
         
-        # Create OTP
         otp_obj = PasswordResetOTP.create_otp(user, ip_address)
         
-        # Send email
         try:
             subject = 'Password Reset OTP - Student Council'
             message = f"""
@@ -213,7 +237,6 @@ Student Council Team
             }, status=status.HTTP_200_OK)
             
         except Exception as e:
-            # Delete the OTP if email fails
             otp_obj.delete()
             import logging
             logger = logging.getLogger(__name__)
@@ -224,9 +247,6 @@ Student Council Team
 
 
 class VerifyOTPView(generics.GenericAPIView):
-    """
-    Verify OTP without resetting password (optional step)
-    """
     serializer_class = VerifyOTPSerializer
     permission_classes = [AllowAny]
     
@@ -237,44 +257,27 @@ class VerifyOTPView(generics.GenericAPIView):
         identifier = serializer.validated_data['identifier']
         otp = serializer.validated_data['otp']
         
-        # Find user
         try:
             user = User.objects.get(email=identifier)
         except User.DoesNotExist:
             try:
                 user = User.objects.get(username=identifier)
             except User.DoesNotExist:
-                return Response({
-                    'error': 'Invalid credentials'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Verify OTP
         try:
-            otp_obj = PasswordResetOTP.objects.get(
-                user=user,
-                otp=otp,
-                is_used=False
-            )
+            otp_obj = PasswordResetOTP.objects.get(user=user, otp=otp, is_used=False)
             
             if not otp_obj.is_valid():
-                return Response({
-                    'error': 'OTP has expired'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
             
-            return Response({
-                'message': 'OTP verified successfully'
-            }, status=status.HTTP_200_OK)
+            return Response({'message': 'OTP verified successfully'}, status=status.HTTP_200_OK)
             
         except PasswordResetOTP.DoesNotExist:
-            return Response({
-                'error': 'Invalid OTP'
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ResetPasswordView(generics.GenericAPIView):
-    """
-    Reset password using OTP
-    """
     serializer_class = ResetPasswordSerializer
     permission_classes = [AllowAny]
     
@@ -286,51 +289,31 @@ class ResetPasswordView(generics.GenericAPIView):
         otp = serializer.validated_data['otp']
         new_password = serializer.validated_data['new_password']
         
-        # Find user
         try:
             user = User.objects.get(email=identifier)
         except User.DoesNotExist:
             try:
                 user = User.objects.get(username=identifier)
             except User.DoesNotExist:
-                return Response({
-                    'error': 'Invalid credentials'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # Verify OTP and reset password
         try:
-            otp_obj = PasswordResetOTP.objects.get(
-                user=user,
-                otp=otp,
-                is_used=False
-            )
+            otp_obj = PasswordResetOTP.objects.get(user=user, otp=otp, is_used=False)
             
             if not otp_obj.is_valid():
-                return Response({
-                    'error': 'OTP has expired'
-                }, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
             
-            # Reset password
             user.set_password(new_password)
             user.save()
-            
-            # Mark OTP as used
             otp_obj.mark_as_used()
             
-            return Response({
-                'message': 'Password has been reset successfully'
-            }, status=status.HTTP_200_OK)
+            return Response({'message': 'Password has been reset successfully'}, status=status.HTTP_200_OK)
             
         except PasswordResetOTP.DoesNotExist:
-            return Response({
-                'error': 'Invalid OTP'
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ContactAdminView(generics.CreateAPIView):
-    """
-    Allow users to contact administrators
-    """
     serializer_class = ContactMessageSerializer
     permission_classes = [AllowAny]
     
@@ -346,17 +329,11 @@ class ContactAdminView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         
-        # Get client info
         ip_address = self.get_client_ip(request)
         user_agent = request.META.get('HTTP_USER_AGENT', '')
         
-        # Save the message
-        contact_message = serializer.save(
-            ip_address=ip_address,
-            user_agent=user_agent
-        )
+        contact_message = serializer.save(ip_address=ip_address, user_agent=user_agent)
         
-        # Send notification email to admins
         try:
             from django.core.mail import send_mail
             
@@ -392,8 +369,7 @@ Please respond via the admin panel: {request.build_absolute_uri('/admin/accounts
                     list(admin_emails),
                     fail_silently=True,
                 )
-        except Exception as e:
-            # Don't fail if email notification fails
+        except Exception:
             pass
         
         return Response({
@@ -403,14 +379,10 @@ Please respond via the admin panel: {request.build_absolute_uri('/admin/accounts
 
 
 class ContactMessageListView(generics.ListAPIView):
-    """
-    View for admins to see all contact messages
-    """
     serializer_class = ContactMessageSerializer
     permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
-        # Only staff/admin can view messages
         if not self.request.user.is_staff:
             return ContactMessage.objects.none()
         return ContactMessage.objects.all()

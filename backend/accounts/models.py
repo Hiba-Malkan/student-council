@@ -19,6 +19,12 @@ class Role(models.Model):
     can_add_clubs = models.BooleanField(default=False)
     can_manage_competitions = models.BooleanField(default=False)
     can_manage_gatepass = models.BooleanField(default=False)
+
+    # Duty Roster visibility — default for all users with this role
+    show_in_duty_roster = models.BooleanField(
+        default=False,
+        help_text="Users with this role will appear in the duty roster by default"
+    )
     
     # Hierarchy    
     created_at = models.DateTimeField(auto_now_add=True)
@@ -39,6 +45,18 @@ class User(AbstractUser):
     house = models.CharField(max_length=50, blank=True)  # House A/B/C/D
     
     is_phase_head = models.BooleanField(default=False)
+
+    # Duty Roster visibility — None means "inherit from role", True/False overrides the role default
+    show_in_duty_roster = models.BooleanField(
+        null=True,
+        blank=True,
+        default=None,
+        help_text=(
+            "Controls whether this person appears in the duty roster. "
+            "Leave blank to inherit from their role's setting. "
+            "Tick to force-show, untick to force-hide regardless of role."
+        )
+    )
     
     # Profile
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
@@ -70,6 +88,20 @@ class User(AbstractUser):
     def is_class_rep(self):
         """Check if user is a Class Representative"""
         return self.role and 'Class Rep' in self.role.name
+
+    @property
+    def is_visible_in_duty_roster(self):
+        """
+        Resolve duty roster visibility:
+        - If the user has an explicit override (True or False), use it.
+        - Otherwise fall back to the role's show_in_duty_roster flag.
+        - If no role, default to False.
+        """
+        if self.show_in_duty_roster is not None:
+            return self.show_in_duty_roster
+        if self.role:
+            return self.role.show_in_duty_roster
+        return False
 
 
 class UserSession(models.Model):
@@ -169,4 +201,3 @@ class ContactMessage(models.Model):
     
     def __str__(self):
         return f"{self.subject} - {self.name} ({self.status})"
-

@@ -305,15 +305,25 @@ async function loadTodayDuty() {
     }
 }
 
-// Load users for dropdown
+// Load users for dropdown — only those marked as visible in the duty roster
 async function loadUsers() {
     try {
-        const response = await apiCall('/accounts/users/');
+        const response = await apiCall('/accounts/users/?duty_roster_only=true');
         if (response && response.ok) {
             const data = await response.json();
             const users = data.results || data;
             
             const select = document.getElementById('assigneeSelect');
+
+            if (users.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No eligible members found';
+                option.disabled = true;
+                select.appendChild(option);
+                return;
+            }
+
             users.forEach(user => {
                 const option = document.createElement('option');
                 option.value = user.id;
@@ -610,7 +620,9 @@ async function initDutyRoster() {
     document.getElementById('roleBadgeText').textContent = userData.role_detail?.name || userData.role?.name || 'Member';
     
     // Show assign duty form if user has permission
-    if (userData.role?.can_edit_duty_roster || userData.is_staff) {
+    const canAssign = userData.is_staff || userData.is_superuser || userData.is_c_suite ||
+                      userData.is_captain || userData.role?.can_edit_duty_roster;
+    if (canAssign) {
         document.getElementById('assignDutyCard').style.display = 'block';
         loadUsers();
     }

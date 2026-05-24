@@ -13,6 +13,7 @@ class RoleSerializer(serializers.ModelSerializer):
             'can_create_announcements', 'can_edit_announcements',
             'can_record_discipline', 'can_view_discipline',
             'can_add_clubs', 'can_manage_competitions', 'can_manage_gatepass',
+            'show_in_duty_roster',
             'user_count', 'created_at', 'updated_at'
         ]
         read_only_fields = ['created_at', 'updated_at']
@@ -28,6 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
     is_c_suite = serializers.ReadOnlyField()
     is_captain = serializers.ReadOnlyField()
     is_class_rep = serializers.ReadOnlyField()
+    is_visible_in_duty_roster = serializers.ReadOnlyField()
     
     class Meta:
         model = User
@@ -36,7 +38,8 @@ class UserSerializer(serializers.ModelSerializer):
             'full_name', 'role', 'role_detail', 'phone', 'grade',
             'section', 'house', 'is_phase_head', 'avatar',
             'bio', 'is_active', 'is_staff', 'is_superuser', 'is_c_suite', 'is_captain',
-            'is_class_rep', 'date_joined', 'created_at', 'updated_at'
+            'is_class_rep', 'show_in_duty_roster', 'is_visible_in_duty_roster',
+            'date_joined', 'created_at', 'updated_at'
         ]
         read_only_fields = ['date_joined', 'created_at', 'updated_at']
         extra_kwargs = {
@@ -115,13 +118,11 @@ class ForgotPasswordSerializer(serializers.Serializer):
         user = None
         
         if '@' in identifier:
-            # It's an email
             try:
                 user = User.objects.get(email=identifier, is_active=True)
             except User.DoesNotExist:
                 raise serializers.ValidationError("No account found with this email address.")
         else:
-            # It's a username
             try:
                 user = User.objects.get(username=identifier, is_active=True)
             except User.DoesNotExist:
@@ -130,7 +131,6 @@ class ForgotPasswordSerializer(serializers.Serializer):
         if not user.email:
             raise serializers.ValidationError("This account does not have an email address set.")
         
-        # Add user to validated data
         data['user'] = user
         return data
 
@@ -147,7 +147,6 @@ class VerifyOTPSerializer(serializers.Serializer):
     )
     
     def validate_otp(self, value):
-        """Validate OTP format"""
         if not value.isdigit():
             raise serializers.ValidationError("OTP must contain only digits.")
         return value
@@ -174,13 +173,11 @@ class ResetPasswordSerializer(serializers.Serializer):
     )
     
     def validate_otp(self, value):
-        """Validate OTP format"""
         if not value.isdigit():
             raise serializers.ValidationError("OTP must contain only digits.")
         return value
     
     def validate(self, data):
-        """Validate passwords match"""
         if data['new_password'] != data['confirm_password']:
             raise serializers.ValidationError({
                 "confirm_password": "Passwords do not match."
@@ -207,13 +204,11 @@ class ContactMessageSerializer(serializers.ModelSerializer):
         return None
     
     def validate_email(self, value):
-        """Validate email format"""
         if not value:
             raise serializers.ValidationError("Email is required.")
         return value.lower()
     
     def validate_message(self, value):
-        """Ensure message is not too short"""
         if len(value.strip()) < 10:
             raise serializers.ValidationError("Message must be at least 10 characters long.")
         return value

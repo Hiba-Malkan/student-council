@@ -5,14 +5,24 @@ from .models import Role, User, UserSession, ContactMessage
 
 @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):
-    list_display = ['name', 'user_count', 'created_at']
-    list_filter = ['can_edit_duty_roster', 'can_schedule_meetings', 'can_create_announcements']
+    list_display = ['name', 'show_in_duty_roster', 'user_count', 'created_at']
+    list_filter = [
+        'show_in_duty_roster',
+        'can_edit_duty_roster', 'can_schedule_meetings', 'can_create_announcements',
+    ]
     search_fields = ['name']
     readonly_fields = ['created_at', 'updated_at']
     
     fieldsets = (
         ('Basic Information', {
             'fields': ('name',)
+        }),
+        ('Duty Roster', {
+            'fields': ('show_in_duty_roster',),
+            'description': (
+                'Tick this to make all users with this role appear in the duty roster by default. '
+                'Individual users can be overridden from their own profile.'
+            ),
         }),
         ('Permissions', {
             'fields': (
@@ -40,14 +50,28 @@ class RoleAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ['username', 'email', 'first_name', 'last_name', 'role', 'grade', 'house', 'is_staff']
-    list_filter = ['role', 'grade', 'house', 'is_staff', 'is_active', 'is_phase_head']
+    list_display = [
+        'username', 'email', 'first_name', 'last_name', 'role',
+        'grade', 'house', 'duty_roster_visible', 'is_staff',
+    ]
+    list_filter = [
+        'role', 'grade', 'house', 'is_staff', 'is_active',
+        'is_phase_head', 'show_in_duty_roster',
+    ]
     search_fields = ['username', 'email', 'first_name', 'last_name']
     
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Personal Info', {'fields': ('first_name', 'last_name', 'email', 'phone', 'avatar', 'bio')}),
         ('Role & Academic Info', {'fields': ('role', 'grade', 'section', 'house', 'is_phase_head')}),
+        ('Duty Roster', {
+            'fields': ('show_in_duty_roster',),
+            'description': (
+                'Leave blank (—) to inherit visibility from the user\'s role. '
+                'Tick ✓ to force-show this person even if their role is hidden. '
+                'Untick ✗ to force-hide this person even if their role is shown.'
+            ),
+        }),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
@@ -55,9 +79,23 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'role'),
+            'fields': ('username', 'email', 'password1', 'password2', 'role', 'show_in_duty_roster'),
         }),
     )
+
+    def duty_roster_visible(self, obj):
+        resolved = obj.is_visible_in_duty_roster
+        if obj.show_in_duty_roster is not None:
+            # Explicit override — show with a different colour so admins notice
+            label = '✓ (override)' if resolved else '✗ (override)'
+            color = '#10b981' if resolved else '#ef4444'
+        else:
+            label = '✓ (role)' if resolved else '—'
+            color = '#10b981' if resolved else '#9ca3af'
+        return format_html(
+            '<span style="color: {}; font-weight: 600;">{}</span>', color, label
+        )
+    duty_roster_visible.short_description = 'In Duty Roster'
 
 
 @admin.register(UserSession)
