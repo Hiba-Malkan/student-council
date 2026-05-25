@@ -122,7 +122,7 @@
                 return;
             }
 
-            const response = await apiCall('/discipline/');
+            const response = await apiCall('/discipline/records/');
             if (response && response.ok) {
                 const data = await response.json();
                 allRecords = Array.isArray(data) ? data : (data.results || []);
@@ -212,7 +212,7 @@
         if (!deleteRecordId) return;
 
         try {
-            const response = await apiCall(`/discipline/${deleteRecordId}/`, {
+            const response = await apiCall(`/discipline/records/${deleteRecordId}/`, {
                 method: 'DELETE'
             });
 

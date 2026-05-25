@@ -32,6 +32,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         validated_data['created_by'] = self.context['request'].user
+        validated_data.setdefault('is_active', True)
         return super().create(validated_data)
 
 

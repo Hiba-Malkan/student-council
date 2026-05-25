@@ -11,7 +11,6 @@ class OffenseLogSerializer(serializers.ModelSerializer):
         read_only_fields = ['created_at']
     
     def validate_category(self, value):
-        """Validate that category is one of the allowed choices"""
         valid_choices = [choice[0] for choice in OffenseLog.CATEGORY_CHOICES]
         if value not in valid_choices:
             raise serializers.ValidationError(f"Invalid category. Must be one of: {', '.join(valid_choices)}")
@@ -20,20 +19,16 @@ class OffenseLogSerializer(serializers.ModelSerializer):
 
 class DisciplineRecordSerializer(serializers.ModelSerializer):
     created_by_name = serializers.SerializerMethodField(read_only=True)
-    category = serializers.CharField(write_only=True, required=False, allow_blank=True)  # For creating offense logs
-    reason = serializers.CharField(write_only=True, required=False, allow_blank=True)    # For creating offense logs
+    category = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    reason = serializers.CharField(write_only=True, required=False, allow_blank=True)
     
     def get_created_by_name(self, obj):
-        """Return full name or username as fallback"""
         if obj.created_by:
             full_name = obj.created_by.get_full_name()
             return full_name if full_name else obj.created_by.username
         return 'Unknown'
 
-    # Full history 
     offense_logs = OffenseLogSerializer(many=True, read_only=True)
-
-    # show latest category and date
     latest_category = serializers.SerializerMethodField()
     last_offense_date = serializers.SerializerMethodField()
 
@@ -60,22 +55,30 @@ class DisciplineRecordSerializer(serializers.ModelSerializer):
             'offense_logs',        
             'latest_category',     
             'last_offense_date',
-            'category',             # Write-only
-            'reason',               # Write-only
+            'category',
+            'reason',
         ]
         read_only_fields = ['id', 'created_by', 'created_at', 'updated_at']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # If this is a partial update (PATCH or PUT for update), make fields not required
         if self.instance is not None:
             for field_name, field in self.fields.items():
                 if field_name not in self.Meta.read_only_fields:
                     field.required = False
 
+    def create(self, validated_data):
+        validated_data.pop('category', None)
+        validated_data.pop('reason', None)
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data.pop('category', None)
+        validated_data.pop('reason', None)
+        return super().update(instance, validated_data)
+
     def validate_dno(self, value):
-        """Validate dno format and uniqueness"""
-        if not value:  # Allow empty for partial updates
+        if not value:
             return value
             
         value = value.upper()
@@ -86,11 +89,9 @@ class DisciplineRecordSerializer(serializers.ModelSerializer):
         if not value[1:].isdigit():
             raise serializers.ValidationError("Only digits allowed after 'D'")
         
-        # Allow the same dno for updates (exclude current instance)
         if self.instance and self.instance.dno == value:
             return value
         
-        # Check if this dno already exists (for creates)
         if DisciplineRecord.objects.filter(dno=value).exclude(pk=self.instance.pk if self.instance else None).exists():
             raise serializers.ValidationError("A record with this D.No already exists")
         

@@ -27,6 +27,10 @@ class CanManageCompetitions(permissions.BasePermission):
         return False
     
     def has_object_permission(self, request, view, obj):
+        # Allow public signup action - no auth required
+        if hasattr(view, 'action') and view.action == 'signup':
+            return True
+
         # Allow read operations for authenticated users
         if request.method in permissions.SAFE_METHODS:
             return True

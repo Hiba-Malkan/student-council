@@ -29,7 +29,7 @@
         <form id="disciplineForm">
             <!-- Student Name -->
             <div class="mb-6">
-                <label for="studentName" class="block text-sm font-medium text-black dark:text-lbg-main-dark mb-2">
+                <label for="studentName" class="block text-white font-medium text-black dark:text-lbg-main-dark mb-2">
                     Student Name *
                 </label>
                 <input 
@@ -44,7 +44,7 @@
 
             <!-- Class & Section -->
             <div class="mb-6">
-                <label for="classSection" class="block text-sm font-medium text-black dark:text-lbg-main-dark mb-2">
+                <label for="classSection" class="block text-white font-medium text-black dark:text-lbg-main-dark mb-2">
                     Class & Section *
                 </label>
                 <input 
@@ -55,12 +55,12 @@
                     placeholder="e.g., 10A, 11B, 12C"
                     class="w-full px-4 py-2 text-black dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
-                <p class="mt-1 text-xs text-black dark:text-lbg-main-dark">Format: Grade + Section (e.g., 10A)</p>
+                <p class="mt-1 text-xs text-white dark:text-lbg-main-dark">Format: Grade + Section (e.g., 10A)</p>
             </div>
 
             <!-- Dno -->
             <div class="mb-6">
-                <label for="dno" class="block text-sm font-medium text-black dark:text-lbg-main-dark mb-2">
+                <label for="dno" class="block text-white font-medium text-black dark:text-lbg-main-dark mb-2">
                     D.No *
                 </label>
                 <input 
@@ -74,12 +74,12 @@
                     maxlength="8"
                     class="w-full px-4 py-2 text-black dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent font-mono"
                 >
-                <p class="mt-1 text-xs text-black dark:text-lbg-main-dark">Format: D followed by 4-7 digits (e.g., D1234 to D1234567)</p>
+                <p class="mt-1 text-xs text-white dark:text-lbg-main-dark">Format: D followed by 4-7 digits (e.g., D1234 to D1234567)</p>
             </div>
 
             <!-- Category -->
             <div class="mb-6">
-                <label for="category" class="block text-sm font-medium text-black dark:text-lbg-main-dark mb-2">
+                <label for="category" class="block text-white font-medium text-black dark:text-lbg-main-dark mb-2">
                     Category *
                 </label>
                 <select 
@@ -95,13 +95,14 @@
                     <option value="ACADEMIC">Academic Misconduct</option>
                     <option value="ABSENCE">Unauthorized Absence</option>
                     <option value="SUBSTANCES">Substances</option>
+                    <option value="VPN">VPN Usage</option>
                     <option value="OTHER">Other</option>
                 </select>
             </div>
 
             <!-- Reason -->
             <div class="mb-6">
-                <label for="reason" class="block text-sm font-medium text-black dark:text-lbg-main-dark mb-2">
+                <label for="reason" class="block text-white font-medium text-black dark:text-lbg-main-dark mb-2">
                     Reason *
                 </label>
                 <textarea 
@@ -192,7 +193,7 @@
             let response;
             
             // Check if this D.No already exists
-            const checkResp = await apiCall(`/discipline/?dno=${formData.dno}`);
+            const checkResp = await apiCall(`/discipline/records/?dno=${formData.dno}`);
             if (!checkResp.ok) throw new Error('Check failed');
 
             const checkData = await checkResp.json();
@@ -200,7 +201,7 @@
             if (checkData.length > 0) {
                 // Record exists - just increment offense_count and add a log
                 const existing = checkData[0];
-                response = await apiCall(`/discipline/${existing.id}/`, {
+                response = await apiCall(`/discipline/records/${existing.id}/`, {
                     method: 'PATCH',
                     body: JSON.stringify({
                         offense_count: existing.offense_count + 1,
@@ -210,7 +211,7 @@
                 });
             } else {
                 // New record - create it with initial offense log
-                response = await apiCall('/discipline/', {
+                response = await apiCall('/discipline/records/', {
                     method: 'POST',
                     body: JSON.stringify(formData)
                 });

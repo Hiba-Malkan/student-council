@@ -124,7 +124,7 @@
                 <button type="submit" class="px-4 py-2.5 bg-primary hover:bg-primary text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
                     Sign Up
                 </button>
-                <div id="signupSuccess" class="text-green-500 text-sm font-medium hidden"></div>
+                <div id="signupSuccess" class="text-white text-sm font-medium hidden"></div>
                 <div id="signupError" class="text-red-500 text-sm font-medium hidden"></div>
             </div>
             <button type="button" onclick="closeSignupForm()" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg shadow-sm hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
@@ -520,6 +520,22 @@ async function checkManagePermission() {
     }
 }
 
+// Helper to get CSRF cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
 // Handle signup form submission
 document.getElementById('signupForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -546,7 +562,8 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
         const response = await fetch(`/api/competitions/${compId}/signup/`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
             },
             body: JSON.stringify({
                 student_name: studentName,

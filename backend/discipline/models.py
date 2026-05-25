@@ -66,6 +66,7 @@ class OffenseLog(models.Model):
         ('ACADEMIC', 'Academic Misconduct'),
         ('ABSENCE', 'Unauthorized Absence'),
         ('SUBSTANCES', 'Substances'),
+        ('VPN', 'VPN Usage'),
         ('OTHER', 'Other'),
     ]
     

@@ -108,6 +108,7 @@
                     <option value="ACADEMIC">Academic Misconduct</option>
                     <option value="ABSENCE">Unauthorized Absence</option>
                     <option value="SUBSTANCES">Substances</option>
+                    <option value="VPN">VPN Usage</option>
                     <option value="OTHER">Other</option>
                 </select>
             </div>
@@ -203,7 +204,7 @@
     // Load existing record
     async function loadRecord() {
         try {
-            const response = await apiCall(`/discipline/${recordId}/`);
+            const response = await apiCall(`/discipline/records/${recordId}/`);
             if (response && response.ok) {
                 const record = await response.json();
                 
@@ -270,7 +271,7 @@
         }
 
         try {
-            const response = await apiCall(`/discipline/${recordId}/`, {
+            const response = await apiCall(`/discipline/records/${recordId}/`, {
                 method: 'PUT',
                 body: JSON.stringify(formData)
             });

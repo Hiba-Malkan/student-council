@@ -102,13 +102,14 @@
                     <option value="ACADEMIC">Academic Misconduct</option>
                     <option value="ABSENCE">Unauthorized Absence</option>
                     <option value="SUBSTANCES">Substances</option>
+                    <option value="VPN">VPN Usage</option>
                     <option value="OTHER">Other</option>
                 </select>
             </div>
 
             <!-- Reason -->
             <div>
-                <label for="offenseReason" class="block text-sm font-medium text-text-main-light dark:text-lbg-main-dark mb-2">
+                <label for="offenseReason" class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">
                     Reason
                 </label>
                 <textarea id="offenseReason" rows="4"
@@ -160,7 +161,7 @@ async function loadRecord() {
             return;
         }
 
-        const response = await apiCall(`/discipline/${recordId}/`);
+        const response = await apiCall(`/discipline/records/${recordId}/`);
         if (!response || !response.ok) {
             showError('Failed to load record');
             return;
@@ -261,7 +262,7 @@ document.getElementById('confirmDelete').onclick = async () => {
     if (!offenseToDelete) return;
     
     try {
-        const response = await apiCall(`/discipline/offense/${offenseToDelete}/`, {
+        const response = await apiCall(`/discipline/offense-logs/${offenseToDelete}/`, {
             method: 'DELETE'
         });
         
@@ -329,7 +330,7 @@ document.getElementById('addOffenseForm').addEventListener('submit', async (e) =
             reason: reason || ''
         };
         
-        const response = await apiCall(`/discipline/${recordId}/`, {
+        const response = await apiCall(`/discipline/records/${recordId}/`, {
             method: 'PUT',
             body: JSON.stringify(updateData)
         });
