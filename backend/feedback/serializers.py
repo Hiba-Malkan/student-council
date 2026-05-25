@@ -16,13 +16,16 @@ class FeedbackListSerializer(serializers.ModelSerializer):
             'type',
             'type_display',
             'subject',
+            'description',
             'status',
             'status_display',
             'priority',
             'priority_display',
             'submitted_by_name',
             'created_at',
-            'assigned_to'
+            'assigned_to',
+            'email',
+            'category'
         ]
         read_only_fields = fields
 
@@ -91,6 +94,7 @@ class FeedbackCreateSerializer(serializers.ModelSerializer):
             'name',
             'email',
             'type',
+            'priority',
             'category',
             'subject',
             'description',

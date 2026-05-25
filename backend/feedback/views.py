@@ -172,3 +172,33 @@ class FeedbackViewSet(viewsets.ModelViewSet):
             'message': 'Note added successfully',
             'admin_notes': feedback.admin_notes
         })
+    
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    def update_priority(self, request, pk=None):
+        """Update feedback priority"""
+        feedback = self.get_object()
+        
+        # Check if user has permission
+        if not (request.user.is_staff or request.user.is_superuser):
+            if hasattr(request.user, 'role') and request.user.role:
+                if not getattr(request.user.role, 'can_manage_feedback', False):
+                    return Response(
+                        {'error': 'You do not have permission to update feedback priority'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
+        
+        new_priority = request.data.get('priority')
+        if not new_priority or new_priority not in dict(Feedback.PRIORITY_CHOICES):
+            return Response(
+                {'error': 'Invalid priority. Valid options: LOW, MEDIUM, HIGH, CRITICAL'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        feedback.priority = new_priority
+        feedback.save()
+        
+        return Response({
+            'success': True,
+            'message': f'Feedback priority updated to {feedback.get_priority_display()}',
+            'priority': new_priority
+        })
