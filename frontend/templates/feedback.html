@@ -1,18 +1,78 @@
 {% extends "base.html" %}
-{% load st                             <div>
-                    <p class="text-sm text-gray-700 dark:text-gray-400 font-medium">Bug Reports</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1" id="bugReports">0</p>
-                </div>div>
-                    <p class="text-sm text-gray-700 dark:text-gray-400 font-medium">Resolved</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-1" id="resolvedFeedback">0</p>
-                </div> %}
 
 {% block title %}Feedback & Issues - CouncilApp{% endblock %}
-
 {% block nav_feedback %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
-
 {% block page_title %}Feedback & Issue Tracker{% endblock %}
 {% block page_subtitle %}Help us improve by sharing your feedback, reporting bugs, or requesting features.{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Mobile View Optimization */
+    @media (max-width: 768px) {
+        /* Adjust spacing for mobile */
+        .space-y-6 {
+            --tw-space-y-reverse: 0;
+            margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
+            margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+        }
+        
+        /* Reduce padding on mobile */
+        [class*="p-6"] {
+            padding: 1rem !important;
+        }
+        
+        [class*="p-5"] {
+            padding: 1rem !important;
+        }
+        
+        [class*="p-4"] {
+            padding: 0.75rem !important;
+        }
+        
+        /* Badge responsiveness */
+        .flex.items-center {
+            flex-wrap: wrap;
+        }
+        
+        /* Button responsiveness */
+        .inline-flex.items-center.gap-2 {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+        
+        /* Pagination - horizontal scroll on small screens */
+        #paginationContainer {
+            overflow-x: auto;
+            padding: 0.5rem 0;
+        }
+        
+        /* Form inputs on mobile */
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            font-size: 16px;
+        }
+        
+        /* Feedback card adjustments */
+        .flex.items-start.justify-between {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        /* Extra small screens */
+        .text-sm {
+            font-size: 0.8125rem;
+        }
+        
+        .text-base {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
@@ -24,42 +84,39 @@
                     <p class="text-sm text-white dark:text-gray-400 font-medium">Total Feedback</p>
                     <p class="text-3xl font-bold text-white dark:text-white mt-1" id="totalFeedback">0</p>
                 </div>
-                <span class="material-icons-round text-4xl text-blue-500 opacity-20">comment</span>
+                <span class="material-icons-round text-4xl text-blue-500">comment</span>
             </div>
         </div>
-        
         <div class="bg-card-light dark:bg-card-dark rounded-lg p-6 border border-gray-100 dark:border-gray-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-white dark:text-gray-400 font-medium">Open Issues</p>
-                    <p class="text-3xl font-bold text-white mt-1" id="openIssues">0</p>
+                    <p class="text-3xl font-bold text-white dark:text-white mt-1" id="openIssues">0</p>
                 </div>
-                <span class="material-icons-round text-4xl text-orange-500 opacity-20">pending</span>
+                <span class="material-icons-round text-4xl text-orange-500">pending</span>
             </div>
         </div>
-        
         <div class="bg-card-light dark:bg-card-dark rounded-lg p-6 border border-gray-100 dark:border-gray-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-white dark:text-gray-400 font-medium">Resolved</p>
-                    <p class="text-3xl font-bold text-white mt-1" id="resolvedFeedback">0</p>
+                    <p class="text-3xl font-bold text-white dark:text-white mt-1" id="resolvedFeedback">0</p>
                 </div>
-                <span class="material-icons-round text-4xl text-green-500 opacity-20">check_circle</span>
+                <span class="material-icons-round text-4xl text-green-500">check_circle</span>
             </div>
         </div>
-        
         <div class="bg-card-light dark:bg-card-dark rounded-lg p-6 border border-gray-100 dark:border-gray-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-white dark:text-gray-400 font-medium">Bug Reports</p>
-                    <p class="text-3xl font-bold text-white mt-1" id="bugReports">0</p>
+                    <p class="text-3xl font-bold text-white dark:text-white mt-1" id="bugReports">0</p>
                 </div>
-                <span class="material-icons-round text-4xl text-red-500 opacity-20">bug_report</span>
+                <span class="material-icons-round text-4xl text-red-500">bug_report</span>
             </div>
         </div>
     </div>
 
-    <!-- Submit Feedback Button -->
+    <!-- Submit Button -->
     <div class="flex justify-end">
         <button onclick="openFeedbackModal()" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-semibold rounded-lg shadow-md transition-colors">
             <span class="material-icons-round">add_circle</span>
@@ -67,17 +124,16 @@
         </button>
     </div>
 
-    <!-- Filters & Search -->
+    <!-- Filters -->
     <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Search</label>
-                <input type="text" id="searchFeedback" placeholder="Search by subject..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-white dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="text" id="searchFeedback" placeholder="Search by subject..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
             </div>
-            
             <div>
                 <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Type</label>
-                <select id="filterType" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-white dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                <select id="filterType" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
                     <option value="">All Types</option>
                     <option value="FEEDBACK">Feedback</option>
                     <option value="BUG">Bug Report</option>
@@ -86,10 +142,9 @@
                     <option value="OTHER">Other</option>
                 </select>
             </div>
-            
             <div>
                 <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Status</label>
-                <select id="filterStatus" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-white dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                <select id="filterStatus" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
                     <option value="">All Statuses</option>
                     <option value="OPEN">Open</option>
                     <option value="IN_PROGRESS">In Progress</option>
@@ -97,10 +152,9 @@
                     <option value="CLOSED">Closed</option>
                 </select>
             </div>
-            
             <div>
                 <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Priority</label>
-                <select id="filterPriority" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-white dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                <select id="filterPriority" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
                     <option value="">All Priorities</option>
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
@@ -118,204 +172,163 @@
             <p class="text-gray-600 dark:text-gray-400">Loading feedback...</p>
         </div>
     </div>
+
+    <!-- Pagination -->
+    <div id="paginationContainer" class="flex justify-center gap-2 mt-6 flex-wrap">
+    </div>
 </div>
 
-<!-- Feedback Submit Modal -->
-<div id="feedbackModal" class="hidden fixed inset-0 z-[99999] bg-black bg-opacity-50 overflow-y-auto py-4 px-4">
+<!-- Submit Feedback Modal -->
+<div id="feedbackModal" class="hidden fixed inset-0 z-[99999] bg-black bg-opacity-50 overflow-y-auto py-4 px-4" onclick="closeFeedbackModalOutside(event)">
     <div class="flex items-start justify-center min-h-screen">
-        <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
-            <!-- Header -->
+        <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full shadow-2xl my-auto max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
             <div class="bg-gradient-to-r from-primary to-primary-hover px-6 py-4 flex justify-between items-center sticky top-0">
                 <h2 class="text-2xl font-bold text-white">Submit Feedback</h2>
                 <button onclick="closeFeedbackModal()" class="text-white hover:text-gray-200 transition-colors">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
-
-            <!-- Form -->
             <form id="feedbackForm" class="p-6 space-y-5">
-            <!-- Type -->
-            <div>
-                <label class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Feedback Type *</label>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-950/30">
-                        <input type="radio" name="type" value="FEEDBACK" class="w-4 h-4 text-blue-500" checked>
-                        <span class="ml-2 text-sm font-medium text-white dark:text-gray-300 group-checked:text-blue-700">Feedback</span>
-                    </label>
-                    <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors has-[:checked]:border-red-500 has-[:checked]:bg-red-50 dark:has-[:checked]:bg-red-950/30">
-                        <input type="radio" name="type" value="BUG" class="w-4 h-4 text-red-500">
-                        <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Bug Report</span>
-                    </label>
-                    <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors has-[:checked]:border-green-500 has-[:checked]:bg-green-50 dark:has-[:checked]:bg-green-950/30">
-                        <input type="radio" name="type" value="FEATURE_REQUEST" class="w-4 h-4 text-green-500">
-                        <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Feature Request</span>
-                    </label>
-                    <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 dark:has-[:checked]:bg-orange-950/30">
-                        <input type="radio" name="type" value="PERFORMANCE" class="w-4 h-4 text-orange-500">
-                        <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Performance Issue</span>
-                    </label>
-                    <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors has-[:checked]:border-gray-500 has-[:checked]:bg-gray-100 dark:has-[:checked]:bg-gray-700/30">
-                        <input type="radio" name="type" value="OTHER" class="w-4 h-4 text-gray-500">
-                        <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Other</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Category -->
-            <div>
-                <label for="category" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Category</label>
-                <select id="category" name="category" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-white dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    <option value="">Select a category...</option>
-                    <option value="Announcements">Announcements</option>
-                    <option value="Clubs">Clubs</option>
-                    <option value="Competitions">Competitions</option>
-                    <option value="Discipline">Discipline</option>
-                    <option value="Duty Roster">Duty Roster</option>
-                    <option value="Gate Pass">Gate Pass</option>
-                    <option value="Meetings">Meetings</option>
-                    <option value="Notifications">Notifications</option>
-                    <option value="General">General</option>
-                </select>
-            </div>
-
-            <!-- Name & Email -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Type -->
                 <div>
-                    <label for="name" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Your Name</label>
-                    <input type="text" id="name" name="name" placeholder="Your name (optional)" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-white dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+                    <label class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Feedback Type *</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 dark:has-[:checked]:bg-blue-950/30">
+                            <input type="radio" name="type" value="FEEDBACK" class="w-4 h-4 text-blue-500" checked>
+                            <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Feedback</span>
+                        </label>
+                        <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors has-[:checked]:border-red-500 has-[:checked]:bg-red-50 dark:has-[:checked]:bg-red-950/30">
+                            <input type="radio" name="type" value="BUG" class="w-4 h-4 text-red-500">
+                            <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Bug Report</span>
+                        </label>
+                        <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors has-[:checked]:border-green-500 has-[:checked]:bg-green-50 dark:has-[:checked]:bg-green-950/30">
+                            <input type="radio" name="type" value="FEATURE_REQUEST" class="w-4 h-4 text-green-500">
+                            <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Feature Request</span>
+                        </label>
+                        <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 dark:has-[:checked]:bg-orange-950/30">
+                            <input type="radio" name="type" value="PERFORMANCE" class="w-4 h-4 text-orange-500">
+                            <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Performance Issue</span>
+                        </label>
+                        <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors has-[:checked]:border-gray-500 has-[:checked]:bg-gray-100 dark:has-[:checked]:bg-gray-700/30">
+                            <input type="radio" name="type" value="OTHER" class="w-4 h-4 text-gray-500">
+                            <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Other</span>
+                        </label>
+                    </div>
                 </div>
+
+                <!-- Category, Name, Email, Subject, Description, Screenshot, Messages, Buttons -->
+                <!-- (All your original form fields are here) -->
                 <div>
-                    <label for="email" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Email</label>
-                    <input type="email" id="email" name="email" placeholder="your@email.com (optional)" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-white dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+                    <label for="category" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Category</label>
+                    <select id="category" name="category" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option value="">Select a category...</option>
+                        <option value="Announcements">Announcements</option>
+                        <option value="Clubs">Clubs</option>
+                        <option value="Competitions">Competitions</option>
+                        <option value="Discipline">Discipline</option>
+                        <option value="Duty Roster">Duty Roster</option>
+                        <option value="Gate Pass">Gate Pass</option>
+                        <option value="Meetings">Meetings</option>
+                        <option value="Notifications">Notifications</option>
+                        <option value="General">General</option>
+                    </select>
                 </div>
-            </div>
 
-            <!-- Subject -->
-            <div>
-                <label for="subject" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Subject *</label>
-                <input type="text" id="subject" name="subject" placeholder="Brief subject line" required class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-white dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
-            </div>
-
-            <!-- Description -->
-            <div>
-                <label for="description" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Description *</label>
-                <textarea id="description" name="description" rows="5" placeholder="Please provide detailed information about your feedback..." required class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-white dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"></textarea>
-            </div>
-
-            <!-- Screenshot Upload -->
-            <div>
-                <label for="screenshot" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Screenshot (optional)</label>
-                <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors" id="uploadArea">
-                    <span class="material-icons-round text-4xl text-gray-400 mx-auto mb-2">image</span>
-                    <p class="text-sm text-white dark:text-gray-400">Drag and drop an image here or click to select</p>
-                    <p class="text-xs text-white dark:text-gray-500 mt-1">PNG, JPG, GIF up to 5MB</p>
-                    <input type="file" id="screenshot" name="screenshot" accept="image/*" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="name" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Your Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your name (optional)" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label for="email" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Email</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com (optional)" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
                 </div>
-                <div id="filePreview" class="hidden mt-3 relative">
-                    <img id="previewImage" src="" alt="Preview" class="w-full h-48 object-cover rounded-lg">
-                    <button type="button" onclick="clearScreenshot()" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg">
-                        <span class="material-icons-round text-lg">close</span>
+
+                <div>
+                    <label for="subject" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Subject *</label>
+                    <input type="text" id="subject" name="subject" placeholder="Brief subject line" required class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+                </div>
+
+                <div>
+                    <label for="description" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Description *</label>
+                    <textarea id="description" name="description" rows="5" placeholder="Please provide detailed information about your feedback..." required class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"></textarea>
+                </div>
+
+                <div>
+                    <label for="screenshot" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Screenshot (optional)</label>
+                    <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors" id="uploadArea">
+                        <span class="material-icons-round text-4xl text-gray-400 mx-auto mb-2">image</span>
+                        <p class="text-sm text-white dark:text-gray-400">Drag and drop an image here or click to select</p>
+                        <p class="text-xs text-white dark:text-gray-500 mt-1">PNG, JPG, GIF up to 5MB</p>
+                        <input type="file" id="screenshot" name="screenshot" accept="image/*" class="hidden">
+                    </div>
+                    <div id="filePreview" class="hidden mt-3 relative">
+                        <img id="previewImage" src="" alt="Preview" class="w-full h-48 object-cover rounded-lg">
+                        <button type="button" onclick="clearScreenshot()" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg">
+                            <span class="material-icons-round text-lg">close</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="formError" class="hidden bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm"></div>
+                <div id="formSuccess" class="hidden bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-sm"></div>
+
+                <div class="flex gap-3 justify-end border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <button type="button" onclick="closeFeedbackModal()" class="px-6 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors font-medium flex items-center gap-2">
+                        <span class="material-icons-round text-lg">send</span>
+                        Submit Feedback
                     </button>
                 </div>
-            </div>
-
-            <!-- Error & Success Messages -->
-            <div id="formError" class="hidden bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm"></div>
-            <div id="formSuccess" class="hidden bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-sm"></div>
-
-            <!-- Buttons -->
-            <div class="flex gap-3 justify-end border-t border-gray-200 dark:border-gray-700 pt-6">
-                <button type="button" onclick="closeFeedbackModal()" class="px-6 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
-                    Cancel
-                </button>
-                <button type="submit" class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors font-medium flex items-center gap-2">
-                    <span class="material-icons-round text-lg">send</span>
-                    Submit Feedback
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
 <!-- Feedback Detail Modal -->
-<div id="detailModal" class="hidden fixed inset-0 z-[9999] bg-black bg-opacity-50 flex items-start justify-center pt-8 pb-8 overflow-y-auto">
-    <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
-        <!-- Header -->
+<div id="detailModal" class="hidden fixed inset-0 z-[99999] bg-black bg-opacity-50 flex items-start justify-center pt-8 pb-8 overflow-y-auto" onclick="closeDetailModalOutside(event)">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
         <div class="bg-gradient-to-r from-primary to-primary-hover px-6 py-4 flex justify-between items-center sticky top-0 z-10">
             <h2 class="text-2xl font-bold text-white" id="detailTitle">Feedback Details</h2>
             <button onclick="closeDetailModal()" class="text-white hover:text-gray-200 transition-colors">
                 <span class="material-icons-round">close</span>
             </button>
         </div>
-
-        <!-- Content -->
-        <div id="detailContent" class="p-6">
-            <!-- Will be populated dynamically -->
-        </div>
+        <div id="detailContent" class="p-6"></div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
 <script>
 let allFeedback = [];
-let currentFilters = {
-    search: '',
-    type: '',
-    status: '',
-    priority: ''
-};
+let currentFilters = { search: '', type: '', status: '', priority: '' };
+let currentPage = 1;
+const itemsPerPage = 5;
 
-// Load feedback on page load
 async function loadFeedback() {
     try {
         const response = await apiCall('/feedback/');
-        
-        // Handle 403 Forbidden (normal user without view permission)
         if (response.status === 403) {
-            document.getElementById('feedbackContainer').innerHTML = `
-                <div class="text-center py-12 bg-card-light dark:bg-card-dark rounded-lg p-8 border border-gray-200 dark:border-gray-700">
-                    <span class="material-icons-round text-yellow-400 text-5xl mb-3">info</span>
-                    <p class="text-gray-700 dark:text-gray-300 font-semibold mb-2">View Restricted</p>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">You don't have permission to view feedback submissions. You can still submit your own feedback using the button above.</p>
-                </div>
-            `;
-            // Hide filters and list area
-            document.querySelector('.bg-card-light:has(#searchFeedback)').style.display = 'none';
+            document.getElementById('feedbackContainer').innerHTML = `<div class="text-center py-12 bg-card-light dark:bg-card-dark rounded-lg p-8 border border-gray-200 dark:border-gray-700"><span class="material-icons-round text-yellow-400 text-5xl mb-3">info</span><p class="text-gray-700 dark:text-gray-300 font-semibold mb-2">View Restricted</p><p class="text-gray-600 dark:text-gray-400 text-sm">You can still submit feedback using the button above.</p></div>`;
             return;
         }
-        
-        // Handle 404 or other errors
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
         const data = await response.json();
         allFeedback = data.results || data;
         updateStats();
         renderFeedback(allFeedback);
     } catch (error) {
         console.error('Error loading feedback:', error);
-        document.getElementById('feedbackContainer').innerHTML = `
-            <div class="text-center py-12">
-                <span class="material-icons-round text-red-400 text-5xl mb-3">error</span>
-                <p class="text-red-500">Failed to load feedback. Please try again.</p>
-            </div>
-        `;
+        document.getElementById('feedbackContainer').innerHTML = `<div class="text-center py-12"><span class="material-icons-round text-red-400 text-5xl mb-3">error</span><p class="text-red-500">Failed to load feedback. Please try again.</p></div>`;
     }
 }
 
-// Update stats
 function updateStats() {
-    if (!allFeedback || allFeedback.length === 0) {
-        document.getElementById('totalFeedback').textContent = '0';
-        document.getElementById('openIssues').textContent = '0';
-        document.getElementById('resolvedFeedback').textContent = '0';
-        document.getElementById('bugReports').textContent = '0';
-        return;
-    }
-    
     const total = allFeedback.length;
     const open = allFeedback.filter(f => f.status === 'OPEN').length;
     const resolved = allFeedback.filter(f => f.status === 'RESOLVED').length;
@@ -327,44 +340,25 @@ function updateStats() {
     document.getElementById('bugReports').textContent = bugs;
 }
 
-// Render feedback list
 function renderFeedback(feedback) {
     const container = document.getElementById('feedbackContainer');
-    
     if (feedback.length === 0) {
-        container.innerHTML = `
-            <div class="text-center py-12">
-                <span class="material-icons-round text-gray-400 text-5xl mb-3">feedback</span>
-                <p class="text-gray-600 dark:text-gray-400">No feedback found.</p>
-            </div>
-        `;
+        container.innerHTML = `<div class="text-center py-12"><span class="material-icons-round text-gray-400 text-5xl mb-3">feedback</span><p class="text-gray-600 dark:text-gray-400">No feedback found.</p></div>`;
+        document.getElementById('paginationContainer').innerHTML = '';
         return;
     }
-
+    
+    // Calculate pagination
+    const totalPages = Math.ceil(feedback.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageItems = feedback.slice(startIndex, endIndex);
+    
     let html = '';
-    feedback.forEach(item => {
-        const typeColors = {
-            'FEEDBACK': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-            'BUG': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-            'FEATURE_REQUEST': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-            'PERFORMANCE': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
-            'OTHER': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
-        };
-
-        const statusColors = {
-            'OPEN': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-            'IN_PROGRESS': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-            'RESOLVED': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-            'CLOSED': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
-        };
-
-        const priorityColors = {
-            'LOW': 'text-gray-600 dark:text-gray-400',
-            'MEDIUM': 'text-blue-600 dark:text-blue-400',
-            'HIGH': 'text-orange-600 dark:text-orange-400',
-            'CRITICAL': 'text-red-600 dark:text-red-400'
-        };
-
+    pageItems.forEach(item => {
+        const typeColors = {'FEEDBACK': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','BUG': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400','FEATURE_REQUEST': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400','PERFORMANCE': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400','OTHER': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'};
+        const statusColors = {'OPEN': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','IN_PROGRESS': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400','RESOLVED': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400','CLOSED': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'};
+        const priorityColors = {'LOW': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400','MEDIUM': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','HIGH': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400','CRITICAL': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'};
         const canManage = userData && (userData.is_staff || userData.is_superuser || userData.role?.can_manage_feedback);
 
         html += `
@@ -374,167 +368,139 @@ function renderFeedback(feedback) {
                         <div class="flex items-center gap-3 mb-2">
                             <span class="px-3 py-1 rounded-full text-xs font-semibold ${typeColors[item.type] || typeColors['OTHER']}">${item.type_display}</span>
                             <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusColors[item.status]}">${item.status_display}</span>
-                            <span class="text-xs font-semibold ${priorityColors[item.priority]}">● ${item.priority_display}</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${priorityColors[item.priority]}">${item.priority_display}</span>
                         </div>
-                        <h3 class="text-lg font-semibold text-lbg-main-light dark:text-white">${item.subject}</h3>
+                        <h3 class="text-lg font-semibold text-white dark:text-white">${item.subject}</h3>
                     </div>
                     ${canManage ? `
-                        <div class="relative">
-                            <button onclick="toggleKebabMenu(event, ${item.id})" class="ml-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
-                                <span class="material-icons-round text-gray-600 dark:text-gray-400">more_vert</span>
-                            </button>
-                            <div id="kebab-${item.id}" class="hidden absolute right-0 top-10 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-40 min-w-max">
-                                <button onclick="updateFeedbackStatusQuick(${item.id}, 'OPEN')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
-                                    <span class="material-icons-round text-sm">radio_button_unchecked</span> Mark Open
-                                </button>
-                                <button onclick="updateFeedbackStatusQuick(${item.id}, 'IN_PROGRESS')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
-                                    <span class="material-icons-round text-sm">schedule</span> Mark In Progress
-                                </button>
-                                <button onclick="updateFeedbackStatusQuick(${item.id}, 'RESOLVED')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
-                                    <span class="material-icons-round text-sm">check_circle</span> Mark Resolved
-                                </button>
-                                <button onclick="updateFeedbackStatusQuick(${item.id}, 'CLOSED')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-red-600 dark:text-red-400 flex items-center gap-2 font-medium">
-                                    <span class="material-icons-round text-sm">cancel</span> Mark Closed
-                                </button>
-                            </div>
+                    <div class="relative">
+                        <button onclick="toggleKebabMenu(event, ${item.id})" class="ml-2 p-2 rounded-lg transition-colors">
+                            <span class="material-icons-round text-white dark:text-gray-400">more_vert</span>
+                        </button>
+                        <div id="kebab-${item.id}" class="hidden absolute right-0 top-10 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-40 min-w-max">
+                            <button onclick="updateFeedbackStatusQuick(${item.id}, 'OPEN')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b flex items-center gap-2">Mark Open</button>
+                            <button onclick="updateFeedbackStatusQuick(${item.id}, 'IN_PROGRESS')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b flex items-center gap-2">Mark In Progress</button>
+                            <button onclick="updateFeedbackStatusQuick(${item.id}, 'RESOLVED')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b flex items-center gap-2">Mark Resolved</button>
+                            <button onclick="updateFeedbackStatusQuick(${item.id}, 'CLOSED')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">Mark Closed</button>
                         </div>
-                    ` : ''}
+                    </div>` : ''}
                 </div>
-                
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">${item.description || 'No description'}</p>
-                
-                <div class="flex items-center justify-between mb-4 text-xs text-gray-500 dark:text-gray-400">
+                <p class="text-sm text-white dark:text-gray-400 mb-3 line-clamp-2">${item.description || 'No description'}</p>
+                <div class="flex items-center justify-between mb-4 text-xs text-white dark:text-gray-400">
                     <div class="flex items-center gap-3">
                         <span>${item.submitted_by_name || item.email || 'Anonymous'}</span>
                         ${item.category ? `<span>•</span><span>${item.category}</span>` : ''}
                     </div>
                     <span>${formatRelativeDate(item.created_at)}</span>
                 </div>
-
                 <div class="flex justify-end">
                     <button onclick="viewFeedback(event, ${item.id})" class="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium text-sm transition-colors">
-                        <span class="material-icons-round text-base">visibility</span>
-                        View Details
+                        <span class="material-icons-round text-base">visibility</span> View Details
                     </button>
                 </div>
             </div>
         `;
     });
-
     container.innerHTML = html;
+    
+    // Render pagination controls
+    renderPagination(totalPages, feedback.length);
 }
 
-// View feedback details
+function renderPagination(totalPages, totalItems) {
+    const paginationContainer = document.getElementById('paginationContainer');
+    if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+    }
+    
+    let paginationHtml = '';
+    
+    // Previous button
+    if (currentPage > 1) {
+        paginationHtml += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors text-sm font-medium"><span class="material-icons-round text-base">chevron_left</span></button>`;
+    }
+    
+    // Page buttons
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === currentPage) {
+            paginationHtml += `<button class="px-3 py-2 bg-primary text-white rounded-lg font-medium text-sm">${i}</button>`;
+        } else {
+            paginationHtml += `<button onclick="goToPage(${i})" class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg transition-colors text-sm font-medium">${i}</button>`;
+        }
+    }
+    
+    // Next button
+    if (currentPage < totalPages) {
+        paginationHtml += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors text-sm font-medium"><span class="material-icons-round text-base">chevron_right</span></button>`;
+    }
+    
+    paginationContainer.innerHTML = paginationHtml;
+}
+
+function goToPage(page) {
+    currentPage = page;
+    const filtered = getFilteredFeedback();
+    renderFeedback(filtered);
+    window.scrollTo(0, 0);
+}
+
 async function viewFeedback(event, id) {
     event.stopPropagation();
     try {
         const response = await apiCall(`/feedback/${id}/`);
-        
-        // Handle 403 Forbidden
         if (response.status === 403) {
-            showError('You don\'t have permission to view this feedback');
+            showError("You don't have permission to view this feedback");
             return;
         }
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-        }
-        
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
         const data = await response.json();
-        // Close submit modal first
         closeFeedbackModal();
-        // Wait for modal to actually close, then show detail
-        setTimeout(() => {
-            displayFeedbackDetail(data);
-        }, 100);
+        closeDetailModal();
+        setTimeout(() => displayFeedbackDetail(data), 100);
     } catch (error) {
         console.error('Error loading feedback details:', error);
         showError('Failed to load feedback details');
     }
 }
 
-// Display feedback detail
 function displayFeedbackDetail(feedback) {
     const modal = document.getElementById('detailModal');
     const content = document.getElementById('detailContent');
-
-    const typeColors = {
-        'FEEDBACK': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-        'BUG': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-        'FEATURE_REQUEST': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-        'PERFORMANCE': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
-        'OTHER': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
-    };
-
-    const statusColors = {
-        'OPEN': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-        'IN_PROGRESS': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-        'RESOLVED': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400',
-        'CLOSED': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
-    };
-
-    // Check if user can manage feedback
     const canManage = userData && (userData.is_staff || userData.is_superuser || userData.role?.can_manage_feedback);
 
+    const typeColors = {'FEEDBACK': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','BUG': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400','FEATURE_REQUEST': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400','PERFORMANCE': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400','OTHER': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'};
+    const statusColors = {'OPEN': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','IN_PROGRESS': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400','RESOLVED': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400','CLOSED': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'};
+    const priorityColors = {'LOW': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400','MEDIUM': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','HIGH': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400','CRITICAL': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'};
+
     content.innerHTML = `
-        <div class="space-y-6">
-            <!-- Status Badges -->
-            <div class="flex flex-wrap gap-2">
+        <div class="space-y-4">
+            <div class="flex flex-wrap gap-2 pb-4">
                 <span class="px-3 py-1 rounded-full text-xs font-semibold ${typeColors[feedback.type]}">${feedback.type_display}</span>
                 <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusColors[feedback.status]}">${feedback.status_display}</span>
-                <span class="px-3 py-1 rounded-full text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800">Priority: ${feedback.priority_display}</span>
+                <span class="px-3 py-1 rounded-full text-xs font-semibold ${priorityColors[feedback.priority]}">Priority: ${feedback.priority_display}</span>
             </div>
-
-            <!-- Details Grid -->
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4"></div>
             <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Submitted By</p>
-                    <p class="text-sm text-white dark:text-white">${feedback.submitted_by_name}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">${feedback.submitted_by_role || 'Member'}</p>
-                </div>
-                <div>
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Email</p>
-                    <p class="text-sm text-white dark:text-white">${feedback.email || 'N/A'}</p>
-                </div>
-                <div>
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Category</p>
-                    <p class="text-sm text-white dark:text-white">${feedback.category || 'N/A'}</p>
-                </div>
-                <div>
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Submitted</p>
-                    <p class="text-sm text-white dark:text-white">${formatDate(feedback.created_at)}</p>
-                </div>
+                <div><p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-1">Submitted By</p><p class="text-sm text-white dark:text-white">${feedback.submitted_by_name}</p></div>
+                <div><p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-1">Email</p><p class="text-sm text-white dark:text-white">${feedback.email || 'N/A'}</p></div>
+                <div><p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-1">Category</p><p class="text-sm text-white dark:text-white">${feedback.category || 'N/A'}</p></div>
+                <div><p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-1">Submitted</p><p class="text-sm text-white dark:text-white">${formatDate(feedback.created_at)}</p></div>
             </div>
-
             <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Subject</p>
+                <p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2">Subject</p>
                 <p class="text-base font-semibold text-white dark:text-white">${feedback.subject}</p>
             </div>
-
             <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Description</p>
+                <p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2">Description</p>
                 <p class="text-sm text-white dark:text-gray-300 leading-relaxed whitespace-pre-wrap">${feedback.description}</p>
             </div>
-
-            ${feedback.screenshot ? `
-                <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Screenshot</p>
-                    <img src="${feedback.screenshot}" alt="Feedback screenshot" class="max-w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700">
-                </div>
-            ` : ''}
-
-            ${feedback.admin_notes ? `
-                <div class="border-t border-gray-200 dark:border-gray-700 pt-6 bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg">
-                    <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Admin Notes</p>
-                    <p class="text-sm text-white dark:text-gray-300 leading-relaxed whitespace-pre-wrap">${feedback.admin_notes}</p>
-                </div>
-            ` : ''}
-
+            ${feedback.screenshot ? `<div class="border-t border-gray-200 dark:border-gray-700 pt-6"><p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Screenshot</p><img src="${feedback.screenshot}" class="max-w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700"></div>` : ''}
             ${canManage ? `
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">
-                    <!-- Status Update -->
                     <div>
-                        <label class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2 block">Update Status</label>
+                        <label class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Update Status</label>
                         <div class="flex gap-2 flex-wrap">
                             <button onclick="updateFeedbackStatus(${feedback.id}, 'OPEN')" class="px-3 py-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-lg text-xs font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors ${feedback.status === 'OPEN' ? 'ring-2 ring-blue-500' : ''}">Open</button>
                             <button onclick="updateFeedbackStatus(${feedback.id}, 'IN_PROGRESS')" class="px-3 py-1.5 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-lg text-xs font-medium hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors ${feedback.status === 'IN_PROGRESS' ? 'ring-2 ring-yellow-500' : ''}">In Progress</button>
@@ -542,65 +508,59 @@ function displayFeedbackDetail(feedback) {
                             <button onclick="updateFeedbackStatus(${feedback.id}, 'CLOSED')" class="px-3 py-1.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded-lg text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors ${feedback.status === 'CLOSED' ? 'ring-2 ring-gray-500' : ''}">Closed</button>
                         </div>
                     </div>
-
-                    <!-- Add Notes -->
                     <div>
-                        <label for="adminNotesInput" class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2 block">Add Admin Notes</label>
-                        <textarea id="adminNotesInput" placeholder="Add internal notes..." rows="3" class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-white dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"></textarea>
+                        <label for="adminNotesInput" class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Add Admin Notes</label>
+                        <textarea id="adminNotesInput" placeholder="Add internal notes..." rows="3" class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"></textarea>
                         <button onclick="addFeedbackNotes(${feedback.id})" class="mt-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors text-sm">Save Notes</button>
                     </div>
                 </div>
             ` : ''}
         </div>
     `;
-
     modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
 }
 
-// Open feedback form modal
+function closeDetailModal() { 
+    document.getElementById('detailModal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function closeDetailModalOutside(event) {
+    if (event.target.id === 'detailModal') {
+        closeDetailModal();
+    }
+}
+
 function openFeedbackModal() {
-    // Pre-fill name and email if logged in
+    closeDetailModal();
     if (userData && userData.email) {
         document.getElementById('email').value = userData.email;
-        if (userData.first_name || userData.last_name) {
-            document.getElementById('name').value = `${userData.first_name} ${userData.last_name}`.trim();
-        }
+        document.getElementById('name').value = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
     }
     document.getElementById('feedbackModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
 }
-
-// Close feedback form modal
 function closeFeedbackModal() {
     document.getElementById('feedbackModal').classList.add('hidden');
     document.getElementById('feedbackForm').reset();
-    document.getElementById('formError').classList.add('hidden');
-    document.getElementById('formSuccess').classList.add('hidden');
     document.getElementById('filePreview').classList.add('hidden');
+    document.body.style.overflow = '';
 }
 
-// Close detail modal
-function closeDetailModal() {
-    document.getElementById('detailModal').classList.add('hidden');
+function closeFeedbackModalOutside(event) {
+    if (event.target.id === 'feedbackModal') {
+        closeFeedbackModal();
+    }
 }
 
-// Initialize form event listeners after page loads
+// Helper Functions
 function initFormListeners() {
-    // Handle screenshot upload
     const uploadArea = document.getElementById('uploadArea');
     if (uploadArea) {
-        uploadArea.addEventListener('click', () => {
-            document.getElementById('screenshot').click();
-        });
-
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('border-primary', 'bg-primary', 'bg-opacity-5');
-        });
-
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('border-primary', 'bg-primary', 'bg-opacity-5');
-        });
-
+        uploadArea.addEventListener('click', () => document.getElementById('screenshot').click());
+        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('border-primary', 'bg-primary', 'bg-opacity-5'); });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('border-primary', 'bg-primary', 'bg-opacity-5'));
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('border-primary', 'bg-primary', 'bg-opacity-5');
@@ -611,18 +571,13 @@ function initFormListeners() {
             }
         });
     }
-
     const screenshotInput = document.getElementById('screenshot');
-    if (screenshotInput) {
-        screenshotInput.addEventListener('change', previewScreenshot);
-    }
+    if (screenshotInput) screenshotInput.addEventListener('change', previewScreenshot);
 
-    // Handle form submission
     const feedbackForm = document.getElementById('feedbackForm');
     if (feedbackForm) {
         feedbackForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const formData = new FormData();
             const type = document.querySelector('input[name="type"]:checked').value;
             const category = document.getElementById('category').value;
@@ -647,18 +602,19 @@ function initFormListeners() {
             if (screenshot) formData.append('screenshot', screenshot);
 
             try {
+                const token = localStorage.getItem('access_token');
                 const response = await fetch('/api/feedback/', {
                     method: 'POST',
-                    headers: {
-                        'Authorization': localStorage.getItem('access_token') ? `Bearer ${localStorage.getItem('access_token')}` : '',
-                    },
+                    headers: token ? {
+                        'Authorization': `Bearer ${token}`
+                    } : {},
                     body: formData
                 });
 
                 const data = await response.json();
-
-                if (response.ok) {
-                    document.getElementById('formSuccess').textContent = data.message || 'Feedback submitted successfully!';
+                
+                if (response.ok || response.status === 201) {
+                    document.getElementById('formSuccess').textContent = 'Feedback submitted successfully!';
                     document.getElementById('formSuccess').classList.remove('hidden');
                     document.getElementById('feedbackForm').reset();
                     document.getElementById('filePreview').classList.add('hidden');
@@ -667,8 +623,10 @@ function initFormListeners() {
                         loadFeedback();
                     }, 2000);
                 } else {
-                    document.getElementById('formError').textContent = data.error || 'Failed to submit feedback';
+                    const errorMessage = data.detail || data.error || data.message || 'Failed to submit feedback';
+                    document.getElementById('formError').textContent = errorMessage;
                     document.getElementById('formError').classList.remove('hidden');
+                    console.error('Feedback submission error:', data);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -678,37 +636,10 @@ function initFormListeners() {
         });
     }
 
-    // Handle filter changes
-    const searchFeedback = document.getElementById('searchFeedback');
-    const filterType = document.getElementById('filterType');
-    const filterStatus = document.getElementById('filterStatus');
-    const filterPriority = document.getElementById('filterPriority');
-
-    if (searchFeedback) searchFeedback.addEventListener('input', applyFilters);
-    if (filterType) filterType.addEventListener('change', applyFilters);
-    if (filterStatus) filterStatus.addEventListener('change', applyFilters);
-    if (filterPriority) filterPriority.addEventListener('change', applyFilters);
-
-    // Prevent clicks on modal backdrops from bubbling to feedback cards
-    const feedbackModal = document.getElementById('feedbackModal');
-    if (feedbackModal) {
-        feedbackModal.addEventListener('click', (e) => {
-            if (e.target === feedbackModal) {
-                closeFeedbackModal();
-            }
-            e.stopPropagation();
-        });
-    }
-
-    const detailModal = document.getElementById('detailModal');
-    if (detailModal) {
-        detailModal.addEventListener('click', (e) => {
-            if (e.target === detailModal) {
-                closeDetailModal();
-            }
-            e.stopPropagation();
-        });
-    }
+    document.getElementById('searchFeedback').addEventListener('input', applyFilters);
+    document.getElementById('filterType').addEventListener('change', applyFilters);
+    document.getElementById('filterStatus').addEventListener('change', applyFilters);
+    document.getElementById('filterPriority').addEventListener('change', applyFilters);
 }
 
 function previewScreenshot() {
@@ -728,35 +659,36 @@ function clearScreenshot() {
     document.getElementById('filePreview').classList.add('hidden');
 }
 
-// Filter feedback
 function applyFilters() {
     currentFilters.search = document.getElementById('searchFeedback').value.toLowerCase();
     currentFilters.type = document.getElementById('filterType').value;
     currentFilters.status = document.getElementById('filterStatus').value;
     currentFilters.priority = document.getElementById('filterPriority').value;
+    currentPage = 1;
 
-    const filtered = allFeedback.filter(item => {
-        return (
-            (currentFilters.search === '' || 
-             item.subject.toLowerCase().includes(currentFilters.search) ||
-             (item.description && item.description.toLowerCase().includes(currentFilters.search))) &&
-            (currentFilters.type === '' || item.type === currentFilters.type) &&
-            (currentFilters.status === '' || item.status === currentFilters.status) &&
-            (currentFilters.priority === '' || item.priority === currentFilters.priority)
-        );
-    });
-
+    const filtered = getFilteredFeedback();
     renderFeedback(filtered);
 }
 
-// Helper function to format relative date
+function getFilteredFeedback() {
+    return allFeedback.filter(item => {
+        const matchesSearch = !currentFilters.search || 
+            item.subject.toLowerCase().includes(currentFilters.search) ||
+            (item.description && item.description.toLowerCase().includes(currentFilters.search));
+        const matchesType = !currentFilters.type || item.type === currentFilters.type;
+        const matchesStatus = !currentFilters.status || item.status === currentFilters.status;
+        const matchesPriority = !currentFilters.priority || item.priority === currentFilters.priority;
+        return matchesSearch && matchesType && matchesStatus && matchesPriority;
+    });
+}
+
 function formatRelativeDate(dateString) {
     const date = new Date(dateString);
     const now = new Date();
     const diff = now - date;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
     if (minutes < 1) return 'just now';
     if (minutes < 60) return `${minutes}m ago`;
@@ -766,116 +698,104 @@ function formatRelativeDate(dateString) {
     return date.toLocaleDateString();
 }
 
-// Helper function to format absolute date
 function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
 }
 
-// Update feedback status
-async function updateFeedbackStatus(feedbackId, newStatus) {
-    try {
-        const response = await apiCall(`/feedback/${feedbackId}/update_status/`, {
-            method: 'POST',
-            body: JSON.stringify({ status: newStatus })
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            showError(data.error || 'Failed to update status');
-            return;
-        }
-
-        showSuccess('Status updated successfully');
-        // Reload feedback details
-        viewFeedback(feedbackId);
-        // Reload list
-        loadFeedback();
-    } catch (error) {
-        console.error('Error updating status:', error);
-        showError('Failed to update status');
-    }
-}
-
-// Add feedback notes
-async function addFeedbackNotes(feedbackId) {
-    const notesInput = document.getElementById('adminNotesInput');
-    const notes = notesInput.value.trim();
-
-    if (!notes) {
-        showError('Please enter some notes');
-        return;
-    }
-
-    try {
-        const response = await apiCall(`/feedback/${feedbackId}/add_notes/`, {
-            method: 'POST',
-            body: JSON.stringify({ notes: notes })
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            showError(data.error || 'Failed to add notes');
-            return;
-        }
-
-        showSuccess('Notes added successfully');
-        notesInput.value = '';
-        // Reload feedback details
-        viewFeedback(feedbackId);
-    } catch (error) {
-        console.error('Error adding notes:', error);
-        showError('Failed to add notes');
-    }
-}
-
-// Toggle kebab menu
 function toggleKebabMenu(event, feedbackId) {
     event.stopPropagation();
     const menu = document.getElementById(`kebab-${feedbackId}`);
-    menu.classList.toggle('hidden');
-    
-    // Close other menus
-    document.querySelectorAll('[id^="kebab-"]').forEach(m => {
-        if (m.id !== `kebab-${feedbackId}`) {
-            m.classList.add('hidden');
-        }
-    });
+    if (menu) menu.classList.toggle('hidden');
 }
 
-// Quick status update from kebab menu
 async function updateFeedbackStatusQuick(feedbackId, newStatus) {
     try {
         const response = await apiCall(`/feedback/${feedbackId}/update_status/`, {
             method: 'POST',
             body: JSON.stringify({ status: newStatus })
         });
-
         if (!response.ok) {
             const data = await response.json();
             showError(data.error || 'Failed to update status');
             return;
         }
-
         showSuccess('Status updated');
-        // Close kebab menu
         const menu = document.getElementById(`kebab-${feedbackId}`);
         if (menu) menu.classList.add('hidden');
-        // Reload list
         loadFeedback();
     } catch (error) {
-        console.error('Error updating status:', error);
+        console.error('Error:', error);
         showError('Failed to update status');
     }
 }
 
-// Initialize
+async function updateFeedbackStatus(feedbackId, newStatus) {
+    try {
+        const response = await apiCall(`/feedback/${feedbackId}/update_status/`, {
+            method: 'POST',
+            body: JSON.stringify({ status: newStatus })
+        });
+        if (!response.ok) {
+            const data = await response.json();
+            showError(data.error || 'Failed to update status');
+            return;
+        }
+        showSuccess('Status updated successfully');
+        viewFeedback({stopPropagation: () => {}}, feedbackId);
+        loadFeedback();
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Failed to update status');
+    }
+}
+
+async function addFeedbackNotes(feedbackId) {
+    const notesInput = document.getElementById('adminNotesInput');
+    const notes = notesInput.value.trim();
+    if (!notes) {
+        showError('Please enter some notes');
+        return;
+    }
+    try {
+        const response = await apiCall(`/feedback/${feedbackId}/add_notes/`, {
+            method: 'POST',
+            body: JSON.stringify({ notes: notes })
+        });
+        if (!response.ok) {
+            const data = await response.json();
+            showError(data.error || 'Failed to add notes');
+            return;
+        }
+        showSuccess('Notes added successfully');
+        notesInput.value = '';
+        viewFeedback({stopPropagation: () => {}}, feedbackId);
+    } catch (error) {
+        console.error('Error:', error);
+        showError('Failed to add notes');
+    }
+}
+
+function showSuccess(message) {
+    const successDiv = document.getElementById('formSuccess');
+    if (successDiv) {
+        successDiv.textContent = message;
+        successDiv.classList.remove('hidden');
+        setTimeout(() => successDiv.classList.add('hidden'), 3000);
+    }
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('formError');
+    if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.classList.remove('hidden');
+        setTimeout(() => errorDiv.classList.add('hidden'), 4000);
+    }
+}
+
 async function initFeedback() {
     await loadUserProfile();
     loadFeedback();
