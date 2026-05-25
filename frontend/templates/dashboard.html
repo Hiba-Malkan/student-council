@@ -58,7 +58,7 @@
     <a href="/duty-roster/" class="block group">
         <div class="bg-card-light dark:bg-card-dark rounded-2xl p-7 shadow-lg border border-gray-100 dark:border-gray-800 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 h-full flex flex-col justify-between">
             <div class="flex items-start justify-between gap-4">
-                <div class="flex-1">
+                <div>
                     <p class="text-4xl font-bold text-white dark:text-red-400 leading-tight" id="todayDutyStatus">No Duty</p>
                 </div>
                 <div class="w-16 h-16 rounded-2xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center group-hover:scale-110 transition-transform flex-shrink-0">
@@ -226,7 +226,7 @@ async function loadRecentActivity() {
             (data.results || data).forEach(m => {
                 activities.push({
                     icon: "event",
-                    color: "text-primary",
+                    color: "text-blue-600 dark:text-blue-400",
                     text: `Meeting: <strong>${m.title}</strong>`,
                     date: m.created_at || m.date
                 });
@@ -238,7 +238,7 @@ async function loadRecentActivity() {
             (data.results || data).forEach(d => {
                 activities.push({
                     icon: "assignment_turned_in",
-                    color: "text-green-600 dark:text-green-400",
+                    color: "text-red-600 dark:text-red-400",
                     text: `You were assigned <strong>${d.duty_type_name || 'duty'}</strong>`,
                     date: d.created_at || d.date
                   });
@@ -277,7 +277,7 @@ function renderPage(page) {
     if (pageItems.length === 0 && allActivities.length === 0) {
         document.getElementById('activityFeed').innerHTML = `
             <div class="text-center py-16 text-white dark:text-lbg-sub-dark">
-                <span class="material-icons-round text-7xl mb-4 opacity-30">inbox</span>
+                <span class="material-icons-round text-7xl mb-4 opacity-100">inbox</span>
                 <p>No recent activity</p>
             </div>`;
         document.getElementById('paginationControls').style.display = 'none';

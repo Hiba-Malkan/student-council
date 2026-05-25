@@ -15,8 +15,8 @@
 <div class="mt-6">
     <!-- Search and New Announcement Button -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div class="relative flex-1">
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <div class="relative" style="width: 60%">
+            <div class="absolute inset-y-0 left-1 pl-3 flex items-center pointer-events-none">
                 <span class="material-icons-round text-gray-400 text-lg">search</span>
             </div>
             <input 
@@ -346,20 +346,20 @@
                 <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 ${a.is_pinned ? 'border-l-4 ' + badge.border : ''} cursor-pointer a-card group relative" data-id="${a.id}" style="border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); cursor: pointer; transition: all 0.3s;">
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex flex-wrap items-center gap-2">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text}">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-2xs font-semibold ${badge.bg} ${badge.text}">
                                 ${a.announcement_type_display || a.announcement_type}
                             </span>
                             ${a.is_pinned ? `<span class="text-xs font-medium text-lbg-main-dark dark:text-white flex items-center gap-1"><span class="material-icons-round text-sm">push_pin</span>Pinned</span>` : ''}
                             ${!a.is_read_by_user ? `<span class="px-2 py-1 text-xs font-bold bg-primary text-white rounded-full">NEW</span>` : ''}
                         </div>
                         ${canManage ? `
-                            <button class="p-2 more-btn" data-id="${a.id}" onclick="event.stopPropagation(); showDropdown(this, ${JSON.stringify(a).replace(/"/g, '&quot;')})">
+                            <button class="more-btn" data-id="${a.id}" onclick="event.stopPropagation(); showDropdown(this, ${JSON.stringify(a).replace(/"/g, '&quot;')})">
                                 <span class="material-icons-round text-xl text-lbg-main-dark dark:text-gray-500">more_vert</span>
                             </button>
                         ` : ''}
                     </div>
 
-                    <h3 class="text-xl font-bold text-lbg-main-dark dark:text-lbg-main-dark mb-3 pr-10">${a.title}</h3>
+                    <h3 class="text-3xl font-bold text-lbg-main-dark dark:text-lbg-main-dark mb-3 pr-10">${a.title}</h3>
                     <p class="text-lbg-main-dark dark:text-lbg-sub-dark text-sm leading-relaxed line-clamp-2 mb-4">${a.content}</p>
 
                     <div class="flex flex-wrap items-center justify-between text-xs text-lbg-main-dark dark:text-lbg-sub-dark pt-4 border-t border-gray-200 dark:border-gray-700">

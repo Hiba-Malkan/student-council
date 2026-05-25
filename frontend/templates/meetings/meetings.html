@@ -65,7 +65,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">edit</span>
                     </div>
-                    <input name="title" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400" placeholder="e.g. Monthly Council Review" type="text" required/>
+                    <input name="title" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" placeholder="e.g. Monthly Council Review" type="text" required/>
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -75,7 +75,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">event</span>
                         </div>
-                        <input name="date" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark" type="date" required/>
+                        <input name="date" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" type="date" required/>
                     </div>
                 </div>
                 <div>
@@ -84,7 +84,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <span class="material-icons-round text-gray-400 text-lg">place</span>
                         </div>
-                        <input name="location" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400" type="text" placeholder="e.g. Council Room" required/>
+                        <input name="location" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" type="text" placeholder="e.g. Council Room" required/>
                     </div>
                 </div>
             </div>
@@ -94,7 +94,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">link</span>
                     </div>
-                    <input name="meeting_link" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400" type="url" placeholder="https://meet.google.com/..."/>
+                    <input name="meeting_link" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" type="url" placeholder="https://meet.google.com/..."/>
                 </div>
             </div>
             <div>
@@ -103,12 +103,12 @@
                     <div class="absolute top-3 left-3 pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">notes</span>
                     </div>
-                    <textarea name="agenda" class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 resize-none" placeholder="Add details about the meeting agenda..." rows="3"></textarea>
+                    <textarea name="agenda" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors resize-none" placeholder="Add details about the meeting agenda..." rows="3"></textarea>
                 </div>
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
                 <div class="flex items-center text-xs text-white dark:text-lbg-main-dark">
-                    <span class="material-icons-round text-base mr-1 text-primary">notifications_active</span>
+                    <span class="material-icons-round text-base mr-1 text-primary dark:text-gray-600">notifications_active</span>
                     Reminders will be sent on the morning of the meeting.
                 </div>
                 <div class="flex items-center gap-3 self-end sm:self-auto">
