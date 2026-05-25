@@ -29,7 +29,7 @@ app.conf.beat_schedule = {
     
     # Send discipline reports at 4:00 PM
     'send-discipline-reports': {
-        'task': 'notifications.tasks.send_discipline_reports',
+        'task': 'notifications.tasks.send_daily_discipline_report_task',
         'schedule': crontab(hour=16, minute=0),
     },
     
