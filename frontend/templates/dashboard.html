@@ -217,7 +217,7 @@ async function loadRecentActivity() {
 
         const [mRes, dRes, aRes] = await Promise.all([
             apiCall(`/meetings/?date__gte=${since}&ordering=-date`),
-            apiCall(`/duty-roster/duties/?date__gte=${since}&ordering=-created_at`),
+            apiCall(`/duty-roster/duties/?assigned_to=${userData.id}&date__gte=${since}&ordering=-created_at`),
             apiCall('/announcements/?ordering=-created_at')
         ]);
 
@@ -236,17 +236,14 @@ async function loadRecentActivity() {
         if (dRes?.ok) {
             const data = await dRes.json();
             (data.results || data).forEach(d => {
-                const isMe = d.assigned_to === userData.id;
                 activities.push({
-                    icon: isMe ? "assignment_turned_in" : "assignment_ind",
-                    color: isMe ? "text-green-600 dark:text-green-400" : "text-blue-600 dark:text-blue-400",
-                    text: isMe 
-                        ? `You were assigned <strong>${d.duty_type_name || 'duty'}</strong>`
-                        : `<strong>${d.assigned_to_detail?.first_name || 'Member'}</strong> got duty`,
+                    icon: "assignment_turned_in",
+                    color: "text-green-600 dark:text-green-400",
+                    text: `You were assigned <strong>${d.duty_type_name || 'duty'}</strong>`,
                     date: d.created_at || d.date
-                });
-            });
-        }
+                  });
+              });
+            }
 
         if (aRes?.ok) {
             const data = await aRes.json();
