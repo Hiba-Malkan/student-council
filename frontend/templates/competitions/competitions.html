@@ -21,17 +21,17 @@
 </div>
 
 <!-- Add New Competition Button -->
-<section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-    <div class="flex-1">
-        <div class="relative">
+<section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+    <div class="relative w-full sm:w-3/5">
+        <div>
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <span class="material-icons-round text-gray-400 dark:text-gray-300 text-lg">search</span>
             </div>
             <input type="text" id="searchCompetitions" class="block w-full pl-10 pr-6 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-text-main-light dark:text-lbg-main-dark placeholder-text-gray-700 dark:placeholder-text-sub-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors" placeholder="Search competitions...">
         </div>
     </div>
-    <div class="mt-2 sm:mt-0 sm:ml-4 flex items-center justify-end" id="addCompetitionSection" style="display: none;">
-        <a href="/competitions/new/" class="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+    <div class="w-full sm:w-auto flex items-center justify-center sm:justify-end" id="addCompetitionSection" style="display: none;">
+        <a href="/competitions/new/" class="inline-flex items-center justify-center w-full sm:w-auto px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
             <span class="material-icons-round text-sm mr-2">add</span>
             Add New Competition
         </a>
@@ -199,10 +199,10 @@ function renderCompetitions(competitions) {
                     </div>
                     
                     <!-- Competition Info -->
-                    <div class="flex-1 flex flex-col">
+                    <div class="flex flex-col">
                         <!-- Header -->
                         <div class="flex justify-between items-start mb-2">
-                            <div class="flex-1">
+                            <div>
                                 <div class="flex items-center gap-3">
                                     <h3 class="text-xl font-bold text-white dark:text-white">${comp.name}</h3>
                                     ${comp.is_active ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 uppercase tracking-wide">Active</span>` : ''}
@@ -217,7 +217,7 @@ function renderCompetitions(competitions) {
                         </div>
                     
                     <!-- Competition Details Grid -->
-                    <div class="flex grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto pt-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex grid grid-cols-1 lg:grid-cols-4 gap-4 mt-auto pt-4 pb-4 border-t border-gray-200 dark:border-gray-700">
                         ${comp.event_date ? `
                         <div class="flex items-start gap-2">
                             <span class="material-icons-round text-white dark:text-lbg-main-dark text-lg mt-0.5">event</span>
@@ -287,7 +287,7 @@ function renderCompetitions(competitions) {
                                 </a>
                             ` : ''}
                             ${comp.event_link ? `
-                                <a href="${comp.event_link}" target="_blank" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+                                <a href="${comp.event_link}" target="_blank" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary dark:text-white hover:underline">
                                     <span class="material-icons-round text-base">link</span>
                                     Event Link
                                 </a>
@@ -364,20 +364,20 @@ function displayCompetitionModal(comp) {
                         <ul class="space-y-2 text-lbg-main-light dark:text-white">
                             ${comp.event_date ? `
                                 <li class="flex items-start gap-3">
-                                    <span class="material-icons-round text-lg mt-0.5 text-primary">event</span>
+                                    <span class="material-icons-round text-lg mt-0.5 text-primary dark:text-white">event</span>
                                     <span class="mt-1"><strong>Date:</strong> ${formatDate(comp.event_date)}</span>
                                 </li>
                             ` : ''}
                             ${comp.event_time ? `
                                 <li class="flex items-start gap-3">
-                                    <span class="material-icons-round text-lg mt-0.5 text-primary">schedule</span>
+                                    <span class="material-icons-round text-lg mt-0.5 text-primary dark:text-white">schedule</span>
                                     <span class="mt-1"><strong>Time:</strong> ${comp.event_time}</span>
                                 </li>
                             ` : ''}
                             
                             ${comp.team_size ? `
                                 <li class="flex items-start gap-3">
-                                    <span class="material-icons-round text-lg mt-0.5 text-primary">groups</span>
+                                    <span class="material-icons-round text-lg mt-0.5 text-primary dark:text-white">groups</span>
                                     <span class="mt-1"><strong>Team Size:</strong> ${comp.team_size}</span>
                                 </li>
                             ` : ''}
@@ -390,13 +390,13 @@ function displayCompetitionModal(comp) {
                     <ul class="space-y-2 text-lbg-main-light dark:text-white">
                         ${comp.hosts_list.map(host => `
                             <li class="flex items-center gap-3">
-                                <span class="material-icons-round text-lg text-primary">corporate_fare</span>
+                                <span class="material-icons-round text-lg text-primary dark:text-white">corporate_fare</span>
                                 <span>${host}</span>
                             </li>
                         `).join('')}
                         ${comp.location ? `
                             <li class="flex items-start gap-3">
-                                <span class="material-icons-round text-lg text-primary">location_on</span>
+                                <span class="material-icons-round text-lg text-primary dark:text-white">location_on</span>
                                 <span class="mt-0.5"><strong>Location:</strong> ${comp.location}</span>
                             </li>
                         ` : ''}
@@ -427,13 +427,13 @@ function displayCompetitionModal(comp) {
                 <h4 class="text-sm font-semibold text-text-sub-light dark:text-lbg-sub-dark uppercase tracking-wider mb-2">Links</h4>
                 <div class="flex flex-wrap gap-3">
                     ${comp.brochure ? `
-                        <a href="${comp.brochure}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+                        <a href="${comp.brochure}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary dark:text-white rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
                             <span class="material-icons-round text-lg">picture_as_pdf</span>
                             <span class="font-medium">Download Brochure</span>
                         </a>
                     ` : ''}
                     ${comp.event_link ? `
-                        <a href="${comp.event_link}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+                        <a href="${comp.event_link}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary dark:text-white rounded-lg hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
                             <span class="material-icons-round text-lg">link</span>
                             <span class="font-medium">Event Link</span>
                         </a>

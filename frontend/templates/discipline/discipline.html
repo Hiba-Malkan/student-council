@@ -13,11 +13,10 @@
 
 {% block content %}
 <div class="mt-6">
-    <!-- Action Bar -->
     <div class="bg-card-light dark:bg-card-dark rounded-lg shadow-sm p-4 mb-6">
-        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-            <div class="flex-1 w-full sm:w-auto">
-                <div class="relative">
+        <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between w-full">
+            <div class="w-full sm:flex-1">
+                <div class="relative w-full">
                     <span class="material-icons-round absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">search</span>
                     <input 
                         type="text" 
@@ -28,18 +27,20 @@
                     >
                 </div>
             </div>
-            <button 
-                onclick="window.location.href='/discipline/new/'"
-                class="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap"
-                id="addRecordBtn"
-            >
-                <span class="material-icons-round text-xl">add</span>
-                Add Record
-            </button>
+            
+            <div class="w-full sm:w-auto flex justify-center">
+                <button 
+                    onclick="window.location.href='/discipline/new/'"
+                    class="w-full sm:w-auto justify-center bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-colors whitespace-nowrap text-sm font-medium"
+                    id="addRecordBtn"
+                >
+                    <span class="material-icons-round text-xl">add</span>
+                    Add Record
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Records Table -->
     <div class="bg-card-light dark:bg-card-dark rounded-lg shadow-sm overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">
@@ -56,7 +57,7 @@
                 </thead>
                 <tbody id="recordsTableBody" class="divide-y divide-gray-200 dark:divide-gray-700">
                     <tr>
-                        <td colspan="8" class="px-6 py-8 text-center text-white dark:text-lbg-main-dark">
+                        <td colspan="7" class="px-6 py-8 text-center text-white dark:text-lbg-main-dark">
                             <span class="material-icons-round text-4xl mb-2 opacity-50">hourglass_empty</span>
                             <p>Loading records...</p>
                         </td>
@@ -66,7 +67,6 @@
         </div>
     </div>
 
-    <!-- Empty State -->
     <div id="emptyState" class="hidden bg-card-light dark:bg-card-dark rounded-lg shadow-sm p-12 text-center">
         <span class="material-icons-round text-6xl text-white dark:text-lbg-main-dark mb-4">description</span>
         <h3 class="text-xl font-semibold text-white dark:text-lbg-main-dark mb-2">No Records Found</h3>
@@ -81,7 +81,6 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white dark:bg-card-dark rounded-lg p-6 max-w-md w-full mx-4">
         <h3 class="text-xl font-semibold text-text-main-light dark:text-lbg-main-dark mb-4">Confirm Delete</h3>
@@ -112,7 +111,6 @@
 
     async function loadRecords() {
         try {
-            // Check if user is authorized to view discipline
             await loadUserProfile();
             const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
             

@@ -9,123 +9,187 @@
 {% block nav_discipline %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
 
 {% block content %}
-<div class="mt-6 max-w-6xl mx-auto">
-    <!-- Back Button -->
-    <button onclick="window.location.href='/discipline/'" class="mb-6 flex items-center gap-2 text-primary hover:text-primary-hover dark:text-white transition-colors">
-        <span class="material-icons-round">arrow_back</span>
+<div class="mt-6 max-w-6xl mx-auto px-4 sm:px-6">
+    <button onclick="window.location.href='/discipline/'" class="mb-6 flex items-center gap-2 text-primary hover:text-primary-hover dark:text-white transition-colors text-sm sm:text-base">
+        <span class="material-icons-round text-lg sm:text-xl">arrow_back</span>
         Back to Records
     </button>
 
-    <!-- Student Summary -->
-    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow p-8 mb-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div>
-                <h1 id="studentName" class="text-3xl font-bold text-white dark:text-lbg-main-dark">Loading...</h1>
-                <p class="text-lg text-white dark:text-lbg-sub-dark mt-2">
+    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow border border-gray-200 dark:border-gray-700 p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 overflow-hidden">
+        <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-6">
+            <div class="min-w-0 flex-1">
+                <h1 id="studentName" class="text-2xl sm:text-3xl font-bold text-lbg-main-dark dark:text-lbg-main-dark break-words">Loading...</h1>
+                <p class="text-sm sm:text-base md:text-lg text-lbg-sub-dark dark:text-lbg-sub-dark mt-2 break-all sm:break-normal">
                     DNO: <span class="font-mono" id="studentDno">—</span> • Class: <span id="studentClass">—</span>
                 </p>
             </div>
-            <div class="flex items-center gap-6">
-                <div class="text-center">
-                    <div id="offenseCount" class="text-6xl font-bold text-red-600 dark:text-red-400">0</div>
-                    <div class="text-sm text-white dark:text-lbg-sub-dark mt-1">
+            <div class="flex flex-row items-center justify-between md:justify-end gap-6 border-t border-gray-200 dark:border-gray-700/50 md:border-none pt-4 md:pt-0">
+                <div class="text-center flex flex-row md:flex-col items-center gap-3 md:gap-1">
+                    <div id="offenseCount" class="text-4xl sm:text-5xl md:text-6xl font-bold text-red-600 dark:text-red-400 leading-none">0</div>
+                    <div class="text-xs sm:text-sm text-lbg-sub-dark dark:text-lbg-sub-dark font-medium md:mt-1">
                         Total <span id="offenseLabel">Offenses</span>
                     </div>
                 </div>
-                <button id="addOffenseBtn" onclick="showAddOffenseModal()" class="hidden px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium flex items-center gap-2 transition-colors">
-                    <span class="material-icons-round">add</span>
-                    Add Offense
+                <button id="addOffenseBtn" onclick="showAddOffenseModal()" class="hidden px-4 py-2.5 sm:px-6 sm:py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium flex items-center gap-2 transition-colors text-sm sm:text-base shadow-sm">
+                    <span class="material-icons-round text-lg sm:text-xl">add</span>
+                    <span>Add Offense</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Offense History -->
-    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow overflow-hidden">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-            <h2 class="text-xl font-semibold text-white dark:text-lbg-main-dark">Offense History (<span id="historyCount">0</span>)</h2>
-            <div class="flex items-center gap-3">
-                <span class="text-sm font-medium text-text-sub-light dark:text-lbg-sub-dark">Sort by:</span>
-                <select id="sortSelect" class="px-4 py-2 border rounded-lg bg-input-bg-light dark:bg-input-bg-dark text-lbg-main-light dark:text-lbg-main-dark border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-primary">
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="category">Category (A–Z)</option>
-                </select>
+    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h2 class="text-lg sm:text-xl font-semibold text-lbg-main-dark dark:text-lbg-main-dark">Offense History (<span id="historyCount">0</span>)</h2>
+            <div class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                <span class="text-xs sm:text-sm font-medium text-lbg-sub-dark dark:text-lbg-sub-dark whitespace-nowrap">Sort by:</span>
+                
+                <input type="hidden" id="sortSelect" value="newest" />
+
+                <div class="relative w-full sm:w-48" id="sortDropdownWrapper">
+                    <button
+                        type="button"
+                        id="sortDropdownBtn"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                    >
+                        <span id="sortDropdownLabel">Newest First</span>
+                        <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200" id="sortDropdownChevron">expand_more</span>
+                    </button>
+
+                    <ul
+                        id="sortDropdownMenu"
+                        role="listbox"
+                        class="absolute right-0 z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden"
+                    >
+                        <li role="option" data-value="newest" data-label="Newest First"
+                            class="sort-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>Newest First
+                        </li>
+                        <li role="option" data-value="oldest" data-label="Oldest First"
+                            class="sort-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Oldest First
+                        </li>
+                        <li role="option" data-value="category" data-label="Category (A–Z)"
+                            class="sort-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Category (A–Z)
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
 
         <div class="divide-y divide-gray-200 dark:divide-gray-700" id="historyContainer">
-            <div class="p-12 text-center text-text-sub-light dark:text-lbg-sub-dark">
-                <span class="material-icons-round text-6xl mb-4 opacity-50">hourglass_empty</span>
-                <p>Loading offense history...</p>
+            <div class="p-8 sm:p-12 text-center text-text-sub-light dark:text-lbg-sub-dark">
+                <span class="material-icons-round text-4xl sm:text-6xl mb-3 sm:mb-4 opacity-50">hourglass_empty</span>
+                <p class="text-sm sm:text-base">Loading offense history...</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Delete Modal -->
-<div id="deleteModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-card-light dark:bg-card-dark rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
-        <h3 class="text-2xl font-bold text-text-main-light dark:text-lbg-main-dark mb-4">Delete Offense?</h3>
-        <p class="text-text-sub-light dark:text-lbg-sub-dark mb-8">
+<div id="deleteModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+    <div class="bg-white dark:bg-card-dark rounded-xl p-5 sm:p-8 max-w-md w-full shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-lbg-main-dark mb-3">Delete Offense?</h3>
+        <p class="text-sm sm:text-base text-gray-600 dark:text-lbg-sub-dark mb-6 sm:mb-8">
             This will permanently delete this offense and decrease the total count by 1.
         </p>
-        <div class="flex justify-end gap-4">
+        <div class="flex justify-end gap-3 sm:gap-4">
             <button onclick="document.getElementById('deleteModal').classList.add('hidden')"
-                    class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-lbg-main-light dark:text-lbg-main-dark rounded-lg">
+                    class="px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-lbg-main-dark rounded-lg font-medium transition-colors">
                 Cancel
             </button>
-            <button id="confirmDelete" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium">
+            <button id="confirmDelete" class="px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">
                 Delete Offense
             </button>
         </div>
     </div>
 </div>
 
-<!-- Add Offense Modal -->
-<div id="addOffenseModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-card-light dark:bg-card-dark rounded-xl p-8 max-w-lg w-full mx-4 shadow-2xl">
-        <h3 class="text-2xl font-bold text-white dark:text-lbg-main-dark mb-6">Add New Offense</h3>
+<div id="addOffenseModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+    <div class="bg-white dark:bg-card-dark rounded-xl p-5 sm:p-8 max-w-lg w-full shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-lbg-main-dark mb-4 sm:mb-6">Add New Offense</h3>
         
         <form id="addOffenseForm" class="space-y-4">
-            <!-- Category -->
             <div>
-                <label for="offenseCategory" class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">
-                    Category *
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Category <span class="text-red-500">*</span>
                 </label>
-                <select id="offenseCategory" required
-                    class="w-full px-4 py-2 text-lbg-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                    <option value="">Select category</option>
-                    <option value="UNIFORM">Uniform Violation</option>
-                    <option value="LATE">Late Arrival</option>
-                    <option value="BEHAVIOR">Misbehavior</option>
-                    <option value="ACADEMIC">Academic Misconduct</option>
-                    <option value="ABSENCE">Unauthorized Absence</option>
-                    <option value="SUBSTANCES">Substances</option>
-                    <option value="VPN">VPN Usage</option>
-                    <option value="OTHER">Other</option>
-                </select>
+                
+                <input type="hidden" id="offenseCategory" name="category" value="" required />
+
+                <div class="relative" id="categoryDropdownWrapper">
+                    <button
+                        type="button"
+                        id="categoryDropdownBtn"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                    >
+                        <span id="categoryDropdownLabel" class="text-gray-400 dark:placeholder-gray-500">Select category</span>
+                        <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200" id="categoryDropdownChevron">expand_more</span>
+                    </button>
+
+                    <ul
+                        id="categoryDropdownMenu"
+                        role="listbox"
+                        class="absolute z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden max-h-48 overflow-y-auto"
+                    >
+                        <li role="option" data-value="UNIFORM" data-label="Uniform Violation"
+                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Uniform Violation
+                        </li>
+                        <li role="option" data-value="LATE" data-label="Late Arrival"
+                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Late Arrival
+                        </li>
+                        <li role="option" data-value="BEHAVIOR" data-label="Misbehavior"
+                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Misbehavior
+                        </li>
+                        <li role="option" data-value="ACADEMIC" data-label="Academic Misconduct"
+                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Academic Misconduct
+                        </li>
+                        <li role="option" data-value="ABSENCE" data-label="Unauthorized Absence"
+                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Unauthorized Absence
+                        </li>
+                        <li role="option" data-value="SUBSTANCES" data-label="Substances"
+                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Substances
+                        </li>
+                        <li role="option" data-value="VPN" data-label="VPN Usage"
+                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>VPN Usage
+                        </li>
+                        <li role="option" data-value="OTHER" data-label="Other"
+                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Other
+                        </li>
+                    </ul>
+                </div>
             </div>
 
-            <!-- Reason -->
             <div>
-                <label for="offenseReason" class="block text-sm font-medium text-white dark:text-lbg-main-dark mb-2">
+                <label for="offenseReason" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Reason
                 </label>
                 <textarea id="offenseReason" rows="4"
                     placeholder="Provide details about the offense (optional)"
-                    class="w-full px-4 py-2 text-text-main-light dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-y"></textarea>
+                    class="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm focus:border-primary focus:ring-primary sm:text-sm placeholder-gray-400 dark:placeholder-gray-500 py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-primary resize-y"></textarea>
             </div>
 
-            <div class="flex justify-end gap-3 pt-4">
+            <div class="flex justify-end gap-3 pt-2 sm:pt-4">
                 <button type="button" onclick="closeAddOffenseModal()"
-                        class="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-lbg-main-light dark:text-lbg-main-dark rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                        class="px-4 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-lbg-main-dark rounded-lg transition-colors font-medium">
                     Cancel
                 </button>
                 <button type="submit"
-                        class="px-6 py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors flex items-center gap-2">
-                    <span class="material-icons-round text-lg">save</span>
-                    Add Offense
+                        class="px-4 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors flex items-center gap-2">
+                    <span class="material-icons-round text-base sm:text-lg">save</span>
+                    <span>Add Offense</span>
                 </button>
             </div>
         </form>
@@ -140,12 +204,104 @@ let offenseLogs = [];
 let canManageRecords = false;
 let offenseToDelete = null;
 
-// Get record ID from URL
 const recordId = window.location.pathname.split('/').filter(Boolean).pop();
+
+// --- CUSTOM SORT DROPDOWN SYSTEM LOGIC ---
+const sortInput = document.getElementById('sortSelect');
+const sortBtn = document.getElementById('sortDropdownBtn');
+const sortMenu = document.getElementById('sortDropdownMenu');
+const sortLabel = document.getElementById('sortDropdownLabel');
+const sortChevron = document.getElementById('sortDropdownChevron');
+const sortOptions = document.querySelectorAll('.sort-option');
+
+function openSortDropdown() {
+    sortMenu.classList.remove('hidden');
+    sortChevron.style.transform = 'rotate(180deg)';
+    sortBtn.setAttribute('aria-expanded', 'true');
+}
+
+function closeSortDropdown() {
+    sortMenu.classList.add('hidden');
+    sortChevron.style.transform = '';
+    sortBtn.setAttribute('aria-expanded', 'false');
+}
+
+sortBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeCategoryDropdown();
+    sortMenu.classList.contains('hidden') ? openSortDropdown() : closeSortDropdown();
+});
+
+sortOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        const value = option.dataset.value;
+        const label = option.dataset.label;
+
+        sortInput.value = value;
+        sortLabel.textContent = label;
+
+        sortOptions.forEach(opt => opt.querySelector('.check-icon').classList.add('opacity-0'));
+        option.querySelector('.check-icon').classList.remove('opacity-0');
+
+        closeSortDropdown();
+        applySorting();
+    });
+});
+
+// --- CUSTOM MODAL CATEGORY DROPDOWN SYSTEM LOGIC ---
+const catInput = document.getElementById('offenseCategory');
+const catBtn = document.getElementById('categoryDropdownBtn');
+const catMenu = document.getElementById('categoryDropdownMenu');
+const catLabel = document.getElementById('categoryDropdownLabel');
+const catChevron = document.getElementById('categoryDropdownChevron');
+const catOptions = document.querySelectorAll('.category-option');
+
+function openCategoryDropdown() {
+    catMenu.classList.remove('hidden');
+    catChevron.style.transform = 'rotate(180deg)';
+    catBtn.setAttribute('aria-expanded', 'true');
+}
+
+function closeCategoryDropdown() {
+    catMenu.classList.add('hidden');
+    catChevron.style.transform = '';
+    catBtn.setAttribute('aria-expanded', 'false');
+}
+
+catBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeSortDropdown();
+    catMenu.classList.contains('hidden') ? openCategoryDropdown() : closeCategoryDropdown();
+});
+
+catOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        const value = option.dataset.value;
+        const label = option.dataset.label;
+
+        catInput.value = value;
+        catLabel.textContent = label;
+        catLabel.classList.remove('text-gray-400', 'dark:placeholder-gray-500');
+        catLabel.classList.add('text-gray-900', 'dark:text-white');
+
+        catOptions.forEach(opt => opt.querySelector('.check-icon').classList.add('opacity-0'));
+        option.querySelector('.check-icon').classList.remove('opacity-0');
+
+        closeCategoryDropdown();
+    });
+});
+
+document.addEventListener('click', (e) => {
+    if (!document.getElementById('sortDropdownWrapper').contains(e.target)) {
+        closeSortDropdown();
+    }
+    if (!document.getElementById('categoryDropdownWrapper').contains(e.target)) {
+        closeCategoryDropdown();
+    }
+});
 
 async function loadRecord() {
     try {
-        // First check if user is authorized to view discipline records
         const userResponse = await apiCall(`/accounts/me/`);
         if (!userResponse || !userResponse.ok) {
             window.location.href = '/';
@@ -170,7 +326,6 @@ async function loadRecord() {
         recordData = await response.json();
         offenseLogs = recordData.offense_logs || [];
         
-        // Update UI
         document.getElementById('studentName').textContent = recordData.student_name;
         document.getElementById('studentDno').textContent = recordData.dno;
         document.getElementById('studentClass').textContent = recordData.class_section;
@@ -191,7 +346,6 @@ function checkPermissions() {
     canManageRecords = user.is_staff || user.is_superuser || 
         (user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name));
     
-    // Show add offense button if user can manage
     if (canManageRecords) {
         document.getElementById('addOffenseBtn').classList.remove('hidden');
     }
@@ -202,9 +356,9 @@ function renderOffenseLogs() {
     
     if (offenseLogs.length === 0) {
         container.innerHTML = `
-            <div class="p-12 text-center text-text-sub-light dark:text-lbg-sub-dark">
-                <span class="material-icons-round text-6xl mb-4 opacity-50">info</span>
-                <p>No offense history recorded yet.</p>
+            <div class="p-8 sm:p-12 text-center text-lbg-sub-dark dark:text-lbg-sub-dark">
+                <span class="material-icons-round text-4xl sm:text-6xl mb-3 sm:mb-4 opacity-50">info</span>
+                <p class="text-sm sm:text-base">No offense history recorded yet.</p>
             </div>
         `;
         return;
@@ -221,27 +375,27 @@ function renderOffenseLogs() {
         });
 
         return `
-            <div class="offense-row p-6 hover:bg-primary-light/10 dark:hover:bg-primary/10 transition group"
+            <div class="offense-row p-4 sm:p-6 hover:bg-primary-light/5 dark:hover:bg-primary/10 transition group"
                  data-date="${log.created_at}"
                  data-category="${log.category_display}">
-                <div class="flex justify-between items-start gap-6">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-4 mb-2">
-                            <span class="text-sm font-medium text-white dark:text-lbg-sub-dark">
+                <div class="flex justify-between items-start gap-4 sm:gap-6">
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="text-xs sm:text-sm font-medium text-lbg-sub-dark dark:text-lbg-sub-dark whitespace-nowrap">
                                 ${formattedDate}
                             </span>
-                            <span class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-xs font-medium text-lbg-main-light dark:text-lbg-main-dark">
+                            <span class="px-2 py-0.5 sm:px-3 sm:py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-[10px] sm:text-xs font-medium text-lbg-main-light dark:text-lbg-main-dark max-w-full truncate border border-gray-200/50 dark:border-none">
                                 ${log.category_display}
                             </span>
                         </div>
-                        <p class="text-white dark:text-lbg-main-dark mt-1">
+                        <p class="text-sm sm:text-base text-lbg-main-dark dark:text-lbg-main-dark mt-1 break-words">
                             ${log.reason || 'No reason provided'}
                         </p>
                     </div>
                     ${canManageRecords ? `
-                        <div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-3">
-                            <button onclick="deleteOffense(${log.id})" class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300" title="Delete">
-                                <span class="material-icons-round">delete</span>
+                        <div class="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 pt-1">
+                            <button onclick="deleteOffense(${log.id})" class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Delete">
+                                <span class="material-icons-round text-xl sm:text-2xl">delete</span>
                             </button>
                         </div>
                     ` : ''}
@@ -280,7 +434,7 @@ document.getElementById('confirmDelete').onclick = async () => {
 };
 
 function applySorting() {
-    const val = document.getElementById('sortSelect').value;
+    const val = sortInput.value;
     const container = document.getElementById('historyContainer');
     const rows = Array.from(container.querySelectorAll('.offense-row'));
 
@@ -294,24 +448,25 @@ function applySorting() {
     rows.forEach(row => container.appendChild(row));
 }
 
-document.getElementById('sortSelect').onchange = applySorting;
-
-// Show add offense modal
 function showAddOffenseModal() {
     document.getElementById('addOffenseModal').classList.remove('hidden');
 }
 
-// Close add offense modal
 function closeAddOffenseModal() {
     document.getElementById('addOffenseModal').classList.add('hidden');
     document.getElementById('addOffenseForm').reset();
+    
+    catInput.value = "";
+    catLabel.textContent = "Select category";
+    catLabel.classList.add('text-gray-400', 'dark:placeholder-gray-500');
+    catLabel.classList.remove('text-gray-900', 'dark:text-white');
+    catOptions.forEach(opt => opt.querySelector('.check-icon').classList.add('opacity-0'));
 }
 
-// Handle add offense form submission
 document.getElementById('addOffenseForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const category = document.getElementById('offenseCategory').value;
+    const category = catInput.value;
     const reason = document.getElementById('offenseReason').value;
     
     if (!category) {
@@ -320,7 +475,6 @@ document.getElementById('addOffenseForm').addEventListener('submit', async (e) =
     }
     
     try {
-        // Update the record with incremented offense count and new log data
         const updateData = {
             student_name: recordData.student_name,
             class_section: recordData.class_section,
@@ -338,7 +492,6 @@ document.getElementById('addOffenseForm').addEventListener('submit', async (e) =
         if (response && response.ok) {
             showSuccess('Offense added successfully!');
             closeAddOffenseModal();
-            // Reload the record to show updated data
             setTimeout(() => loadRecord(), 500);
         } else {
             const error = await response.json();
@@ -350,7 +503,6 @@ document.getElementById('addOffenseForm').addEventListener('submit', async (e) =
     }
 });
 
-// Load on page load
 loadRecord();
 </script>
 {% endblock %}

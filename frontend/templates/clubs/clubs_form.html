@@ -12,20 +12,16 @@
 {% block page_subtitle %}{% if club_id %}Update the club information below.{% else %}Enter the details below to register a new student organization.{% endif %}{% endblock %}
 
 {% block content %}
-<!-- Breadcrumbs -->
 <div class="flex items-center gap-2 text-sm text-lbg-sub-light dark:text-lbg-sub-dark mb-6">
     <a href="/clubs/" class="hover:text-primary hover:underline">Clubs</a>
     <span class="material-icons-round text-base">chevron_right</span>
     <span class="text-lbg-main-light dark:text-white font-medium">{% if club_id %}Edit Club{% else %}New Club{% endif %}</span>
 </div>
 
-<!-- Form Card -->
 <section>
     <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
-        <!-- Form Content -->
         <div class="p-6 md:p-8">
             <form id="clubForm" class="space-y-8">
-                <!-- Logo Upload -->
                 <div>
                     <label class="block text-sm font-semibold text-text-main-dark dark:text-white mb-3">Club Logo</label>
                     <div id="logoPreview" class="mb-4" style="display: none;">
@@ -33,7 +29,7 @@
                     </div>
                     <div class="flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 px-6 py-12 hover:border-primary/50 hover:bg-blue-50/30 dark:hover:bg-gray-800 transition-all">
                         <div class="flex h-14 w-14 items-center justify-center rounded-full bg-white dark:bg-gray-700 shadow-sm">
-                            <span class="material-icons-round text-3xl text-primary">add_photo_alternate</span>
+                            <span class="material-icons-round text-3xl text-primary dark:text-white">add_photo_alternate</span>
                         </div>
                         <div class="text-center">
                             <p class="text-sm font-semibold text-lbg-main-light dark:text-white mb-1">Click to upload or drag and drop</p>
@@ -46,25 +42,50 @@
                     </div>
                 </div>
 
-                <!-- Form Fields Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Club Name -->
                     <div>
                         <label class="block text-sm font-medium text-text-main-dark dark:text-white mb-2">Club Name *</label>
                         <input type="text" id="clubName" required class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="e.g. Robotics Club">
                     </div>
 
-                    <!-- Status -->
                     <div>
                         <label class="block text-sm font-medium text-text-main-dark dark:text-white mb-2">Status *</label>
-                        <select id="clubStatus" required class="w-full px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
-                            <option value="active">Active</option>
-                            <option value="under_review">Under Review</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
+                        
+                        <input type="hidden" id="clubStatus" name="status" value="active" required />
+
+                        <div class="relative" id="statusDropdownWrapper">
+                            <button
+                                type="button"
+                                id="statusDropdownBtn"
+                                aria-haspopup="listbox"
+                                aria-expanded="false"
+                                class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                            >
+                                <span id="statusDropdownLabel">Active</span>
+                                <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200" id="statusDropdownChevron">expand_more</span>
+                            </button>
+
+                            <ul
+                                id="statusDropdownMenu"
+                                role="listbox"
+                                class="absolute z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden"
+                            >
+                                <li role="option" data-value="active" data-label="Active"
+                                    class="status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                                    <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>Active
+                                </li>
+                                <li role="option" data-value="under_review" data-label="Under Review"
+                                    class="status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                                    <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Under Review
+                                </li>
+                                <li role="option" data-value="inactive" data-label="Inactive"
+                                    class="status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                                    <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Inactive
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <!-- Established Year -->
                     <div>
                         <label class="block text-sm font-medium text-text-main-dark dark:text-white mb-2">Established Year *</label>
                         <div class="relative">
@@ -75,7 +96,6 @@
                         </div>
                     </div>
 
-                    <!-- Member Count -->
                     <div>
                         <label class="block text-sm font-medium text-text-main-dark dark:text-white mb-2">Estimated Members *</label>
                         <div class="relative">
@@ -86,7 +106,6 @@
                         </div>
                     </div>
 
-                    <!-- Established By -->
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-text-main-dark dark:text-white mb-2">Established By (Founders) *</label>
                         <div class="relative">
@@ -97,7 +116,6 @@
                         </div>
                     </div>
 
-                    <!-- Tutors -->
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-text-main-dark dark:text-white mb-2">Tutors / Advisors *</label>
                         <div class="relative">
@@ -108,7 +126,6 @@
                         </div>
                     </div>
 
-                    <!-- Description -->
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-text-main-dark dark:text-white mb-2">Description & Mission *</label>
                         <textarea id="description" required rows="4" class="w-full px-4 py-3 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 resize-none" placeholder="Describe the club's main activities, goals, and mission statement..."></textarea>
@@ -117,7 +134,6 @@
             </form>
         </div>
 
-        <!-- Footer Actions -->
         <div class="flex items-center justify-end gap-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 px-6 py-4 md:px-8">
             <a href="/clubs/" class="px-5 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-800 rounded-lg transition-colors">
                 Cancel
@@ -139,6 +155,63 @@
 const clubId = {% if club_id %}{{ club_id }}{% else %}null{% endif %};
 let currentLogo = null;
 
+// --- CUSTOM STATUS DROPDOWN SYSTEM LOGIC ---
+const statusInput = document.getElementById('clubStatus');
+const statusBtn = document.getElementById('statusDropdownBtn');
+const statusMenu = document.getElementById('statusDropdownMenu');
+const statusLabel = document.getElementById('statusDropdownLabel');
+const statusChevron = document.getElementById('statusDropdownChevron');
+const statusOptions = document.querySelectorAll('.status-option');
+
+function openStatusDropdown() {
+    statusMenu.classList.remove('hidden');
+    statusChevron.style.transform = 'rotate(180deg)';
+    statusBtn.setAttribute('aria-expanded', 'true');
+}
+
+function closeStatusDropdown() {
+    statusMenu.classList.add('hidden');
+    statusChevron.style.transform = '';
+    statusBtn.setAttribute('aria-expanded', 'false');
+}
+
+statusBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    statusMenu.classList.contains('hidden') ? openStatusDropdown() : closeStatusDropdown();
+});
+
+statusOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        const value = option.dataset.value;
+        const label = option.dataset.label;
+
+        statusInput.value = value;
+        statusLabel.textContent = label;
+
+        statusOptions.forEach(opt => opt.querySelector('.check-icon').classList.add('opacity-0'));
+        option.querySelector('.check-icon').classList.remove('opacity-0');
+
+        closeStatusDropdown();
+    });
+});
+
+document.addEventListener('click', (e) => {
+    if (!document.getElementById('statusDropdownWrapper').contains(e.target)) {
+        closeStatusDropdown();
+    }
+});
+
+// Sync manual custom UI logic state on data mutations
+function updateCustomDropdownUI(value) {
+    const matchingOption = Array.from(statusOptions).find(opt => opt.dataset.value === value);
+    if (matchingOption) {
+        statusInput.value = value;
+        statusLabel.textContent = matchingOption.dataset.label;
+        statusOptions.forEach(opt => opt.querySelector('.check-icon').classList.add('opacity-0'));
+        matchingOption.querySelector('.check-icon').classList.remove('opacity-0');
+    }
+}
+
 // Load club data if editing
 async function loadClubData() {
     if (!clubId) return;
@@ -150,12 +223,14 @@ async function loadClubData() {
             
             // Populate form
             document.getElementById('clubName').value = club.name;
-            document.getElementById('clubStatus').value = club.status;
             document.getElementById('establishedYear').value = club.established_year;
             document.getElementById('memberCount').value = club.member_count;
             document.getElementById('establishedBy').value = club.established_by;
             document.getElementById('tutors').value = club.tutors;
             document.getElementById('description').value = club.description;
+            
+            // Sync status value into the custom dropdown system
+            updateCustomDropdownUI(club.status);
             
             // Show current logo
             if (club.logo_url) {
@@ -209,7 +284,7 @@ async function submitForm() {
     try {
         const formData = new FormData();
         formData.append('name', document.getElementById('clubName').value.trim());
-        formData.append('status', document.getElementById('clubStatus').value);
+        formData.append('status', statusInput.value);
         formData.append('established_year', document.getElementById('establishedYear').value);
         formData.append('member_count', document.getElementById('memberCount').value);
         formData.append('established_by', document.getElementById('establishedBy').value.trim());

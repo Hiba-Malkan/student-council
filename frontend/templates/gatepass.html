@@ -148,7 +148,7 @@
             </div>
             
             <div id="pendingRequestsContainer" class="space-y-4">
-                <div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">
+                <div class="text-center py-8 text-white dark:text-text-sub-dark">
                     Loading pending requests...
                 </div>
             </div>
@@ -166,7 +166,7 @@
             </div>
             
             <div id="processedRequestsContainer" class="space-y-4">
-                <div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">
+                <div class="text-center py-8 text-white dark:text-text-sub-dark">
                     Loading processed requests...
                 </div>
             </div>
@@ -432,7 +432,7 @@ function displayPendingRequests(pendingRequests) {
     const container = document.getElementById('pendingRequestsContainer');
     
     if (!pendingRequests || pendingRequests.length === 0) {
-        container.innerHTML = '<div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">No pending requests</div>';
+        container.innerHTML = '<div class="text-center py-8 text-white dark:text-text-sub-dark">No pending requests</div>';
         return;
     }
     
@@ -479,7 +479,7 @@ function displayProcessedRequests(processedRequests) {
     const container = document.getElementById('processedRequestsContainer');
     
     if (!processedRequests || processedRequests.length === 0) {
-        container.innerHTML = '<div class="text-center py-8 text-text-sub-light dark:text-text-sub-dark">No processed requests</div>';
+        container.innerHTML = '<div class="text-center py-8 text-white dark:text-text-sub-dark">No processed requests</div>';
         return;
     }
     

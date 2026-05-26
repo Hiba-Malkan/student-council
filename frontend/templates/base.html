@@ -9,10 +9,8 @@
     {% load static %}
     <link href="{% static 'dist/output.css' %}?v=20251215v2" rel="stylesheet">
     
-    <!-- Component Library CSS -->
     <link href="{% static 'css/components.css' %}" rel="stylesheet">
     
-    <!-- Module-specific CSS (loaded per template) -->
     {% block module_css %}{% endblock %}
     
     <style>
@@ -51,12 +49,15 @@
             background-color: #374151;
         }
 
-        /* Mobile Sidebar Styles */
+        /* Fixed Mobile Sidebar & Layout Architecture */
         @media (max-width: 768px) {
             #mobileMenuBtn {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                position: absolute; /* Pull button completely out of layout flow */
+                top: 1rem;
+                left: 1rem;
             }
 
             #sidebar {
@@ -64,11 +65,11 @@
                 left: 0;
                 top: 0;
                 height: 100vh;
-                width: 256px;
-                z-index: 40;
+                width: 260px;
+                z-index: 50; /* Ensure it stays cleanly above all content components */
                 transform: translateX(-100%);
                 transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+                box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
                 overflow-y: auto;
                 will-change: transform;
             }
@@ -80,11 +81,12 @@
             #sidebarOverlay {
                 position: fixed;
                 inset: 0;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 35;
+                background: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(2px); /* Soft focus separation */
+                z-index: 40; /* Sit exactly behind sidebar but over active dashboard views */
                 opacity: 0;
                 visibility: hidden;
-                transition: opacity 0.3s ease, visibility 0.3s ease;
+                transition: opacity 0.25s ease, visibility 0.25s ease;
             }
 
             #sidebarOverlay.open {
@@ -92,72 +94,27 @@
                 visibility: visible;
             }
 
-            /* Smooth scrolling inside sidebar */
-            #sidebar {
-                scrollbar-width: thin;
-                scrollbar-color: rgba(209, 213, 219, 0.6) transparent;
-            }
-
-            #sidebar::-webkit-scrollbar {
-                width: 6px;
-            }
-
-            #sidebar::-webkit-scrollbar-track {
-                background: transparent;
-            }
-
-            #sidebar::-webkit-scrollbar-thumb {
-                background: rgba(209, 213, 219, 0.6);
-                border-radius: 3px;
-            }
-
-            #sidebar::-webkit-scrollbar-thumb:hover {
-                background: rgba(209, 213, 219, 0.9);
-            }
-
-            .dark #sidebar::-webkit-scrollbar-thumb {
-                background: rgba(75, 85, 99, 0.6);
-            }
-
-            .dark #sidebar::-webkit-scrollbar-thumb:hover {
-                background: rgba(75, 85, 99, 0.9);
-            }
-
-            /* Main content full width on mobile */
-            .flex > main {
-                width: 100%;
-                position: relative;
-                z-index: 10;
-            }
-
-            main {
-                width: 100%;
-            }
-
-            header {
-                padding-right: 1rem;
-                padding-left: 1rem;
-                padding-top: 3rem;
-            }
-
-            #mobileMenuBtn {
-                top: 0.75rem;
-                left: 0.75rem;
-            }
-
+            /* Responsive container safeguards against squeezed inputs */
             .flex-1 {
                 padding-left: 1rem !important;
                 padding-right: 1rem !important;
             }
+
+            header {
+                padding-right: 0.5rem !important;
+                padding-left: 0.5rem !important;
+                padding-top: 4.5rem !important; /* Clear room for hamburger menu element safely */
+            }
+
+            footer {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
         }
 
         @media (min-width: 769px) {
-            #mobileMenuBtn {
-                display: none;
-            }
-
-            #sidebarOverlay {
-                display: none;
+            #mobileMenuBtn, #sidebarOverlay {
+                display: none !important;
             }
 
             #sidebar {
@@ -171,7 +128,6 @@
 </head>
 <body class="font-sans antialiased bg-background-light dark:bg-background-dark text-text-main-light dark:text-text-main-dark selection:bg-primary selection:text-white transition-colors duration-200">
     <script>
-        // Apply dark mode immediately on page load (before anything renders)
         (function() {
             const darkMode = localStorage.getItem('darkMode');
             if (darkMode === 'enabled') {
@@ -179,32 +135,30 @@
             } else if (darkMode === 'disabled') {
                 document.documentElement.classList.remove('dark');
             } else {
-                // Default to system preference if not set
                 if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     document.documentElement.classList.add('dark');
                 }
             }
         })();
     </script>
-    <div class="flex h-screen overflow-hidden">
-        <!-- Mobile Menu Button -->
-        <button id="mobileMenuBtn" class="fixed top-4 left-4 z-50 p-2 rounded-lg bg-primary hover:bg-primary-hover text-white transition-colors md:hidden">
+    
+    <div class="flex h-screen w-full overflow-hidden relative">
+        
+        <button id="mobileMenuBtn" class="p-2 rounded-lg bg-primary hover:bg-primary-hover text-white transition-colors md:hidden">
             <span class="material-icons-round">menu</span>
         </button>
 
-        <!-- Mobile Sidebar Overlay -->
         <div id="sidebarOverlay" class="md:hidden"></div>
 
-        <!-- Sidebar -->
         <aside id="sidebar" class="w-64 flex-shrink-0 bg-sidebar dark:bg-card-dark border-r border-gray-200 dark:border-gray-700 flex flex-col justify-between transition-colors duration-200">
             <div>
                 <div class="h-16 flex items-center px-6 border-b border-gray-100 dark:border-gray-800">
-                <a href="/dashboard/">       
-                    <div class="flex items-center gap-2">
-                        <span class="material-icons-round text-white text-2xl">school</span>
-                        <span class="text-xl font-bold text-white tracking-tight">Council App</span>
-                    </div>
-                </a>
+                    <a href="/dashboard/">       
+                        <div class="flex items-center gap-2">
+                            <span class="material-icons-round text-white text-2xl">school</span>
+                            <span class="text-xl font-bold text-white tracking-tight">Council App</span>
+                        </div>
+                    </a>
                 </div>
                 <nav class="mt-6 px-3 space-y-1">
                     <a id="dashButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_dashboard %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/dashboard/">
@@ -251,7 +205,6 @@
                         <span class="material-icons-round mr-3 text-xl transition-colors">admin_panel_settings</span>
                         Admin Panel
                     </a>
-                    
                 </nav>
             </div>
             <div class="p-4 border-t border-gray-100 dark:border-gray-800">
@@ -270,29 +223,28 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <header class="bg-background-light dark:bg-background-dark pt-8 pb-4 px-8">
-                <div class="flex justify-between items-end">
-                    <div>
-                        <h1 class="text-2xl font-bold text-lbg-main-light dark:text-lbg-main-dark">{% block page_title %}Council App{% endblock %}</h1>
-                        <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">{% block page_subtitle %}{% endblock %}</p>
+        <main class="flex-1 flex flex-col min-w-0 h-full overflow-hidden w-full">
+            <header class="bg-background-light dark:bg-background-dark pt-8 pb-4 px-8 w-full">
+                <div class="flex justify-between items-end gap-4">
+                    <div class="min-w-0 flex-1">
+                        <h1 class="text-2xl font-bold text-lbg-main-light dark:text-lbg-main-dark truncate">{% block page_title %}Council App{% endblock %}</h1>
+                        <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1 break-words">{% block page_subtitle %}{% endblock %}</p>
                     </div>
-                    <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-colors">
+                    <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-colors flex-shrink-0">
                         <span class="material-icons-round text-xl dark:hidden">dark_mode</span>
                         <span class="material-icons-round text-xl hidden dark:block">light_mode</span>
                     </button>
                 </div>
             </header>
 
-            <div class="flex-1 overflow-y-auto px-8 pb-12">
+            <div class="flex-1 overflow-y-auto px-4 sm:px-8 pb-12 w-full mx-auto max-w-full">
                 <div id="errorContainer"></div>
                 <div id="successContainer"></div>
                 
                 {% block content %}{% endblock %}
 
-                <footer class="mt-8 text-center">
-                    <p class="text-xs text-lbg-main-light dark:text-lbg-main-dark">© 2025 Student Council Management System. All rights reserved. Work of Hiba, Hritvik, Ritvick and Stervyn.</p>
+                <footer class="mt-8 text-center px-4">
+                    <p class="text-xs text-lbg-main-light dark:text-lbg-main-dark leading-relaxed">© 2025 Student Council Management System. All rights reserved. Work of Hiba, Hritvik, Ritvick and Stervyn.</p>
                 </footer>
             </div>
         </main>
@@ -307,25 +259,21 @@
             window.location.href = '/';
         }
 
-        // Route guard: Prevent normal students from accessing restricted pages
         function applyRouteGuard() {
             const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
-            if (!isNormalStudent) return; // Only apply to normal students
+            if (!isNormalStudent) return;
 
             const currentPath = window.location.pathname;
             const restrictedPaths = ['/dashboard/', '/meetings/', '/duty-roster/', '/discipline/'];
             
-            // Check if current page is restricted
             const isRestricted = restrictedPaths.some(path => currentPath.startsWith(path));
             if (isRestricted) {
                 window.location.href = '/announcements/';
             }
         }
 
-        // Apply guard early
         applyRouteGuard();
 
-        // Dark mode toggle functionality with persistence
         document.getElementById('darkModeToggle').addEventListener('click', function() {
             const isDark = document.documentElement.classList.toggle('dark');
             localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
@@ -335,16 +283,6 @@
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             isNormalStudent = user.is_staff || user.is_superuser || 
                 (user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name));
-            
-            if (isNormalStudent) {
-                //document.getElementById('dashButton').style.display = 'none';
-                //document.getElementById('dutyButton').style.display = 'none';
-                //document.getElementById('meetingButton').style.display = 'none';
-                //document.getElementById('disciplineButton').style.display = 'none';
-                //document.getElementById('clubButton').style.display = 'none';
-                //document.getElementById('competitionButton').style.display = 'none';
-                //document.getElementById('adminpanelButton').style.display = 'none';
-            }
         }
 
         function showError(message) {
@@ -426,7 +364,6 @@
                 }
             }
 
-            // Hide dashboard, meetings, duty roster, and discipline for normal students (use permission fields)
             const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
             
             if (isNormalStudent) {
@@ -434,10 +371,8 @@
                 if (meetingButton) meetingButton.style.display = 'none';
                 if (dutyButton) dutyButton.style.display = 'none';
                 if (disciplineButton) disciplineButton.style.display = 'none';
-                // Students can only see: announcements, clubs, competitions, about, gatepass
             }
 
-            // Show signup management pages only to users with appropriate permissions
             const canManageClubs = userData.is_superuser || userData.is_staff || userData.role?.can_add_clubs || userData.role?.can_manage_clubs;
             const canManageCompetitions = userData.is_superuser || userData.is_staff || userData.role?.can_manage_competitions;
             
@@ -452,10 +387,8 @@
         }
 
         loadUserProfile();
-        // Small delay to ensure async loadUserProfile completes
         setTimeout(() => checkPermissions(), 100);
 
-        // Logout functionality
         document.getElementById('logoutBtn').addEventListener('click', async function() {
             try {
                 const response = await fetch('/api/accounts/logout/', {
@@ -468,21 +401,16 @@
                         refresh_token: localStorage.getItem('refresh_token') || ''
                     })
                 });
-
-                // Clear localStorage regardless of response
                 localStorage.clear();
-                
-                // Redirect to login page
                 window.location.href = '/';
             } catch (error) {
                 console.error('Logout error:', error);
-                // Even if logout fails on server, clear client-side data
                 localStorage.clear();
                 window.location.href = '/';
             }
         });
 
-        // Mobile Sidebar Toggle
+        // Mobile Sidebar Display Controller Logic
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -497,22 +425,18 @@
             sidebarOverlay.classList.remove('open');
         }
 
-        // Menu button click
         mobileMenuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleSidebar();
         });
 
-        // Overlay click to close
         sidebarOverlay.addEventListener('click', closeSidebar);
 
-        // Close sidebar when a nav link is clicked
         const navLinks = sidebar.querySelectorAll('a');
         navLinks.forEach(link => {
             link.addEventListener('click', closeSidebar);
         });
 
-        // Close sidebar when clicking outside (including on content area)
         document.addEventListener('click', (e) => {
             if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
                 if (window.innerWidth < 768) {
@@ -521,14 +445,12 @@
             }
         });
 
-        // Close sidebar on window resize to desktop
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 768) {
                 closeSidebar();
             }
         });
 
-        // Prevent body scroll when sidebar is open
         document.addEventListener('DOMContentLoaded', () => {
             const observer = new MutationObserver(() => {
                 if (sidebar.classList.contains('open')) {

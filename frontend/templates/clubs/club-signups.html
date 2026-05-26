@@ -7,22 +7,39 @@
 {% block page_subtitle %}View and manage all student signups for clubs{% endblock %}
 
 {% block content %}
-<!-- Error/Success Containers -->
 <div id="errorContainer"></div>
 <div id="successContainer"></div>
 
-<!-- Club Selection -->
 <section class="mb-8">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
-        <label for="clubSelect" class="block text-sm font-semibold text-white dark:text-lbg-main-dark mb-4">Select a Club</label>
-        <select id="clubSelect" class="w-full px-4 py-3 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-lbg-main-light dark:text-lbg-main-dark focus:ring-2 focus:ring-primary focus:border-transparent">
-            <option value="">Choose a club</option>
-        </select>
-        <div id="signupCount" class="mt-4 text-sm font-medium text-lbg-sub-light dark:text-lbg-sub-dark"></div>
+        <label class="block text-sm font-semibold text-white dark:text-lbg-main-dark mb-4">Select a Club</label>
+        
+        <input type="hidden" id="clubSelect" name="club_id" value="" />
+
+        <div class="relative" id="clubDropdownWrapper">
+            <button
+                type="button"
+                id="clubDropdownBtn"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-input-bg-light dark:bg-input-bg-dark text-lbg-main-light dark:text-lbg-main-dark shadow-sm px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+            >
+                <span id="clubDropdownLabel">Choose a club</span>
+                <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200" id="clubDropdownChevron">expand_more</span>
+            </button>
+
+            <ul
+                id="clubDropdownMenu"
+                role="listbox"
+                class="absolute z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg hidden"
+            >
+                </ul>
+        </div>
+
+        <div id="signupCount" class="mt-4 text-sm font-medium text-white dark:text-lbg-sub-dark"></div>
     </div>
 </section>
 
-<!-- Signups Table -->
 <section>
     <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
         <div class="overflow-x-auto">
@@ -49,14 +66,12 @@
         </div>
     </div>
 
-    <!-- Empty State -->
     <div id="emptyState" class="hidden text-center py-12">
         <span class="material-icons-round text-gray-400 dark:text-gray-600 text-5xl mb-3 block">person_off</span>
         <h3 class="text-lg font-semibold text-lbg-main-light dark:text-lbg-main-dark">No signups yet</h3>
         <p class="text-lbg-sub-light dark:text-lbg-sub-dark text-sm mt-2">This club has no student signups</p>
     </div>
 
-    <!-- Pagination -->
     <div id="paginationSection" class="hidden mt-6 flex items-center justify-between">
         <div class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark">
             <span id="signupCountTotal">Showing 0 signups</span>
@@ -75,7 +90,6 @@
     </div>
 </section>
 
-<!-- Delete Confirmation Modal -->
 <div id="deleteModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6">
     <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl w-full max-w-lg border border-gray-200 dark:border-gray-700">
         <div style="padding: 32px 40px; border-bottom: 1px solid #e5e7eb;" class="dark:border-gray-700">
@@ -96,7 +110,6 @@
     </div>
 </div>
 
-<!-- Message Viewer Modal -->
 <div id="messageModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-xl w-full max-w-2xl mx-4 border border-gray-200 dark:border-gray-700 flex flex-col" style="height: 250px;">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
@@ -110,7 +123,6 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
@@ -122,6 +134,36 @@ let deleteTargetSignup = null;
 let currentPage = 1;
 let allSignups = [];
 const signupsPerPage = 10;
+
+// --- CUSTOM DROPDOWN INTERACTION HANDLERS ---
+const selectHiddenInput = document.getElementById('clubSelect');
+const dropdownBtn = document.getElementById('clubDropdownBtn');
+const dropdownMenu = document.getElementById('clubDropdownMenu');
+const dropdownLabel = document.getElementById('clubDropdownLabel');
+const dropdownChevron = document.getElementById('clubDropdownChevron');
+
+function openDropdown() {
+    dropdownMenu.classList.remove('hidden');
+    dropdownChevron.style.transform = 'rotate(180deg)';
+    dropdownBtn.setAttribute('aria-expanded', 'true');
+}
+
+function closeDropdown() {
+    dropdownMenu.classList.add('hidden');
+    dropdownChevron.style.transform = '';
+    dropdownBtn.setAttribute('aria-expanded', 'false');
+}
+
+dropdownBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdownMenu.classList.contains('hidden') ? openDropdown() : closeDropdown();
+});
+
+document.addEventListener('click', (e) => {
+    if (!document.getElementById('clubDropdownWrapper').contains(e.target)) {
+        closeDropdown();
+    }
+});
 
 // Check authorization first
 (async () => {
@@ -149,13 +191,25 @@ async function loadClubs() {
         const data = await response.json();
         clubs = data.results || data;
         
-        const select = document.getElementById('clubSelect');
-        select.innerHTML = '<option value="">-- Choose a club --</option>';
+        // Clear list and construct alternative UI layout loop
+        dropdownMenu.innerHTML = '';
+        
+        // Setup initial default option element
+        const defaultLi = document.createElement('li');
+        defaultLi.role = 'option';
+        defaultLi.className = 'club-option flex items-center px-4 py-3 text-sm text-gray-500 dark:text-gray-400 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800';
+        defaultLi.innerHTML = `<span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>Choose a club`;
+        defaultLi.addEventListener('click', () => handleClubSelection('', 'Choose a club', defaultLi));
+        dropdownMenu.appendChild(defaultLi);
+
         clubs.forEach(club => {
-            const opt = document.createElement('option');
-            opt.value = club.id;
-            opt.textContent = club.name;
-            select.appendChild(opt);
+            const li = document.createElement('li');
+            li.role = 'option';
+            li.className = 'club-option flex items-center px-4 py-3 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-800 active:bg-primary-light';
+            li.innerHTML = `<span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>${club.name}`;
+            
+            li.addEventListener('click', () => handleClubSelection(club.id, club.name, li));
+            dropdownMenu.appendChild(li);
         });
     } catch (error) {
         console.error('Error:', error);
@@ -163,11 +217,28 @@ async function loadClubs() {
     }
 }
 
+function handleClubSelection(value, name, optionElement) {
+    selectHiddenInput.value = value;
+    dropdownLabel.textContent = name;
+
+    // Reset visual structural checks on selection items
+    document.querySelectorAll('.club-option').forEach(opt => {
+        opt.querySelector('.check-icon').classList.add('opacity-0');
+    });
+    optionElement.querySelector('.check-icon').classList.remove('opacity-0');
+
+    closeDropdown();
+
+    // Trigger state mutation pipeline
+    currentClubId = value;
+    loadSignups(currentClubId);
+}
+
 async function loadSignups(clubId) {
     if (!clubId) {
         document.getElementById('signupsTableBody').innerHTML = `
             <tr>
-                <td colspan="6" class="px-6 py-12 text-center text-white">
+                <td colspan="6" class="px-6 py-12 text-center text-white dark:text-lbg-main-dark">
                     <span class="material-icons-round text-white text-4xl mb-2 block">info</span>
                     Select a club to view signups
                 </td>
@@ -228,7 +299,6 @@ function displaySignupsPage() {
     const end = start + signupsPerPage;
     const pageSignups = allSignups.slice(start, end);
     
-    // Clear existing rows
     while (tbody.firstChild) {
         tbody.removeChild(tbody.firstChild);
     }
@@ -236,25 +306,21 @@ function displaySignupsPage() {
     pageSignups.forEach((s) => {
         const tr = document.createElement('tr');
         
-        // Student name
         const nameTd = document.createElement('td');
         nameTd.className = 'px-6 py-4 font-medium text-white';
         nameTd.textContent = s.student_name;
         tr.appendChild(nameTd);
         
-        // Email
         const emailTd = document.createElement('td');
         emailTd.className = 'px-6 py-4 text-white';
         emailTd.textContent = s.email;
         tr.appendChild(emailTd);
         
-        // Phone
         const phoneTd = document.createElement('td');
         phoneTd.className = 'px-6 py-4 text-white';
         phoneTd.textContent = s.phone || '-';
         tr.appendChild(phoneTd);
         
-        // Message
         const messageTd = document.createElement('td');
         messageTd.className = 'px-6 py-4 text-sm text-white max-w-xs truncate cursor-pointer';
         messageTd.title = 'Click to view full message';
@@ -266,13 +332,11 @@ function displaySignupsPage() {
         }
         tr.appendChild(messageTd);
         
-        // Created at
         const dateTd = document.createElement('td');
         dateTd.className = 'px-6 py-4 text-sm text-white';
         dateTd.textContent = new Date(s.created_at).toLocaleDateString();
         tr.appendChild(dateTd);
         
-        // Actions (delete button)
         const actionsTd = document.createElement('td');
         actionsTd.className = 'px-6 py-4';
         
@@ -368,11 +432,6 @@ function showSuccess(msg) {
         }, 3000);
     }
 }
-
-document.getElementById('clubSelect').addEventListener('change', (e) => {
-    currentClubId = e.target.value;
-    loadSignups(currentClubId);
-});
 
 document.getElementById('prevPageBtn').addEventListener('click', () => {
     if (currentPage > 1) {

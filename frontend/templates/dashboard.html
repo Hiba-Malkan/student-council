@@ -286,11 +286,11 @@ function renderPage(page) {
 
     const html = pageItems.map(act => `
         <div class="p-5 rounded-2xl bg-white dark:bg-primary-hover/10 border border-primary-light/50 dark:border-primary-hover/20 transition-all hover:shadow-md">
-            <div class="flex items-start gap-4">
+            <div class="flex items-start gap-4 line-clamp-2">
                 <div class="w-12 h-12 rounded-xl bg-primary-light dark:bg-primary-hover/20 flex-shrink-0 flex items-center justify-center">
                     <span class="material-icons-round ${act.color} text-2xl">${act.icon}</span>
                 </div>
-                <div class="flex-1">
+                <div>
                     <p class="text-lbg-main-light dark:text-lbg-main-dark font-medium">${act.text}</p>
                     <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1">${timeAgo(act.date)}</p>
                 </div>

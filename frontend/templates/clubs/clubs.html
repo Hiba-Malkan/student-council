@@ -12,7 +12,6 @@
 {% block page_subtitle %}Manage and view all registered student organizations.{% endblock %}
 
 {% block content %}
-<!-- View Signups Button -->
 <div id="clubSignupsButtonContainer" class="mb-6 hidden">
     <a href="/clubs/signups/" class="inline-flex items-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors" style="background-color: #256a3f !important; color: #ffffff !important;">
         <span class="material-icons-round text-sm mr-2">assessment</span>
@@ -20,25 +19,57 @@
     </a>
 </div>
 
-<!-- Search and Filter -->
 <section class="mb-6">
-    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
-        <div class="flex flex-col md:flex-row gap-4">
-            <div class="flex-1 relative mb-2">
+    <div>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+            <div class="relative w-full sm:w-3/5">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <span class="material-icons-round text-gray-400 dark:text-gray-300 text-lg">search</span>
                 </div>
                 <input type="text" id="searchClubs" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="Search by name, founders, or tutors...">
             </div>
-            <select id="filterStatus" class="px-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="under_review">Under Review</option>
-                <option value="inactive">Inactive</option>
-            </select>
-            <section id="createClubSection" style="display: none;">
-                <div class="flex justify-end">
-                    <a href="/clubs/new/" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
+            
+            <div class="relative w-full sm:w-auto sm:min-w-[160px]" id="statusDropdownWrapper">
+                <input type="hidden" id="filterStatus" name="status" value="" />
+                
+                <button
+                    type="button"
+                    id="statusDropdownBtn"
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    class="flex w-full items-center justify-between rounded-lg border border-transparent bg-input-bg-light dark:bg-input-bg-dark text-sm text-lbg-main-light dark:text-lbg-main-dark px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
+                >
+                    <span id="statusDropdownLabel">All Status</span>
+                    <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200 ml-2" id="statusDropdownChevron">expand_more</span>
+                </button>
+
+                <ul
+                    id="statusDropdownMenu"
+                    role="listbox"
+                    class="absolute left-0 z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden"
+                >
+                    <li role="option" data-value="" data-label="All Status"
+                        class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                        <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>All Status
+                    </li>
+                    <li role="option" data-value="active" data-label="Active"
+                        class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                        <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Active
+                    </li>
+                    <li role="option" data-value="under_review" data-label="Under Review"
+                        class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                        <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Under Review
+                    </li>
+                    <li role="option" data-value="inactive" data-label="Inactive"
+                        class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                        <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Inactive
+                    </li>
+                </ul>
+            </div>
+
+            <section id="createClubSection" style="display: none;" class="w-full sm:w-auto">
+                <div class="flex justify-center sm:justify-end">
+                    <a href="/clubs/new/" class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
                         <span class="material-icons-round text-lg">add</span>
                         Create New Club
                     </a>
@@ -48,17 +79,14 @@
     </div>
 </section>
 
-<!-- Clubs List -->
 <section>
     <div id="clubsContainer" class="space-y-6">
-        <!-- Loading state -->
         <div class="text-center py-12">
             <span class="material-icons-round text-text-main-light dark:text-lbg-main-dark text-4xl mb-3 animate-spin">sync</span>
             <p class="text-text-main-light dark:text-lbg-main-dark">Loading clubs...</p>
         </div>
     </div>
     
-    <!-- Pagination -->
     <div class="flex items-center justify-between mt-6" id="paginationSection" style="display: none;">
         <div class="text-sm text-text-sub-light dark:text-lbg-sub-dark">
             <span id="clubCount">Showing 0 clubs</span>
@@ -77,7 +105,6 @@
     </div>
 </section>
 
-<!-- Club Actions Dropdown Template -->
 <template id="clubDropdownTemplate">
     <div class="club-dropdown-menu hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
         <a href="#" class="edit-option w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-3 transition-colors">
@@ -89,9 +116,8 @@
     </div>
 </template>
 
-<!-- Join Club Modal -->
 <div id="joinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-green-600 bg-opacity-90" style="display: none;">
-    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 max-w-md w-full shadow-lg">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 max-w-md w-full shadow-lg mx-4">
         <h3 class="text-xl font-bold text-white mb-4" id="joinClubName">Join Club</h3>
         <form id="joinForm" class="space-y-4">
             <input type="hidden" id="joinClubId">
@@ -220,7 +246,6 @@ function displayClubs(clubs) {
         html += `
             <div class="bg-card-light dark:bg-card-dark rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
                 <div class="flex flex-col md:flex-row gap-6">
-                    <!-- Club Logo -->
                     <div class="w-full md:w-48 h-48 shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
                         ${club.logo_url ? `
                             <img src="${club.logo_url}" alt="${club.name}" class="w-full h-full object-cover">
@@ -231,19 +256,18 @@ function displayClubs(clubs) {
                         `}
                     </div>
                     
-                    <!-- Club Info -->
-                    <div class="flex-1 flex flex-col">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <div class="flex items-center gap-3 mb-2">
-                                    <h3 class="text-xl font-bold text-white dark:text-white">${club.name}</h3>
-                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusColors[club.status]} uppercase tracking-wide transform -translate-y-0.5">
+                    <div class="flex flex-col w-full">
+                        <div class="flex justify-between items-start mb-4 gap-4">
+                            <div class="min-w-0">
+                                <div class="flex flex-wrap items-center gap-3 mb-2">
+                                    <h3 class="text-xl font-bold text-white dark:text-white truncate">${club.name}</h3>
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusColors[club.status]} uppercase tracking-wide">
                                         ${statusText[club.status]}
                                     </span>
                                 </div>
-                                <p class="text-sm text-white dark:text-lbg-sub-dark leading-relaxed">${club.description}</p>
+                                <p class="text-sm text-white dark:text-lbg-sub-dark leading-relaxed" style="word-break: break-all;">${club.description}</p>
                             </div>
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 shrink-0">
                                 ${canManage ? `
                                     <button class="p-2 club-more-btn relative" data-club-id="${club.id}" onclick="event.stopPropagation(); showClubDropdown(this, ${club.id})">
                                         <span class="material-icons-round text-white hover:bg-white/10 p-1 rounded-lg transition-colors">more_vert</span>
@@ -259,11 +283,10 @@ function displayClubs(clubs) {
                             </div>
                         </div>
                         
-                        <!-- Club Details Grid -->
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
                             <div class="flex items-start gap-2">
                                 <span class="material-icons-round text-white text-lg mt-0.5">group</span>
-                                <div>
+                                <div class="min-w-0">
                                     <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Members</p>
                                     <p class="text-sm font-semibold text-white dark:text-white">${club.member_count} Members</p>
                                 </div>
@@ -271,7 +294,7 @@ function displayClubs(clubs) {
                             
                             <div class="flex items-start gap-2">
                                 <span class="material-icons-round text-white text-lg mt-0.5">calendar_today</span>
-                                <div>
+                                <div class="min-w-0">
                                     <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Est.</p>
                                     <p class="text-sm font-semibold text-white dark:text-white">${club.established_year}</p>
                                 </div>
@@ -279,7 +302,7 @@ function displayClubs(clubs) {
                             
                             <div class="flex items-start gap-2">
                                 <span class="material-icons-round text-white text-lg mt-0.5">badge</span>
-                                <div>
+                                <div class="min-w-0">
                                     <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Founders</p>
                                     <p class="text-sm font-semibold text-white dark:text-white break-words">${club.founders_list.join(', ')}</p>
                                 </div>
@@ -287,7 +310,7 @@ function displayClubs(clubs) {
                             
                             <div class="flex items-start gap-2">
                                 <span class="material-icons-round text-white text-lg mt-0.5">school</span>
-                                <div>
+                                <div class="min-w-0">
                                     <p class="text-xs text-white dark:text-lbg-sub-dark uppercase font-medium">Tutors</p>
                                     <p class="text-sm font-semibold text-white dark:text-white break-words">${club.tutors_list.join(', ')}</p>
                                 </div>
@@ -337,31 +360,25 @@ async function deleteClub(clubId) {
 
 // Show club dropdown menu
 function showClubDropdown(button, clubId) {
-    // Remove any existing dropdowns
     document.querySelectorAll('.club-dropdown-menu').forEach(m => m.remove());
     
-    // Clone template
     const template = document.getElementById('clubDropdownTemplate').content.cloneNode(true);
     const menu = template.querySelector('.club-dropdown-menu');
     
     const editBtn = menu.querySelector('.edit-option');
     const deleteBtn = menu.querySelector('.delete-option');
     
-    // Set edit link
     editBtn.href = `/clubs/edit/${clubId}/`;
     
-    // Delete handler
     deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         deleteClub(clubId);
         menu.remove();
     });
     
-    // Position and append to the button so absolute positioning (top-full/right-0) is relative to the button
     button.appendChild(menu);
     menu.classList.remove('hidden');
     
-    // Close on outside click
     document.addEventListener('click', function closeDropdown(e) {
         if (!menu.contains(e.target) && !button.contains(e.target)) {
             menu.remove();
@@ -384,6 +401,7 @@ function closeJoinModal() {
     document.getElementById('joinModal').style.display = 'none';
 }
 
+// Form validation and escape logic
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -449,14 +467,12 @@ function showJoinError(message) {
     document.getElementById('joinSuccess').style.display = 'none';
 }
 
-// Close modal when clicking outside
 document.getElementById('joinModal').addEventListener('click', (e) => {
     if (e.target === document.getElementById('joinModal')) {
         closeJoinModal();
     }
 });
 
-// Close on Escape key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && document.getElementById('joinModal').style.display !== 'none') {
         closeJoinModal();
@@ -468,29 +484,86 @@ async function initClubs() {
     await checkManagePermission();
     await loadClubs();
     
-    // Search functionality
+    // Custom drop down behavior implementation for UI consistency 
+    const typeDropdownBtn = document.getElementById('statusDropdownBtn');
+    const typeDropdownMenu = document.getElementById('statusDropdownMenu');
+    const typeDropdownChevron = document.getElementById('statusDropdownChevron');
+    const typeDropdownLabel = document.getElementById('statusDropdownLabel');
+    const filterStatusInput = document.getElementById('filterStatus');
+    const typeOptions = document.querySelectorAll('.status-option');
+
+    // Toggle custom drop down visibility
+    typeDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = typeDropdownMenu.classList.contains('hidden');
+        if (isHidden) {
+            typeDropdownMenu.classList.remove('hidden');
+            typeDropdownBtn.setAttribute('aria-expanded', 'true');
+            typeDropdownChevron.classList.add('rotate-180');
+        } else {
+            closeCustomDropdown();
+        }
+    });
+
+    // Close on selection option choice
+    typeOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const val = option.getAttribute('data-value');
+            const label = option.getAttribute('data-label');
+            
+            // Set underlying functional inputs and labels
+            filterStatusInput.value = val;
+            typeDropdownLabel.textContent = label;
+            
+            // Toggle view visibility for check icons
+            typeOptions.forEach(opt => {
+                const check = opt.querySelector('.check-icon');
+                if (opt === option) {
+                    check.classList.remove('opacity-0');
+                } else {
+                    check.classList.add('opacity-0');
+                }
+            });
+            
+            closeCustomDropdown();
+            
+            // Execute table filter refresh using updated criteria setup
+            loadClubs(1, document.getElementById('searchClubs').value, val);
+        });
+    });
+
+    // Close panel logic helper functions
+    function closeCustomDropdown() {
+        typeDropdownMenu.classList.add('hidden');
+        typeDropdownBtn.setAttribute('aria-expanded', 'false');
+        typeDropdownChevron.classList.remove('rotate-180');
+    }
+
+    // Global backdrop actions for drop downs close events handling
+    document.addEventListener('click', (e) => {
+        if (!document.getElementById('statusDropdownWrapper').contains(e.target)) {
+            closeCustomDropdown();
+        }
+    });
+
+    // Search input dynamic listening query updates execution
     document.getElementById('searchClubs').addEventListener('input', (e) => {
         clearTimeout(window.searchTimeout);
         window.searchTimeout = setTimeout(() => {
-            loadClubs(1, e.target.value, document.getElementById('filterStatus').value);
+            loadClubs(1, e.target.value, filterStatusInput.value);
         }, 300);
     });
     
-    // Filter functionality
-    document.getElementById('filterStatus').addEventListener('change', (e) => {
-        loadClubs(1, document.getElementById('searchClubs').value, e.target.value);
-    });
-    
-    // Pagination
+    // Dynamic lists layout navigation bindings update handles
     document.getElementById('prevPage').addEventListener('click', () => {
         if (hasPrev) {
-            loadClubs(currentPage - 1, document.getElementById('searchClubs').value, document.getElementById('filterStatus').value);
+            loadClubs(currentPage - 1, document.getElementById('searchClubs').value, filterStatusInput.value);
         }
     });
     
     document.getElementById('nextPage').addEventListener('click', () => {
         if (hasNext) {
-            loadClubs(currentPage + 1, document.getElementById('searchClubs').value, document.getElementById('filterStatus').value);
+            loadClubs(currentPage + 1, document.getElementById('searchClubs').value, filterStatusInput.value);
         }
     });
 }

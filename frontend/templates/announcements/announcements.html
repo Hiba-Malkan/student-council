@@ -13,74 +13,92 @@
 
 {% block content %}
 <div class="mt-6">
-    <!-- Search and New Announcement Button -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
-        <div class="relative" style="width: 60%">
-            <div class="absolute inset-y-0 left-1 pl-3 flex items-center pointer-events-none">
-                <span class="material-icons-round text-gray-400 text-lg">search</span>
-            </div>
-            <input 
-                id="searchInput"
-                class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-text-main-light dark:text-lbg-main-dark placeholder-text-gray-700 dark:placeholder-text-sub-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors" 
-                placeholder="Search announcements..." 
-                type="text"
-            />
+    <div class="relative w-full sm:w-3/5">
+        <div class="absolute inset-y-0 left-1 pl-3 flex items-center pointer-events-none">
+            <span class="material-icons-round text-gray-400 text-lg">search</span>
         </div>
-        <button 
-            id="newAnnouncementBtn"
-            class="inline-flex items-center px-4 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
-            style="display: none;"
-        >
-            <span class="material-icons-round text-lg mr-2">add</span>
-            New Announcement
-        </button>
+        <input 
+            id="searchInput"
+            class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-text-main-light dark:text-lbg-main-dark placeholder-text-gray-700 dark:placeholder-text-sub-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors" 
+            placeholder="Search announcements..." 
+            type="text"
+        />
     </div>
+    
+    <button 
+        id="newAnnouncementBtn"
+        class="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+        style="display: none;"
+    >
+        <span class="material-icons-round text-lg mr-2">add</span>
+        New Announcement
+    </button>
+</div>
 
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-8 bg-card-light dark:bg-card-dark p-2 rounded-xl border border-gray-200 dark:border-gray-700">
-        <!-- Filter Buttons -->
-        <div class="flex flex-wrap items-center gap-2">
-            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="all">All</button>
-            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="GENERAL">General</button>
-            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="EVENT">School Events</button>
-            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="URGENT">Urgent</button>
-            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="CULTURAL">Cultural</button>
-            <button class="filter-btn px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-200" data-type="IH_SCHEDULE">Inter-House</button>
-        </div>
-
-        <!-- Sort Dropdown -->
-        <div class="flex items-center gap-3 text-sm">
-            <span class="text-white dark:text-gray-400 font-medium">Sort by:</span>
-            <div class="relative">
-                <select id="sortSelect" class="appearance-none bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 pr-10 text-sm font-medium text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer transition-all">
-                    <option value="pinned">Pinned First</option>
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                </select>
-                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </div>
-            </div>
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 bg-card-light dark:bg-card-dark p-3 rounded-xl border border-gray-200 dark:border-gray-700">
+    
+    <div class="w-full md:w-auto overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+        <div class="flex items-center gap-2 flex-nowrap whitespace-nowrap">
+            <button class="filter-btn px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 flex-shrink-0" data-type="all">All</button>
+            <button class="filter-btn px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 flex-shrink-0" data-type="GENERAL">General</button>
+            <button class="filter-btn px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 flex-shrink-0" data-type="EVENT">School Events</button>
+            <button class="filter-btn px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 flex-shrink-0" data-type="URGENT">Urgent</button>
+            <button class="filter-btn px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 flex-shrink-0" data-type="CULTURAL">Cultural</button>
+            <button class="filter-btn px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 flex-shrink-0" data-type="IH_SCHEDULE">Inter-House</button>
         </div>
     </div>
 
-    <!-- Loading State -->
+    <div class="flex items-center justify-between md:justify-end gap-3 text-sm pt-2 md:pt-0 border-t border-gray-100 dark:border-gray-800 md:border-t-0 flex-shrink-0">
+        <span class="text-white dark:text-gray-400 font-medium">Sort by:</span>
+        
+        <div class="relative w-full md:w-48" id="sortDropdownWrapper">
+            <input type="hidden" id="sortSelect" value="pinned" />
+            <button
+                type="button"
+                id="sortDropdownBtn"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                class="flex w-full items-center justify-between rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100 shadow-sm px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all"
+            >
+                <span id="sortDropdownLabel">Pinned First</span>
+                <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200" id="sortDropdownChevron">expand_more</span>
+            </button>
+
+            <ul
+                id="sortDropdownMenu"
+                role="listbox"
+                class="absolute right-0 z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden"
+            >
+                <li role="option" data-value="pinned" data-label="Pinned First"
+                    class="sort-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                    <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>Pinned First
+                </li>
+                <li role="option" data-value="newest" data-label="Newest First"
+                    class="sort-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                    <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Newest First
+                </li>
+                <li role="option" data-value="oldest" data-label="Oldest First"
+                    class="sort-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                    <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Oldest First
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
     <div id="loadingState" class="text-center py-12">
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         <p class="mt-2 text-sm text-text-sub-light dark:text-lbg-sub-dark">Loading announcements...</p>
     </div>
 
-    <!-- Announcements List -->
     <div id="announcementsList" class="space-y-5" style="display: none;"></div>
 
-    <!-- Empty State -->
     <div id="emptyState" class="text-center py-12" style="display: none;">
         <span class="material-icons-round text-6xl text-black dark:text-gray-600 mb-4">campaign</span>
         <p class="text-text-sub-light dark:text-lbg-sub-dark">No announcements found</p>
     </div>
 
-    <!-- Pagination -->
     <div id="paginationContainer" class="mt-8 flex items-center justify-center" style="display: none;">
         <nav class="inline-flex rounded-lg shadow-sm">
             <button id="prevPage" class="px-4 py-2 rounded-l-lg border border-gray-300 dark:border-gray-600 bg-card-light dark:bg-card-dark text-sm font-medium text-white hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -190,8 +208,66 @@
         'IH_SCHEDULE': { bg: 'bg-green-100 dark:bg-green-900/30', text: 'text-green-800 dark:text-green-300', border: 'border-l-green-500' },
     };
 
-    document.addEventListener('click', () => {
+    // Modified click handler to encompass both context dropmenus and custom select items
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#sortDropdownWrapper')) {
+            const menu = document.getElementById('sortDropdownMenu');
+            const chevron = document.getElementById('sortDropdownChevron');
+            const btn = document.getElementById('sortDropdownBtn');
+            if (menu) {
+                menu.classList.add('hidden');
+                btn.setAttribute('aria-expanded', 'false');
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        }
         document.querySelectorAll('.dropdown-menu').forEach(menu => menu.classList.add('hidden'));
+    });
+
+    // Wire Custom Sort Dropdown Interactions
+    const sortDropdownBtn = document.getElementById('sortDropdownBtn');
+    const sortDropdownMenu = document.getElementById('sortDropdownMenu');
+    const sortDropdownChevron = document.getElementById('sortDropdownChevron');
+    const sortDropdownLabel = document.getElementById('sortDropdownLabel');
+    const sortSelectInput = document.getElementById('sortSelect');
+
+    sortDropdownBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = sortDropdownMenu.classList.contains('hidden');
+        if (isHidden) {
+            sortDropdownMenu.classList.remove('hidden');
+            sortDropdownBtn.setAttribute('aria-expanded', 'true');
+            sortDropdownChevron.style.transform = 'rotate(180deg)';
+        } else {
+            sortDropdownMenu.classList.add('hidden');
+            sortDropdownBtn.setAttribute('aria-expanded', 'false');
+            sortDropdownChevron.style.transform = 'rotate(0deg)';
+        }
+    });
+
+    document.querySelectorAll('.sort-option').forEach(option => {
+        option.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const value = option.getAttribute('data-value');
+            const label = option.getAttribute('data-label');
+
+            sortSelectInput.value = value;
+            sortDropdownLabel.textContent = label;
+
+            // Clear visual checks
+            document.querySelectorAll('.sort-option .check-icon').forEach(icon => {
+                icon.classList.add('opacity-0');
+            });
+            option.querySelector('.check-icon').classList.remove('opacity-0');
+
+            // Close UI Elements
+            sortDropdownMenu.classList.add('hidden');
+            sortDropdownBtn.setAttribute('aria-expanded', 'false');
+            sortDropdownChevron.style.transform = 'rotate(0deg)';
+
+            // Trigger existing pipeline
+            applySorting(); 
+            renderAnnouncements();
+        });
     });
 
     function openDelteModal(id) {
@@ -346,7 +422,7 @@
                 <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 ${a.is_pinned ? 'border-l-4 ' + badge.border : ''} cursor-pointer a-card group relative" data-id="${a.id}" style="border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); cursor: pointer; transition: all 0.3s;">
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex flex-wrap items-center gap-2">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-2xs font-semibold ${badge.bg} ${badge.text}">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text}">
                                 ${a.announcement_type_display || a.announcement_type}
                             </span>
                             ${a.is_pinned ? `<span class="text-xs font-medium text-lbg-main-dark dark:text-white flex items-center gap-1"><span class="material-icons-round text-sm">push_pin</span>Pinned</span>` : ''}
@@ -359,14 +435,14 @@
                         ` : ''}
                     </div>
 
-                    <h3 class="text-3xl font-bold text-lbg-main-dark dark:text-lbg-main-dark mb-3 pr-10">${a.title}</h3>
+                    <h3 class="line-clamp-2 text-3xl font-bold text-lbg-main-dark dark:text-lbg-main-dark mb-3 pr-10">${a.title}</h3>
                     <p class="text-lbg-main-dark dark:text-lbg-sub-dark text-sm leading-relaxed line-clamp-2 mb-4">${a.content}</p>
 
                     <div class="flex flex-wrap items-center justify-between text-xs text-lbg-main-dark dark:text-lbg-sub-dark pt-4 border-t border-gray-200 dark:border-gray-700">
                         <div class="flex flex-wrap items-center gap-4">
                             <span class="flex items-center gap-1"><span class="material-icons-round text-sm">calendar_today</span> ${date}</span>
                             <span class="flex items-center gap-1"><span class="material-icons-round text-sm">person</span> ${creator}</span>
-                            ${a.attachments?.length ? `<span class="flex items-center gap-1 text-text-main-light"><span class="material-icons-round text-sm">attach_file</span> Attachment</span>` : ''}
+                            ${a.attachments?.length ? `<span class="flex items-center gap-1 text-lbg-main-dark"><span class="material-icons-round text-sm">attach_file</span> Attachment</span>` : ''}
                         </div>
                         <span class="font-medium text-lbg-main-dark dark:text-white hover:underline">View Details</span>
                     </div>
@@ -429,7 +505,6 @@
     }
 
     document.getElementById('searchInput').addEventListener('input', applyFilters);
-    document.getElementById('sortSelect').addEventListener('change', () => { applySorting(); renderAnnouncements(); });
     document.getElementById('newAnnouncementBtn').addEventListener('click', () => window.location.href = '/announcements/new/');
 
     document.querySelectorAll('.filter-btn').forEach(btn => {

@@ -7,161 +7,263 @@
 
 {% block extra_css %}
 <style>
-    /* Mobile View Optimization */
-    @media (max-width: 768px) {
-        /* Adjust spacing for mobile */
-        .space-y-6 {
-            --tw-space-y-reverse: 0;
-            margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
-            margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
-        }
-        
-        /* Reduce padding on mobile */
-        [class*="p-6"] {
-            padding: 1rem !important;
-        }
-        
-        [class*="p-5"] {
-            padding: 1rem !important;
-        }
-        
-        [class*="p-4"] {
-            padding: 0.75rem !important;
-        }
-        
-        /* Badge responsiveness */
-        .flex.items-center {
-            flex-wrap: wrap;
-        }
-        
-        /* Button responsiveness */
-        .inline-flex.items-center.gap-2 {
-            font-size: 0.875rem;
-            padding: 0.5rem 1rem;
-        }
-        
-        /* Pagination - horizontal scroll on small screens */
-        #paginationContainer {
-            overflow-x: auto;
-            padding: 0.5rem 0;
-        }
-        
-        /* Form inputs on mobile */
-        input[type="text"],
-        input[type="email"],
-        select,
-        textarea {
-            font-size: 16px;
-        }
-        
-        /* Feedback card adjustments */
-        .flex.items-start.justify-between {
-            flex-direction: column;
-            align-items: flex-start;
-        }
+    /* ── Custom dropdown (matches new-announcement style) ── */
+    .custom-dropdown-menu {
+        position: absolute;
+        z-index: 50;
+        margin-top: 0.25rem;
+        width: 100%;
+        border-radius: 0.5rem;
+        border: 1px solid;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
-    
-    @media (max-width: 640px) {
-        /* Extra small screens */
-        .text-sm {
-            font-size: 0.8125rem;
-        }
-        
-        .text-base {
-            font-size: 0.9rem;
-        }
+    .custom-dropdown-menu.hidden { display: none; }
+
+    /* ── Prevent text overflow everywhere ── */
+    .feedback-card h3 {
+        overflow-wrap: break-word;
+        word-break: break-word;
+        hyphens: auto;
+    }
+    .feedback-card p {
+        overflow-wrap: break-word;
+        word-break: break-word;
+    }
+
+    /* ── Stat cards: always 2-col grid on mobile, 4-col on md ── */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    @media (min-width: 768px) {
+        .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    }
+
+    /* ── Filters: 2-col on mobile ── */
+    .filters-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    @media (min-width: 480px) {
+        .filters-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (min-width: 768px) {
+        .filters-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    /* ── Feedback card badges don't overflow ── */
+    .badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+        align-items: center;
+    }
+    .badge {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* ── Card footer: wrap nicely on mobile ── */
+    .card-footer {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    /* ── Stat card number size: smaller on mobile ── */
+    .stat-number {
+        font-size: 1.75rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: white;
+        margin-top: 0.25rem;
+    }
+    @media (min-width: 768px) {
+        .stat-number { font-size: 1.875rem; }
+    }
+
+    /* ── Prevent horizontal scroll on page ── */
+    body { overflow-x: hidden; }
+    #paginationContainer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+    }
+
+    /* ── Input font-size fix for iOS (prevents zoom) ── */
+    input[type="text"],
+    input[type="email"],
+    textarea {
+        font-size: 16px !important;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="space-y-6">
+
     <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-card-light dark:bg-card-dark rounded-lg p-6 border border-gray-100 dark:border-gray-800">
+    <div class="stats-grid">
+        <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-white dark:text-gray-400 font-medium">Total Feedback</p>
-                    <p class="text-3xl font-bold text-white dark:text-white mt-1" id="totalFeedback">0</p>
+                    <p class="stat-number" id="totalFeedback">0</p>
                 </div>
-                <span class="material-icons-round text-4xl text-blue-500">comment</span>
+                <span class="material-icons-round text-3xl md:text-4xl text-blue-500">comment</span>
             </div>
         </div>
-        <div class="bg-card-light dark:bg-card-dark rounded-lg p-6 border border-gray-100 dark:border-gray-800">
+        <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-white dark:text-gray-400 font-medium">Open Issues</p>
-                    <p class="text-3xl font-bold text-white dark:text-white mt-1" id="openIssues">0</p>
+                    <p class="stat-number" id="openIssues">0</p>
                 </div>
-                <span class="material-icons-round text-4xl text-orange-500">pending</span>
+                <span class="material-icons-round text-3xl md:text-4xl text-orange-500">pending</span>
             </div>
         </div>
-        <div class="bg-card-light dark:bg-card-dark rounded-lg p-6 border border-gray-100 dark:border-gray-800">
+        <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-white dark:text-gray-400 font-medium">Resolved</p>
-                    <p class="text-3xl font-bold text-white dark:text-white mt-1" id="resolvedFeedback">0</p>
+                    <p class="stat-number" id="resolvedFeedback">0</p>
                 </div>
-                <span class="material-icons-round text-4xl text-green-500">check_circle</span>
+                <span class="material-icons-round text-3xl md:text-4xl text-green-500">check_circle</span>
             </div>
         </div>
-        <div class="bg-card-light dark:bg-card-dark rounded-lg p-6 border border-gray-100 dark:border-gray-800">
+        <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-white dark:text-gray-400 font-medium">Bug Reports</p>
-                    <p class="text-3xl font-bold text-white dark:text-white mt-1" id="bugReports">0</p>
+                    <p class="stat-number" id="bugReports">0</p>
                 </div>
-                <span class="material-icons-round text-4xl text-red-500">bug_report</span>
+                <span class="material-icons-round text-3xl md:text-4xl text-red-500">bug_report</span>
             </div>
         </div>
     </div>
 
     <!-- Submit Button -->
     <div class="flex justify-end">
-        <button onclick="openFeedbackModal()" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-hover text-white font-semibold rounded-lg shadow-md transition-colors">
-            <span class="material-icons-round">add_circle</span>
+        <button onclick="openFeedbackModal()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-hover text-white font-semibold rounded-lg shadow-md transition-colors text-sm">
+            <span class="material-icons-round text-lg">add_circle</span>
             Submit New Feedback
         </button>
     </div>
 
     <!-- Filters -->
     <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="filters-grid">
+
+            <!-- Search (plain input, no dropdown needed) -->
             <div>
                 <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Search</label>
-                <input type="text" id="searchFeedback" placeholder="Search by subject..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+                <input type="text" id="searchFeedback" placeholder="Search by subject..."
+                    class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
             </div>
+
+            <!-- Type dropdown -->
             <div>
                 <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Type</label>
-                <select id="filterType" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    <option value="">All Types</option>
-                    <option value="FEEDBACK">Feedback</option>
-                    <option value="BUG">Bug Report</option>
-                    <option value="FEATURE_REQUEST">Feature Request</option>
-                    <option value="PERFORMANCE">Performance Issue</option>
-                    <option value="OTHER">Other</option>
-                </select>
+                <div class="relative" id="typeFilterWrapper">
+                    <input type="hidden" id="filterType" value="">
+                    <button type="button" id="typeFilterBtn" aria-haspopup="listbox" aria-expanded="false"
+                        class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors">
+                        <span id="typeFilterLabel">All Types</span>
+                        <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200 text-lg" id="typeFilterChevron">expand_more</span>
+                    </button>
+                    <ul id="typeFilterMenu" role="listbox"
+                        class="custom-dropdown-menu hidden border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                        <li role="option" data-value="" data-label="All Types" class="filter-type-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>All Types
+                        </li>
+                        <li role="option" data-value="FEEDBACK" data-label="Feedback" class="filter-type-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Feedback
+                        </li>
+                        <li role="option" data-value="BUG" data-label="Bug Report" class="filter-type-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Bug Report
+                        </li>
+                        <li role="option" data-value="FEATURE_REQUEST" data-label="Feature Request" class="filter-type-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Feature Request
+                        </li>
+                        <li role="option" data-value="PERFORMANCE" data-label="Performance Issue" class="filter-type-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Performance Issue
+                        </li>
+                        <li role="option" data-value="OTHER" data-label="Other" class="filter-type-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Other
+                        </li>
+                    </ul>
+                </div>
             </div>
+
+            <!-- Status dropdown -->
             <div>
                 <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Status</label>
-                <select id="filterStatus" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    <option value="">All Statuses</option>
-                    <option value="OPEN">Open</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="RESOLVED">Resolved</option>
-                    <option value="CLOSED">Closed</option>
-                </select>
+                <div class="relative" id="statusFilterWrapper">
+                    <input type="hidden" id="filterStatus" value="">
+                    <button type="button" id="statusFilterBtn" aria-haspopup="listbox" aria-expanded="false"
+                        class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors">
+                        <span id="statusFilterLabel">All Statuses</span>
+                        <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200 text-lg" id="statusFilterChevron">expand_more</span>
+                    </button>
+                    <ul id="statusFilterMenu" role="listbox"
+                        class="custom-dropdown-menu hidden border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                        <li role="option" data-value="" data-label="All Statuses" class="filter-status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>All Statuses
+                        </li>
+                        <li role="option" data-value="OPEN" data-label="Open" class="filter-status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Open
+                        </li>
+                        <li role="option" data-value="IN_PROGRESS" data-label="In Progress" class="filter-status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>In Progress
+                        </li>
+                        <li role="option" data-value="RESOLVED" data-label="Resolved" class="filter-status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Resolved
+                        </li>
+                        <li role="option" data-value="CLOSED" data-label="Closed" class="filter-status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Closed
+                        </li>
+                    </ul>
+                </div>
             </div>
+
+            <!-- Priority dropdown -->
             <div>
                 <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Priority</label>
-                <select id="filterPriority" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                    <option value="">All Priorities</option>
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                    <option value="CRITICAL">Critical</option>
-                </select>
+                <div class="relative" id="priorityFilterWrapper">
+                    <input type="hidden" id="filterPriority" value="">
+                    <button type="button" id="priorityFilterBtn" aria-haspopup="listbox" aria-expanded="false"
+                        class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors">
+                        <span id="priorityFilterLabel">All Priorities</span>
+                        <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200 text-lg" id="priorityFilterChevron">expand_more</span>
+                    </button>
+                    <ul id="priorityFilterMenu" role="listbox"
+                        class="custom-dropdown-menu hidden border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                        <li role="option" data-value="" data-label="All Priorities" class="filter-priority-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>All Priorities
+                        </li>
+                        <li role="option" data-value="LOW" data-label="Low" class="filter-priority-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Low
+                        </li>
+                        <li role="option" data-value="MEDIUM" data-label="Medium" class="filter-priority-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Medium
+                        </li>
+                        <li role="option" data-value="HIGH" data-label="High" class="filter-priority-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>High
+                        </li>
+                        <li role="option" data-value="CRITICAL" data-label="Critical" class="filter-priority-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Critical
+                        </li>
+                    </ul>
+                </div>
             </div>
+
         </div>
     </div>
 
@@ -174,103 +276,152 @@
     </div>
 
     <!-- Pagination -->
-    <div id="paginationContainer" class="flex justify-center gap-2 mt-6 flex-wrap">
-    </div>
+    <div id="paginationContainer"></div>
 </div>
 
-<!-- Submit Feedback Modal -->
+<!-- ══════════════════════════════════════════════════════════
+     Submit Feedback Modal
+═══════════════════════════════════════════════════════════ -->
 <div id="feedbackModal" class="hidden fixed inset-0 z-[99999] bg-black bg-opacity-50 overflow-y-auto py-4 px-4" onclick="closeFeedbackModalOutside(event)">
     <div class="flex items-start justify-center min-h-screen">
         <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full shadow-2xl my-auto max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
-            <div class="bg-gradient-to-r from-primary to-primary-hover px-6 py-4 flex justify-between items-center sticky top-0">
-                <h2 class="text-2xl font-bold text-white">Submit Feedback</h2>
+            <div class="bg-gradient-to-r from-primary to-primary-hover px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+                <h2 class="text-xl font-bold text-white">Submit Feedback</h2>
                 <button onclick="closeFeedbackModal()" class="text-white hover:text-gray-200 transition-colors">
                     <span class="material-icons-round">close</span>
                 </button>
             </div>
-            <form id="feedbackForm" class="p-6 space-y-5">
-                <!-- Type -->
+            <form id="feedbackForm" class="p-4 sm:p-6 space-y-5">
+
+                <!-- Type radio pills -->
                 <div>
                     <label class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Feedback Type *</label>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors has-[:checked]:border-blue-500">
-                            <input type="radio" name="type" value="FEEDBACK" class="w-4 h-4 text-blue-500" checked>
+                            <input type="radio" name="type" value="FEEDBACK" class="w-4 h-4 text-blue-500 shrink-0" checked>
                             <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Feedback</span>
                         </label>
                         <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors has-[:checked]:border-red-500">
-                            <input type="radio" name="type" value="BUG" class="w-4 h-4 text-red-500">
+                            <input type="radio" name="type" value="BUG" class="w-4 h-4 text-red-500 shrink-0">
                             <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Bug Report</span>
                         </label>
                         <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors has-[:checked]:border-green-500">
-                            <input type="radio" name="type" value="FEATURE_REQUEST" class="w-4 h-4 text-green-500">
+                            <input type="radio" name="type" value="FEATURE_REQUEST" class="w-4 h-4 text-green-500 shrink-0">
                             <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Feature Request</span>
                         </label>
                         <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors has-[:checked]:border-orange-500">
-                            <input type="radio" name="type" value="PERFORMANCE" class="w-4 h-4 text-orange-500">
-                            <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Performance Issue</span>
+                            <input type="radio" name="type" value="PERFORMANCE" class="w-4 h-4 text-orange-500 shrink-0">
+                            <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Performance</span>
                         </label>
                         <label class="flex items-center p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer transition-colors has-[:checked]:border-gray-500">
-                            <input type="radio" name="type" value="OTHER" class="w-4 h-4 text-gray-500">
+                            <input type="radio" name="type" value="OTHER" class="w-4 h-4 text-gray-500 shrink-0">
                             <span class="ml-2 text-sm font-medium text-white dark:text-gray-300">Other</span>
                         </label>
                     </div>
                 </div>
 
-                <!-- Priority -->
+                <!-- Priority custom dropdown -->
                 <div>
                     <label class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Priority</label>
-                    <select id="priority" name="priority" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                        <option value="LOW">Low</option>
-                        <option value="MEDIUM" selected>Medium</option>
-                        <option value="HIGH">High</option>
-                        <option value="CRITICAL">Critical</option>
-                    </select>
+                    <div class="relative" id="formPriorityWrapper">
+                        <input type="hidden" id="priority" name="priority" value="MEDIUM">
+                        <button type="button" id="formPriorityBtn" aria-haspopup="listbox" aria-expanded="false"
+                            class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors">
+                            <span id="formPriorityLabel">Medium</span>
+                            <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200 text-lg" id="formPriorityChevron">expand_more</span>
+                        </button>
+                        <ul id="formPriorityMenu" role="listbox"
+                            class="custom-dropdown-menu hidden border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                            <li role="option" data-value="LOW" data-label="Low" class="form-priority-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round mr-2 text-primary dark:text-white check-icon opacity-0">check</span>Low
+                            </li>
+                            <li role="option" data-value="MEDIUM" data-label="Medium" class="form-priority-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round mr-2 text-primary dark:text-white check-icon">check</span>Medium
+                            </li>
+                            <li role="option" data-value="HIGH" data-label="High" class="form-priority-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round mr-2 text-primary dark:text-white check-icon opacity-0">check</span>High
+                            </li>
+                            <li role="option" data-value="CRITICAL" data-label="Critical" class="form-priority-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round mr-2 text-primary dark:text-white check-icon opacity-0">check</span>Critical
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
-                <!-- Category, Name, Email, Subject, Description, Screenshot, Messages, Buttons -->
-                <!-- (All your original form fields are here) -->
+                <!-- Category custom dropdown -->
                 <div>
-                    <label for="category" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Category</label>
-                    <select id="category" name="category" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary">
-                        <option value="">Select a category...</option>
-                        <option value="Announcements">Announcements</option>
-                        <option value="Clubs">Clubs</option>
-                        <option value="Competitions">Competitions</option>
-                        <option value="Discipline">Discipline</option>
-                        <option value="Duty Roster">Duty Roster</option>
-                        <option value="Gate Pass">Gate Pass</option>
-                        <option value="Meetings">Meetings</option>
-                        <option value="Notifications">Notifications</option>
-                        <option value="General">General</option>
-                    </select>
+                    <label class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Category</label>
+                    <div class="relative" id="formCategoryWrapper">
+                        <input type="hidden" id="category" name="category" value="">
+                        <button type="button" id="formCategoryBtn" aria-haspopup="listbox" aria-expanded="false"
+                            class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors">
+                            <span id="formCategoryLabel" class="text-gray-400 dark:text-gray-500">Select a category...</span>
+                            <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200 text-lg" id="formCategoryChevron">expand_more</span>
+                        </button>
+                        <ul id="formCategoryMenu" role="listbox"
+                            class="custom-dropdown-menu hidden border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                            <li role="option" data-value="" data-label="" class="form-category-option flex items-center px-3 py-2.5 text-sm text-gray-400 dark:text-gray-500 cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary dark:text-white check-icon">check</span>Select a category...
+                            </li>
+                            <li role="option" data-value="Announcement" data-label="Announcement" class="form-category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary dark:text-white check-icon opacity-0">check</span>Announcements
+                            </li>
+                            <li role="option" data-value="Clubs" data-label="Clubs" class="form-category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary dark:text-white check-icon opacity-0">check</span>Clubs
+                            </li>
+                            <li role="option" data-value="Competitions" data-label="Competitions" class="form-category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary dark:text-white check-icon opacity-0">check</span>Competitions
+                            </li>
+                            <li role="option" data-value="Discipline" data-label="Discipline" class="form-category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary dark:text-white check-icon opacity-0">check</span>Discipline
+                            </li>
+                            <li role="option" data-value="Duty Roster" data-label="Duty Roster" class="form-category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary dark:text-white check-icon opacity-0">check</span>Duty Roster
+                            </li>
+                            <li role="option" data-value="Gate Pass" data-label="Gate Pass" class="form-category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary dark:text-white check-icon opacity-0">check</span>Gate Pass
+                            </li>
+                            <li role="option" data-value="Meetings" data-label="Meetings" class="form-category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary dark:text-white check-icon opacity-0">check</span>Meetings
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Name + Email -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label for="name" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Your Name</label>
-                        <input type="text" id="name" name="name" placeholder="Your name (optional)" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+                        <input type="text" id="name" name="name" placeholder="Your name (optional)"
+                            class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
                     </div>
                     <div>
                         <label for="email" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Email</label>
-                        <input type="email" id="email" name="email" placeholder="your@email.com (optional)" class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+                        <input type="email" id="email" name="email" placeholder="your@email.com (optional)"
+                            class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
                     </div>
                 </div>
 
+                <!-- Subject -->
                 <div>
                     <label for="subject" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Subject *</label>
-                    <input type="text" id="subject" name="subject" placeholder="Brief subject line" required class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
+                    <input type="text" id="subject" name="subject" placeholder="Brief subject line" required
+                        class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary">
                 </div>
 
+                <!-- Description -->
                 <div>
                     <label for="description" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Description *</label>
-                    <textarea id="description" name="description" rows="5" placeholder="Please provide detailed information about your feedback..." required class="w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"></textarea>
+                    <textarea id="description" name="description" rows="5" placeholder="Please provide detailed information about your feedback..." required
+                        class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none"></textarea>
                 </div>
 
+                <!-- Screenshot upload -->
                 <div>
-                    <label for="screenshot" class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Screenshot (optional)</label>
+                    <label class="text-sm font-semibold text-white dark:text-gray-300 mb-2 block">Screenshot (optional)</label>
                     <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center cursor-pointer hover:border-primary hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors" id="uploadArea">
                         <span class="material-icons-round text-4xl text-gray-400 mx-auto mb-2">image</span>
-                        <p class="text-sm text-white dark:text-gray-400">Drag and drop an image here or click to select</p>
+                        <p class="text-sm text-white dark:text-gray-400">Drag and drop or click to select</p>
                         <p class="text-xs text-white dark:text-gray-500 mt-1">PNG, JPG, GIF up to 5MB</p>
                         <input type="file" id="screenshot" name="screenshot" accept="image/*" class="hidden">
                     </div>
@@ -285,11 +436,11 @@
                 <div id="formError" class="hidden bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm"></div>
                 <div id="formSuccess" class="hidden bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg text-sm"></div>
 
-                <div class="flex gap-3 justify-end border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <button type="button" onclick="closeFeedbackModal()" class="px-6 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium">
+                <div class="flex gap-3 justify-end border-t border-gray-200 dark:border-gray-700 pt-5">
+                    <button type="button" onclick="closeFeedbackModal()" class="px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium text-sm">
                         Cancel
                     </button>
-                    <button type="submit" class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors font-medium flex items-center gap-2">
+                    <button type="submit" class="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors font-medium flex items-center gap-2 text-sm">
                         <span class="material-icons-round text-lg">send</span>
                         Submit Feedback
                     </button>
@@ -299,16 +450,18 @@
     </div>
 </div>
 
-<!-- Feedback Detail Modal -->
-<div id="detailModal" class="hidden fixed inset-0 z-[99999] bg-black bg-opacity-50 flex items-start justify-center pt-8 pb-8 overflow-y-auto" onclick="closeDetailModalOutside(event)">
+<!-- ══════════════════════════════════════════════════════════
+     Feedback Detail Modal
+═══════════════════════════════════════════════════════════ -->
+<div id="detailModal" class="hidden fixed inset-0 z-[99999] bg-black bg-opacity-50 flex items-start justify-center pt-8 pb-8 overflow-y-auto px-4" onclick="closeDetailModalOutside(event)">
     <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
         <div class="bg-gradient-to-r from-primary to-primary-hover px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-            <h2 class="text-2xl font-bold text-white" id="detailTitle">Feedback Details</h2>
+            <h2 class="text-xl font-bold text-white" id="detailTitle">Feedback Details</h2>
             <button onclick="closeDetailModal()" class="text-white hover:text-gray-200 transition-colors">
                 <span class="material-icons-round">close</span>
             </button>
         </div>
-        <div id="detailContent" class="p-6"></div>
+        <div id="detailContent" class="p-4 sm:p-6"></div>
     </div>
 </div>
 {% endblock %}
@@ -320,35 +473,105 @@ let currentFilters = { search: '', type: '', status: '', priority: '' };
 let currentPage = 1;
 const itemsPerPage = 5;
 
+// ── Generic custom dropdown factory ─────────────────────────────────────────
+function initCustomDropdown({ wrapperId, btnId, menuId, chevronId, labelId, optionClass, hiddenInputId, onChange }) {
+    const wrapper  = document.getElementById(wrapperId);
+    const btn      = document.getElementById(btnId);
+    const menu     = document.getElementById(menuId);
+    const chevron  = document.getElementById(chevronId);
+    const label    = document.getElementById(labelId);
+    const input    = document.getElementById(hiddenInputId);
+    const options  = wrapper.querySelectorAll('.' + optionClass);
+
+    function open() {
+        menu.classList.remove('hidden');
+        chevron.style.transform = 'rotate(180deg)';
+        btn.setAttribute('aria-expanded', 'true');
+    }
+    function close() {
+        menu.classList.add('hidden');
+        chevron.style.transform = '';
+        btn.setAttribute('aria-expanded', 'false');
+    }
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.contains('hidden') ? open() : close();
+    });
+
+    options.forEach(opt => {
+        opt.addEventListener('click', () => {
+            const value    = opt.dataset.value;
+            const optLabel = opt.dataset.label;
+            input.value    = value;
+
+            // Update label (grey placeholder if empty)
+            if (value === '') {
+                label.textContent = opt.textContent.trim();
+                label.className = 'text-gray-400 dark:text-gray-500';
+            } else {
+                label.textContent = optLabel;
+                label.className = '';
+            }
+
+            // Update check icons
+            options.forEach(o => o.querySelector('.check-icon').classList.add('opacity-0'));
+            opt.querySelector('.check-icon').classList.remove('opacity-0');
+
+            close();
+            if (onChange) onChange(value);
+        });
+    });
+
+    btn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); menu.classList.contains('hidden') ? open() : close(); }
+        else if (e.key === 'Escape') close();
+    });
+
+    // Close on outside click — store refs for global handler
+    wrapper._closeDropdown = close;
+}
+
+// Close all dropdowns when clicking outside
+document.addEventListener('click', () => {
+    document.querySelectorAll('[id$="Wrapper"]').forEach(w => {
+        if (w._closeDropdown) w._closeDropdown();
+    });
+});
+
+// ── Load & render ─────────────────────────────────────────────────────────────
 async function loadFeedback() {
     try {
         const response = await apiCall('/feedback/');
         if (response.status === 403) {
-            document.getElementById('feedbackContainer').innerHTML = `<div class="text-center py-12 bg-card-light dark:bg-card-dark rounded-lg p-8 border border-gray-200 dark:border-gray-700"><span class="material-icons-round text-yellow-400 text-5xl mb-3">info</span><p class="text-gray-700 dark:text-gray-300 font-semibold mb-2">View Restricted</p><p class="text-gray-600 dark:text-gray-400 text-sm">You can still submit feedback using the button above.</p></div>`;
+            document.getElementById('feedbackContainer').innerHTML = `
+                <div class="text-center py-12 bg-card-light dark:bg-card-dark rounded-lg p-8 border border-gray-200 dark:border-gray-700">
+                    <span class="material-icons-round text-yellow-400 text-5xl mb-3">info</span>
+                    <p class="text-gray-700 dark:text-gray-300 font-semibold mb-2">View Restricted</p>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">You can still submit feedback using the button above.</p>
+                </div>`;
             return;
         }
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
         const data = await response.json();
         allFeedback = data.results || data;
         updateStats();
         renderFeedback(allFeedback);
     } catch (error) {
         console.error('Error loading feedback:', error);
-        document.getElementById('feedbackContainer').innerHTML = `<div class="text-center py-12"><span class="material-icons-round text-red-400 text-5xl mb-3">error</span><p class="text-red-500">Failed to load feedback. Please try again.</p></div>`;
+        document.getElementById('feedbackContainer').innerHTML = `
+            <div class="text-center py-12">
+                <span class="material-icons-round text-red-400 text-5xl mb-3">error</span>
+                <p class="text-red-500">Failed to load feedback. Please try again.</p>
+            </div>`;
     }
 }
 
 function updateStats() {
-    const total = allFeedback.length;
-    const open = allFeedback.filter(f => f.status === 'OPEN').length;
-    const resolved = allFeedback.filter(f => f.status === 'RESOLVED').length;
-    const bugs = allFeedback.filter(f => f.type === 'BUG').length;
-
-    document.getElementById('totalFeedback').textContent = total;
-    document.getElementById('openIssues').textContent = open;
-    document.getElementById('resolvedFeedback').textContent = resolved;
-    document.getElementById('bugReports').textContent = bugs;
+    document.getElementById('totalFeedback').textContent   = allFeedback.length;
+    document.getElementById('openIssues').textContent      = allFeedback.filter(f => f.status === 'OPEN').length;
+    document.getElementById('resolvedFeedback').textContent= allFeedback.filter(f => f.status === 'RESOLVED').length;
+    document.getElementById('bugReports').textContent      = allFeedback.filter(f => f.type === 'BUG').length;
 }
 
 function renderFeedback(feedback) {
@@ -358,112 +581,95 @@ function renderFeedback(feedback) {
         document.getElementById('paginationContainer').innerHTML = '';
         return;
     }
-    
-    // Calculate pagination
+
     const totalPages = Math.ceil(feedback.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const pageItems = feedback.slice(startIndex, endIndex);
-    
+    const start      = (currentPage - 1) * itemsPerPage;
+    const pageItems  = feedback.slice(start, start + itemsPerPage);
+
+    const typeColors     = { FEEDBACK:'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400', BUG:'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400', FEATURE_REQUEST:'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400', PERFORMANCE:'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400', OTHER:'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400' };
+    const statusColors   = { OPEN:'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400', IN_PROGRESS:'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400', RESOLVED:'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400', CLOSED:'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400' };
+    const priorityColors = { LOW:'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400', MEDIUM:'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400', HIGH:'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400', CRITICAL:'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' };
+    const canManage = userData && (userData.is_staff || userData.is_superuser || userData.role?.can_manage_feedback);
+
     let html = '';
     pageItems.forEach(item => {
-        const typeColors = {'FEEDBACK': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','BUG': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400','FEATURE_REQUEST': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400','PERFORMANCE': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400','OTHER': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'};
-        const statusColors = {'OPEN': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','IN_PROGRESS': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400','RESOLVED': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400','CLOSED': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'};
-        const priorityColors = {'LOW': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400','MEDIUM': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','HIGH': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400','CRITICAL': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'};
-        const canManage = userData && (userData.is_staff || userData.is_superuser || userData.role?.can_manage_feedback);
-
         html += `
-            <div class="bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800  cursor-pointer a-card group relative" style="border-radius: 1rem; padding: 1.5rem; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); cursor: pointer; transition: all 0.3s;">
-                <div class="flex flex-wrap justify-between items-center mb-3">
-                    <div class="flex flex-wrap items-start gap-2">
-                        <span class="px-3 py-1 rounded-full text-2xs font-semibold ${typeColors[item.type] || typeColors['OTHER']}">${item.type_display}</span>
-                        <span class="px-3 py-1 rounded-full text-2xs font-semibold ${statusColors[item.status]}">${item.status_display}</span>
-                        <span class="px-3 py-1 rounded-full text-2xs font-semibold ${priorityColors[item.priority]}">${item.priority_display}</span>
-                    </div>
-                    ${canManage ? `
-                    <div>
-                        <button onclick="toggleKebabMenu(event, ${item.id})" class="ml-2 p-2 rounded-lg transition-colors">
-                            <span class="material-icons-round text-white dark:text-gray-400">more_vert</span>
-                        </button>
-                        <div id="kebab-${item.id}" class="hidden absolute right-0 top-10 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-40 min-w-max">
-                            <button onclick="updateFeedbackStatusQuick(${item.id}, 'OPEN')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b flex items-center gap-2">Mark Open</button>
-                            <button onclick="updateFeedbackStatusQuick(${item.id}, 'IN_PROGRESS')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b flex items-center gap-2">Mark In Progress</button>
-                            <button onclick="updateFeedbackStatusQuick(${item.id}, 'RESOLVED')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b flex items-center gap-2">Mark Resolved</button>
-                            <button onclick="updateFeedbackStatusQuick(${item.id}, 'CLOSED')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-red-600 dark:text-red-400 flex items-center gap-2">Mark Closed</button>
-                        </div>
-                    </div>` : ''}
+        <div class="feedback-card bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 sm:p-6 relative" style="transition: box-shadow 0.2s;">
+            <div class="flex items-start justify-between mb-3 gap-2">
+                <div class="badge-row">
+                    <span class="badge px-2.5 py-1 rounded-full text-xs font-semibold ${typeColors[item.type] || typeColors['OTHER']}">${item.type_display}</span>
+                    <span class="badge px-2.5 py-1 rounded-full text-xs font-semibold ${statusColors[item.status]}">${item.status_display}</span>
+                    <span class="badge px-2.5 py-1 rounded-full text-xs font-semibold ${priorityColors[item.priority]}">${item.priority_display}</span>
                 </div>
-                <h3 class="text-3xl font-bold text-lbg-main-dark dark:text-lbg-main-dark mb-3 pr-10">${item.subject}</h3>
-                <p class="text-sm text-white dark:text-gray-400 mb-3 line-clamp-2">${item.description || 'No description'}</p>
-                <div class="flex flex-wrap items-center justify-between text-xs text-lbg-main-dark dark:text-lbg-sub-dark pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center gap-3">
-                        <span>${item.submitted_by_name || item.email || 'Anonymous'}</span>
-                        ${item.category ? `<span>•</span><span>${item.category}</span>` : ''}
+                ${canManage ? `
+                <div class="relative shrink-0">
+                    <button onclick="toggleKebabMenu(event, ${item.id})" class="p-1.5 rounded-lg transition-colors" aria-label="Options">
+                        <span class="material-icons-round text-white dark:text-gray-400 text-xl">more_vert</span>
+                    </button>
+                    <div id="kebab-${item.id}" class="hidden absolute right-0 top-9 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-40 min-w-[150px]">
+                        <button onclick="updateFeedbackStatusQuick(${item.id}, 'OPEN')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b dark:border-gray-700">Mark Open</button>
+                        <button onclick="updateFeedbackStatusQuick(${item.id}, 'IN_PROGRESS')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b dark:border-gray-700">Mark In Progress</button>
+                        <button onclick="updateFeedbackStatusQuick(${item.id}, 'RESOLVED')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-700 dark:text-gray-300 border-b dark:border-gray-700">Mark Resolved</button>
+                        <button onclick="updateFeedbackStatusQuick(${item.id}, 'CLOSED')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-red-600 dark:text-red-400">Mark Closed</button>
                     </div>
-                    <span>${formatRelativeDate(item.created_at)}</span>
+                </div>` : ''}
+            </div>
+
+            <h3 class="text-lg sm:text-xl font-bold text-lbg-main-dark dark:text-lbg-main-dark mb-2 leading-snug"
+                style="overflow-wrap:break-word;word-break:break-word;">
+                ${item.subject}
+            </h3>
+            <p class="text-sm text-white dark:text-gray-400 mb-3 leading-relaxed"
+               style="overflow-wrap:break-word;word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                ${item.description || 'No description'}
+            </p>
+
+            <div class="card-footer pt-3 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-2 text-xs text-lbg-main-dark dark:text-lbg-sub-dark flex-wrap">
+                    <span>${item.submitted_by_name || item.email || 'Anonymous'}</span>
+                    ${item.category ? `<span>•</span><span>${item.category}</span>` : ''}
                 </div>
-                <div class="flex justify-end">
-                    <button onclick="viewFeedback(event, ${item.id})" class="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium text-sm transition-colors mt-4">
-                        <span class="material-icons-round text-base">visibility</span> View Details
+                <div class="flex items-center gap-3 mt-2 sm:mt-0">
+                    <span class="text-xs text-lbg-main-dark dark:text-lbg-sub-dark">${formatRelativeDate(item.created_at)}</span>
+                    <button onclick="viewFeedback(event, ${item.id})"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium text-xs transition-colors">
+                        <span class="material-icons-round text-sm">visibility</span> View Details
                     </button>
                 </div>
             </div>
-        `;
+        </div>`;
     });
+
     container.innerHTML = html;
-    
-    // Render pagination controls
-    renderPagination(totalPages, feedback.length);
+    renderPagination(totalPages);
 }
 
-function renderPagination(totalPages, totalItems) {
-    const paginationContainer = document.getElementById('paginationContainer');
-    if (totalPages <= 1) {
-        paginationContainer.innerHTML = '';
-        return;
-    }
-    
-    let paginationHtml = '';
-    
-    // Previous button
-    if (currentPage > 1) {
-        paginationHtml += `<button onclick="goToPage(${currentPage - 1})" class="px-3 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors text-sm font-medium"><span class="material-icons-round text-base">chevron_left</span></button>`;
-    }
-    
-    // Page buttons
+function renderPagination(totalPages) {
+    const pc = document.getElementById('paginationContainer');
+    if (totalPages <= 1) { pc.innerHTML = ''; return; }
+    let html = '';
+    if (currentPage > 1) html += `<button onclick="goToPage(${currentPage-1})" class="px-3 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm"><span class="material-icons-round text-base" style="vertical-align:middle">chevron_left</span></button>`;
     for (let i = 1; i <= totalPages; i++) {
-        if (i === currentPage) {
-            paginationHtml += `<button class="px-3 py-2 bg-primary text-white rounded-lg font-medium text-sm">${i}</button>`;
-        } else {
-            paginationHtml += `<button onclick="goToPage(${i})" class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg transition-colors text-sm font-medium">${i}</button>`;
-        }
+        html += i === currentPage
+            ? `<button class="px-3 py-2 bg-primary text-white rounded-lg font-medium text-sm">${i}</button>`
+            : `<button onclick="goToPage(${i})" class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg text-sm font-medium">${i}</button>`;
     }
-    
-    // Next button
-    if (currentPage < totalPages) {
-        paginationHtml += `<button onclick="goToPage(${currentPage + 1})" class="px-3 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors text-sm font-medium"><span class="material-icons-round text-base">chevron_right</span></button>`;
-    }
-    
-    paginationContainer.innerHTML = paginationHtml;
+    if (currentPage < totalPages) html += `<button onclick="goToPage(${currentPage+1})" class="px-3 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm"><span class="material-icons-round text-base" style="vertical-align:middle">chevron_right</span></button>`;
+    pc.innerHTML = html;
 }
 
 function goToPage(page) {
     currentPage = page;
-    const filtered = getFilteredFeedback();
-    renderFeedback(filtered);
-    window.scrollTo(0, 0);
+    renderFeedback(getFilteredFeedback());
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 async function viewFeedback(event, id) {
     event.stopPropagation();
     try {
         const response = await apiCall(`/feedback/${id}/`);
-        if (response.status === 403) {
-            showError("You don't have permission to view this feedback");
-            return;
-        }
+        if (response.status === 403) { showError("You don't have permission to view this feedback"); return; }
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
         const data = await response.json();
         closeFeedbackModal();
         closeDetailModal();
@@ -475,86 +681,80 @@ async function viewFeedback(event, id) {
 }
 
 function displayFeedbackDetail(feedback) {
-    const modal = document.getElementById('detailModal');
-    const content = document.getElementById('detailContent');
+    const modal    = document.getElementById('detailModal');
+    const content  = document.getElementById('detailContent');
     const canManage = userData && (userData.is_staff || userData.is_superuser || userData.role?.can_manage_feedback);
 
-    const typeColors = {'FEEDBACK': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','BUG': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400','FEATURE_REQUEST': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400','PERFORMANCE': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400','OTHER': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'};
-    const statusColors = {'OPEN': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','IN_PROGRESS': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400','RESOLVED': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400','CLOSED': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'};
-    const priorityColors = {'LOW': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400','MEDIUM': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400','HIGH': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400','CRITICAL': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'};
+    const typeColors     = { FEEDBACK:'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400', BUG:'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400', FEATURE_REQUEST:'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400', PERFORMANCE:'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400', OTHER:'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400' };
+    const statusColors   = { OPEN:'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400', IN_PROGRESS:'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400', RESOLVED:'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400', CLOSED:'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400' };
+    const priorityColors = { LOW:'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400', MEDIUM:'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400', HIGH:'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400', CRITICAL:'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' };
 
     content.innerHTML = `
         <div class="space-y-4">
-            <div class="flex flex-wrap gap-2 pb-4">
-                <span class="px-3 py-1 rounded-full text-xs font-semibold ${typeColors[feedback.type]}">${feedback.type_display}</span>
-                <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusColors[feedback.status]}">${feedback.status_display}</span>
-                <span class="px-3 py-1 rounded-full text-xs font-semibold ${priorityColors[feedback.priority]}">Priority: ${feedback.priority_display}</span>
+            <div class="badge-row pb-4">
+                <span class="badge px-3 py-1 rounded-full text-xs font-semibold ${typeColors[feedback.type]}">${feedback.type_display}</span>
+                <span class="badge px-3 py-1 rounded-full text-xs font-semibold ${statusColors[feedback.status]}">${feedback.status_display}</span>
+                <span class="badge px-3 py-1 rounded-full text-xs font-semibold ${priorityColors[feedback.priority]}">Priority: ${feedback.priority_display}</span>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700 pt-4"></div>
-            <div class="grid grid-cols-2 gap-4">
-                <div><p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-1">Submitted By</p><p class="text-sm text-white dark:text-white">${feedback.submitted_by_name}</p></div>
-                <div><p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-1">Email</p><p class="text-sm text-white dark:text-white">${feedback.email || 'N/A'}</p></div>
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4 grid grid-cols-2 gap-4">
+                <div><p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-1">Submitted By</p><p class="text-sm text-white dark:text-white break-words">${feedback.submitted_by_name}</p></div>
+                <div><p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-1">Email</p><p class="text-sm text-white dark:text-white break-words">${feedback.email || 'N/A'}</p></div>
                 <div><p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-1">Category</p><p class="text-sm text-white dark:text-white">${feedback.category || 'N/A'}</p></div>
                 <div><p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-1">Submitted</p><p class="text-sm text-white dark:text-white">${formatDate(feedback.created_at)}</p></div>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2">Subject</p>
-                <p class="text-base font-semibold text-white dark:text-white">${feedback.subject}</p>
+                <p class="text-base font-semibold text-white dark:text-white break-words">${feedback.subject}</p>
             </div>
-            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2">Description</p>
-                <p class="text-sm text-white dark:text-gray-300 leading-relaxed whitespace-pre-wrap">${feedback.description}</p>
+                <p class="text-sm text-white dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words">${feedback.description}</p>
             </div>
-            ${feedback.screenshot ? `<div class="border-t border-gray-200 dark:border-gray-700 pt-6"><p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Screenshot</p><img src="${feedback.screenshot}" class="max-w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700"></div>` : ''}
+            ${feedback.screenshot ? `<div class="border-t border-gray-200 dark:border-gray-700 pt-4"><p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Screenshot</p><img src="${feedback.screenshot}" class="max-w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700"></div>` : ''}
             ${canManage ? `
-                <div class="border-t border-gray-200 dark:border-gray-700 pt-6 space-y-4">
-                    <div>
-                        <label class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Update Status</label>
-                        <div class="flex gap-2 flex-wrap">
-                            <button onclick="updateFeedbackStatus(${feedback.id}, 'OPEN')" class="px-3 py-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-lg text-xs font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors ${feedback.status === 'OPEN' ? 'ring-2 ring-blue-500' : ''}">Open</button>
-                            <button onclick="updateFeedbackStatus(${feedback.id}, 'IN_PROGRESS')" class="px-3 py-1.5 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-lg text-xs font-medium hover:bg-yellow-200 dark:hover:bg-yellow-900/50 transition-colors ${feedback.status === 'IN_PROGRESS' ? 'ring-2 ring-yellow-500' : ''}">In Progress</button>
-                            <button onclick="updateFeedbackStatus(${feedback.id}, 'RESOLVED')" class="px-3 py-1.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-lg text-xs font-medium hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors ${feedback.status === 'RESOLVED' ? 'ring-2 ring-green-500' : ''}">Resolved</button>
-                            <button onclick="updateFeedbackStatus(${feedback.id}, 'CLOSED')" class="px-3 py-1.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded-lg text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors ${feedback.status === 'CLOSED' ? 'ring-2 ring-gray-500' : ''}">Closed</button>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Update Priority</label>
-                        <div class="flex gap-2 flex-wrap">
-                            <button onclick="updateFeedbackPriority(${feedback.id}, 'LOW')" class="px-3 py-1.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded-lg text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors ${feedback.priority === 'LOW' ? 'ring-2 ring-gray-500' : ''}">Low</button>
-                            <button onclick="updateFeedbackPriority(${feedback.id}, 'MEDIUM')" class="px-3 py-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-lg text-xs font-medium hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors ${feedback.priority === 'MEDIUM' ? 'ring-2 ring-blue-500' : ''}">Medium</button>
-                            <button onclick="updateFeedbackPriority(${feedback.id}, 'HIGH')" class="px-3 py-1.5 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 rounded-lg text-xs font-medium hover:bg-orange-200 dark:hover:bg-orange-900/50 transition-colors ${feedback.priority === 'HIGH' ? 'ring-2 ring-orange-500' : ''}">High</button>
-                            <button onclick="updateFeedbackPriority(${feedback.id}, 'CRITICAL')" class="px-3 py-1.5 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-lg text-xs font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors ${feedback.priority === 'CRITICAL' ? 'ring-2 ring-red-500' : ''}">Critical</button>
-                        </div>
-                    </div>
-                    <div>
-                        <label for="adminNotesInput" class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Add Admin Notes</label>
-                        <textarea id="adminNotesInput" placeholder="Add internal notes..." rows="3" class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"></textarea>
-                        <button onclick="addFeedbackNotes(${feedback.id})" class="mt-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors text-sm">Save Notes</button>
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
+                <div>
+                    <label class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Update Status</label>
+                    <div class="flex gap-2 flex-wrap">
+                        <button onclick="updateFeedbackStatus(${feedback.id}, 'OPEN')" class="px-3 py-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors ${feedback.status==='OPEN'?'ring-2 ring-blue-500':''}">Open</button>
+                        <button onclick="updateFeedbackStatus(${feedback.id}, 'IN_PROGRESS')" class="px-3 py-1.5 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-lg text-xs font-medium hover:bg-yellow-200 transition-colors ${feedback.status==='IN_PROGRESS'?'ring-2 ring-yellow-500':''}">In Progress</button>
+                        <button onclick="updateFeedbackStatus(${feedback.id}, 'RESOLVED')" class="px-3 py-1.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-lg text-xs font-medium hover:bg-green-200 transition-colors ${feedback.status==='RESOLVED'?'ring-2 ring-green-500':''}">Resolved</button>
+                        <button onclick="updateFeedbackStatus(${feedback.id}, 'CLOSED')" class="px-3 py-1.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors ${feedback.status==='CLOSED'?'ring-2 ring-gray-500':''}">Closed</button>
                     </div>
                 </div>
-            ` : ''}
-        </div>
-    `;
+                <div>
+                    <label class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Update Priority</label>
+                    <div class="flex gap-2 flex-wrap">
+                        <button onclick="updateFeedbackPriority(${feedback.id}, 'LOW')" class="px-3 py-1.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors ${feedback.priority==='LOW'?'ring-2 ring-gray-500':''}">Low</button>
+                        <button onclick="updateFeedbackPriority(${feedback.id}, 'MEDIUM')" class="px-3 py-1.5 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-lg text-xs font-medium hover:bg-blue-200 transition-colors ${feedback.priority==='MEDIUM'?'ring-2 ring-blue-500':''}">Medium</button>
+                        <button onclick="updateFeedbackPriority(${feedback.id}, 'HIGH')" class="px-3 py-1.5 bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 rounded-lg text-xs font-medium hover:bg-orange-200 transition-colors ${feedback.priority==='HIGH'?'ring-2 ring-orange-500':''}">High</button>
+                        <button onclick="updateFeedbackPriority(${feedback.id}, 'CRITICAL')" class="px-3 py-1.5 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-lg text-xs font-medium hover:bg-red-200 transition-colors ${feedback.priority==='CRITICAL'?'ring-2 ring-red-500':''}">Critical</button>
+                    </div>
+                </div>
+                <div>
+                    <label for="adminNotesInput" class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Add Admin Notes</label>
+                    <textarea id="adminNotesInput" placeholder="Add internal notes..." rows="3"
+                        class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"></textarea>
+                    <button onclick="addFeedbackNotes(${feedback.id})" class="mt-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors text-sm">Save Notes</button>
+                </div>
+            </div>` : ''}
+        </div>`;
+
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
 }
 
-function closeDetailModal() { 
+function closeDetailModal() {
     document.getElementById('detailModal').classList.add('hidden');
     document.body.style.overflow = '';
 }
-
-function closeDetailModalOutside(event) {
-    if (event.target.id === 'detailModal') {
-        closeDetailModal();
-    }
-}
+function closeDetailModalOutside(e) { if (e.target.id === 'detailModal') closeDetailModal(); }
 
 function openFeedbackModal() {
     closeDetailModal();
-    if (userData && userData.email) {
+    if (userData?.email) {
         document.getElementById('email').value = userData.email;
-        document.getElementById('name').value = `${userData.first_name || ''} ${userData.last_name || ''}`.trim();
+        document.getElementById('name').value = `${userData.first_name||''} ${userData.last_name||''}`.trim();
     }
     document.getElementById('feedbackModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -565,275 +765,185 @@ function closeFeedbackModal() {
     document.getElementById('filePreview').classList.add('hidden');
     document.body.style.overflow = '';
 }
+function closeFeedbackModalOutside(e) { if (e.target.id === 'feedbackModal') closeFeedbackModal(); }
 
-function closeFeedbackModalOutside(event) {
-    if (event.target.id === 'feedbackModal') {
-        closeFeedbackModal();
-    }
+// ── Filters ───────────────────────────────────────────────────────────────────
+function applyFilters() {
+    currentFilters.search   = document.getElementById('searchFeedback').value.toLowerCase();
+    currentFilters.type     = document.getElementById('filterType').value;
+    currentFilters.status   = document.getElementById('filterStatus').value;
+    currentFilters.priority = document.getElementById('filterPriority').value;
+    currentPage = 1;
+    renderFeedback(getFilteredFeedback());
 }
 
-// Helper Functions
-function initFormListeners() {
-    const uploadArea = document.getElementById('uploadArea');
-    if (uploadArea) {
-        uploadArea.addEventListener('click', () => document.getElementById('screenshot').click());
-        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('border-primary', 'bg-primary', 'bg-opacity-5'); });
-        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('border-primary', 'bg-primary', 'bg-opacity-5'));
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('border-primary', 'bg-primary', 'bg-opacity-5');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                document.getElementById('screenshot').files = files;
-                previewScreenshot();
-            }
-        });
-    }
-    const screenshotInput = document.getElementById('screenshot');
-    if (screenshotInput) screenshotInput.addEventListener('change', previewScreenshot);
-
-    const feedbackForm = document.getElementById('feedbackForm');
-    if (feedbackForm) {
-        feedbackForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData();
-            const type = document.querySelector('input[name="type"]:checked').value;
-            const priority = document.getElementById('priority').value;
-            const category = document.getElementById('category').value;
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const subject = document.getElementById('subject').value.trim();
-            const description = document.getElementById('description').value.trim();
-            const screenshot = document.getElementById('screenshot').files[0];
-
-            if (!subject || !description) {
-                document.getElementById('formError').textContent = 'Please fill in all required fields';
-                document.getElementById('formError').classList.remove('hidden');
-                return;
-            }
-
-            formData.append('type', type);
-            formData.append('priority', priority);
-            if (category) formData.append('category', category);
-            if (name) formData.append('name', name);
-            if (email) formData.append('email', email);
-            formData.append('subject', subject);
-            formData.append('description', description);
-            if (screenshot) formData.append('screenshot', screenshot);
-
-            try {
-                const token = localStorage.getItem('access_token');
-                const response = await fetch('/api/feedback/', {
-                    method: 'POST',
-                    headers: token ? {
-                        'Authorization': `Bearer ${token}`
-                    } : {},
-                    body: formData
-                });
-
-                const data = await response.json();
-                
-                if (response.ok || response.status === 201) {
-                    document.getElementById('formSuccess').textContent = 'Feedback submitted successfully!';
-                    document.getElementById('formSuccess').classList.remove('hidden');
-                    document.getElementById('feedbackForm').reset();
-                    document.getElementById('filePreview').classList.add('hidden');
-                    setTimeout(() => {
-                        closeFeedbackModal();
-                        loadFeedback();
-                    }, 2000);
-                } else {
-                    const errorMessage = data.detail || data.error || data.message || 'Failed to submit feedback';
-                    document.getElementById('formError').textContent = errorMessage;
-                    document.getElementById('formError').classList.remove('hidden');
-                    console.error('Feedback submission error:', data);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('formError').textContent = 'An error occurred. Please try again.';
-                document.getElementById('formError').classList.remove('hidden');
-            }
-        });
-    }
-
-    document.getElementById('searchFeedback').addEventListener('input', applyFilters);
-    document.getElementById('filterType').addEventListener('change', applyFilters);
-    document.getElementById('filterStatus').addEventListener('change', applyFilters);
-    document.getElementById('filterPriority').addEventListener('change', applyFilters);
+function getFilteredFeedback() {
+    return allFeedback.filter(item => {
+        const s = currentFilters.search;
+        return (!s || item.subject.toLowerCase().includes(s) || (item.description||'').toLowerCase().includes(s))
+            && (!currentFilters.type     || item.type === currentFilters.type)
+            && (!currentFilters.status   || item.status === currentFilters.status)
+            && (!currentFilters.priority || item.priority === currentFilters.priority);
+    });
 }
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function formatRelativeDate(dateString) {
+    const diff    = Date.now() - new Date(dateString);
+    const minutes = Math.floor(diff / 60000);
+    const hours   = Math.floor(diff / 3600000);
+    const days    = Math.floor(diff / 86400000);
+    if (minutes < 1)  return 'just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24)   return `${hours}h ago`;
+    if (days === 1)   return 'yesterday';
+    if (days < 7)     return `${days}d ago`;
+    return new Date(dateString).toLocaleDateString();
+}
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+function toggleKebabMenu(event, id) {
+    event.stopPropagation();
+    document.getElementById(`kebab-${id}`).classList.toggle('hidden');
+}
+function showSuccess(msg) {
+    const el = document.getElementById('formSuccess');
+    if (el) { el.textContent = msg; el.classList.remove('hidden'); setTimeout(() => el.classList.add('hidden'), 3000); }
+}
+function showError(msg) {
+    const el = document.getElementById('formError');
+    if (el) { el.textContent = msg; el.classList.remove('hidden'); setTimeout(() => el.classList.add('hidden'), 4000); }
+}
+
+// ── Admin actions ─────────────────────────────────────────────────────────────
+async function updateFeedbackStatusQuick(feedbackId, newStatus) {
+    try {
+        const r = await apiCall(`/feedback/${feedbackId}/update_status/`, { method:'POST', body: JSON.stringify({ status: newStatus }) });
+        if (!r.ok) { const d = await r.json(); showError(d.error || 'Failed to update status'); return; }
+        showSuccess('Status updated');
+        document.getElementById(`kebab-${feedbackId}`)?.classList.add('hidden');
+        loadFeedback();
+    } catch (e) { showError('Failed to update status'); }
+}
+async function updateFeedbackStatus(feedbackId, newStatus) {
+    try {
+        const r = await apiCall(`/feedback/${feedbackId}/update_status/`, { method:'POST', body: JSON.stringify({ status: newStatus }) });
+        if (!r.ok) { const d = await r.json(); showError(d.error || 'Failed to update status'); return; }
+        showSuccess('Status updated successfully');
+        viewFeedback({ stopPropagation:()=>{} }, feedbackId);
+        loadFeedback();
+    } catch (e) { showError('Failed to update status'); }
+}
+async function updateFeedbackPriority(feedbackId, newPriority) {
+    try {
+        const r = await apiCall(`/feedback/${feedbackId}/update_priority/`, { method:'POST', body: JSON.stringify({ priority: newPriority }) });
+        if (!r.ok) { const d = await r.json(); showError(d.error || 'Failed to update priority'); return; }
+        showSuccess('Priority updated successfully');
+        viewFeedback({ stopPropagation:()=>{} }, feedbackId);
+        loadFeedback();
+    } catch (e) { showError('Failed to update priority'); }
+}
+async function addFeedbackNotes(feedbackId) {
+    const notes = document.getElementById('adminNotesInput')?.value.trim();
+    if (!notes) { showError('Please enter some notes'); return; }
+    try {
+        const r = await apiCall(`/feedback/${feedbackId}/add_notes/`, { method:'POST', body: JSON.stringify({ notes }) });
+        if (!r.ok) { const d = await r.json(); showError(d.error || 'Failed to add notes'); return; }
+        showSuccess('Notes added successfully');
+        document.getElementById('adminNotesInput').value = '';
+        viewFeedback({ stopPropagation:()=>{} }, feedbackId);
+    } catch (e) { showError('Failed to add notes'); }
+}
+
+// ── Screenshot ─────────────────────────────────────────────────────────────────
 function previewScreenshot() {
     const file = document.getElementById('screenshot').files[0];
     if (file) {
         const reader = new FileReader();
-        reader.onload = (e) => {
+        reader.onload = e => {
             document.getElementById('previewImage').src = e.target.result;
             document.getElementById('filePreview').classList.remove('hidden');
         };
         reader.readAsDataURL(file);
     }
 }
-
 function clearScreenshot() {
     document.getElementById('screenshot').value = '';
     document.getElementById('filePreview').classList.add('hidden');
 }
 
-function applyFilters() {
-    currentFilters.search = document.getElementById('searchFeedback').value.toLowerCase();
-    currentFilters.type = document.getElementById('filterType').value;
-    currentFilters.status = document.getElementById('filterStatus').value;
-    currentFilters.priority = document.getElementById('filterPriority').value;
-    currentPage = 1;
-
-    const filtered = getFilteredFeedback();
-    renderFeedback(filtered);
-}
-
-function getFilteredFeedback() {
-    return allFeedback.filter(item => {
-        const matchesSearch = !currentFilters.search || 
-            item.subject.toLowerCase().includes(currentFilters.search) ||
-            (item.description && item.description.toLowerCase().includes(currentFilters.search));
-        const matchesType = !currentFilters.type || item.type === currentFilters.type;
-        const matchesStatus = !currentFilters.status || item.status === currentFilters.status;
-        const matchesPriority = !currentFilters.priority || item.priority === currentFilters.priority;
-        return matchesSearch && matchesType && matchesStatus && matchesPriority;
+// ── Init ──────────────────────────────────────────────────────────────────────
+function initFormListeners() {
+    // Screenshot drag/drop
+    const uploadArea = document.getElementById('uploadArea');
+    uploadArea.addEventListener('click', () => document.getElementById('screenshot').click());
+    uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('border-primary'); });
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('border-primary'));
+    uploadArea.addEventListener('drop', e => {
+        e.preventDefault();
+        uploadArea.classList.remove('border-primary');
+        if (e.dataTransfer.files.length) { document.getElementById('screenshot').files = e.dataTransfer.files; previewScreenshot(); }
     });
-}
+    document.getElementById('screenshot').addEventListener('change', previewScreenshot);
 
-function formatRelativeDate(dateString) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = now - date;
-    const minutes = Math.floor(diff / (1000 * 60));
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    // Form submit
+    document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const subject     = document.getElementById('subject').value.trim();
+        const description = document.getElementById('description').value.trim();
+        if (!subject || !description) {
+            document.getElementById('formError').textContent = 'Please fill in all required fields';
+            document.getElementById('formError').classList.remove('hidden');
+            return;
+        }
+        const formData = new FormData();
+        formData.append('type',        document.querySelector('input[name="type"]:checked').value);
+        formData.append('priority',    document.getElementById('priority').value);
+        formData.append('subject',     subject);
+        formData.append('description', description);
+        const cat = document.getElementById('category').value;
+        if (cat) formData.append('category', cat);
+        const name = document.getElementById('name').value.trim();
+        if (name) formData.append('name', name);
+        const email = document.getElementById('email').value.trim();
+        if (email) formData.append('email', email);
+        const ss = document.getElementById('screenshot').files[0];
+        if (ss) formData.append('screenshot', ss);
 
-    if (minutes < 1) return 'just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days === 1) return 'yesterday';
-    if (days < 7) return `${days}d ago`;
-    return date.toLocaleDateString();
-}
-
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+        try {
+            const token    = localStorage.getItem('access_token');
+            const response = await fetch('/api/feedback/', {
+                method: 'POST',
+                headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+                body: formData
+            });
+            const data = await response.json();
+            if (response.ok || response.status === 201) {
+                document.getElementById('formSuccess').textContent = 'Feedback submitted successfully!';
+                document.getElementById('formSuccess').classList.remove('hidden');
+                document.getElementById('feedbackForm').reset();
+                document.getElementById('filePreview').classList.add('hidden');
+                setTimeout(() => { closeFeedbackModal(); loadFeedback(); }, 2000);
+            } else {
+                document.getElementById('formError').textContent = data.detail || data.error || data.message || 'Failed to submit feedback';
+                document.getElementById('formError').classList.remove('hidden');
+            }
+        } catch (error) {
+            document.getElementById('formError').textContent = 'An error occurred. Please try again.';
+            document.getElementById('formError').classList.remove('hidden');
+        }
     });
-}
 
-function toggleKebabMenu(event, feedbackId) {
-    event.stopPropagation();
-    const menu = document.getElementById(`kebab-${feedbackId}`);
-    if (menu) menu.classList.toggle('hidden');
-}
+    // Filter search input
+    document.getElementById('searchFeedback').addEventListener('input', applyFilters);
 
-async function updateFeedbackStatusQuick(feedbackId, newStatus) {
-    try {
-        const response = await apiCall(`/feedback/${feedbackId}/update_status/`, {
-            method: 'POST',
-            body: JSON.stringify({ status: newStatus })
-        });
-        if (!response.ok) {
-            const data = await response.json();
-            showError(data.error || 'Failed to update status');
-            return;
-        }
-        showSuccess('Status updated');
-        const menu = document.getElementById(`kebab-${feedbackId}`);
-        if (menu) menu.classList.add('hidden');
-        loadFeedback();
-    } catch (error) {
-        console.error('Error:', error);
-        showError('Failed to update status');
-    }
-}
-
-async function updateFeedbackStatus(feedbackId, newStatus) {
-    try {
-        const response = await apiCall(`/feedback/${feedbackId}/update_status/`, {
-            method: 'POST',
-            body: JSON.stringify({ status: newStatus })
-        });
-        if (!response.ok) {
-            const data = await response.json();
-            showError(data.error || 'Failed to update status');
-            return;
-        }
-        showSuccess('Status updated successfully');
-        viewFeedback({stopPropagation: () => {}}, feedbackId);
-        loadFeedback();
-    } catch (error) {
-        console.error('Error:', error);
-        showError('Failed to update status');
-    }
-}
-
-async function updateFeedbackPriority(feedbackId, newPriority) {
-    try {
-        const response = await apiCall(`/feedback/${feedbackId}/update_priority/`, {
-            method: 'POST',
-            body: JSON.stringify({ priority: newPriority })
-        });
-        if (!response.ok) {
-            const data = await response.json();
-            showError(data.error || 'Failed to update priority');
-            return;
-        }
-        showSuccess('Priority updated successfully');
-        viewFeedback({stopPropagation: () => {}}, feedbackId);
-        loadFeedback();
-    } catch (error) {
-        console.error('Error:', error);
-        showError('Failed to update priority');
-    }
-}
-
-async function addFeedbackNotes(feedbackId) {
-    const notesInput = document.getElementById('adminNotesInput');
-    const notes = notesInput.value.trim();
-    if (!notes) {
-        showError('Please enter some notes');
-        return;
-    }
-    try {
-        const response = await apiCall(`/feedback/${feedbackId}/add_notes/`, {
-            method: 'POST',
-            body: JSON.stringify({ notes: notes })
-        });
-        if (!response.ok) {
-            const data = await response.json();
-            showError(data.error || 'Failed to add notes');
-            return;
-        }
-        showSuccess('Notes added successfully');
-        notesInput.value = '';
-        viewFeedback({stopPropagation: () => {}}, feedbackId);
-    } catch (error) {
-        console.error('Error:', error);
-        showError('Failed to add notes');
-    }
-}
-
-function showSuccess(message) {
-    const successDiv = document.getElementById('formSuccess');
-    if (successDiv) {
-        successDiv.textContent = message;
-        successDiv.classList.remove('hidden');
-        setTimeout(() => successDiv.classList.add('hidden'), 3000);
-    }
-}
-
-function showError(message) {
-    const errorDiv = document.getElementById('formError');
-    if (errorDiv) {
-        errorDiv.textContent = message;
-        errorDiv.classList.remove('hidden');
-        setTimeout(() => errorDiv.classList.add('hidden'), 4000);
-    }
+    // Init all custom dropdowns
+    initCustomDropdown({ wrapperId:'typeFilterWrapper', btnId:'typeFilterBtn', menuId:'typeFilterMenu', chevronId:'typeFilterChevron', labelId:'typeFilterLabel', optionClass:'filter-type-option', hiddenInputId:'filterType', onChange: applyFilters });
+    initCustomDropdown({ wrapperId:'statusFilterWrapper', btnId:'statusFilterBtn', menuId:'statusFilterMenu', chevronId:'statusFilterChevron', labelId:'statusFilterLabel', optionClass:'filter-status-option', hiddenInputId:'filterStatus', onChange: applyFilters });
+    initCustomDropdown({ wrapperId:'priorityFilterWrapper', btnId:'priorityFilterBtn', menuId:'priorityFilterMenu', chevronId:'priorityFilterChevron', labelId:'priorityFilterLabel', optionClass:'filter-priority-option', hiddenInputId:'filterPriority', onChange: applyFilters });
+    initCustomDropdown({ wrapperId:'formPriorityWrapper', btnId:'formPriorityBtn', menuId:'formPriorityMenu', chevronId:'formPriorityChevron', labelId:'formPriorityLabel', optionClass:'form-priority-option', hiddenInputId:'priority' });
+    initCustomDropdown({ wrapperId:'formCategoryWrapper', btnId:'formCategoryBtn', menuId:'formCategoryMenu', chevronId:'formCategoryChevron', labelId:'formCategoryLabel', optionClass:'form-category-option', hiddenInputId:'category' });
 }
 
 async function initFeedback() {
