@@ -19,14 +19,14 @@
         <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-6">
             <div class="min-w-0 flex-1">
                 <h1 id="studentName" class="text-2xl sm:text-3xl font-bold text-lbg-main-dark dark:text-lbg-main-dark break-words">Loading...</h1>
-                <p class="text-sm sm:text-base md:text-lg text-lbg-sub-dark dark:text-lbg-sub-dark mt-2 break-all sm:break-normal">
+                <p class="text-sm sm:text-base md:text-lg text-white dark:text-lbg-sub-dark mt-2 break-all sm:break-normal">
                     DNO: <span class="font-mono" id="studentDno">—</span> • Class: <span id="studentClass">—</span>
                 </p>
             </div>
             <div class="flex flex-row items-center justify-between md:justify-end gap-6 border-t border-gray-200 dark:border-gray-700/50 md:border-none pt-4 md:pt-0">
                 <div class="text-center flex flex-row md:flex-col items-center gap-3 md:gap-1">
                     <div id="offenseCount" class="text-4xl sm:text-5xl md:text-6xl font-bold text-red-600 dark:text-red-400 leading-none">0</div>
-                    <div class="text-xs sm:text-sm text-lbg-sub-dark dark:text-lbg-sub-dark font-medium md:mt-1">
+                    <div class="text-xs sm:text-sm text-white dark:text-lbg-sub-dark font-medium md:mt-1">
                         Total <span id="offenseLabel">Offenses</span>
                     </div>
                 </div>
@@ -42,7 +42,7 @@
         <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h2 class="text-lg sm:text-xl font-semibold text-lbg-main-dark dark:text-lbg-main-dark">Offense History (<span id="historyCount">0</span>)</h2>
             <div class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
-                <span class="text-xs sm:text-sm font-medium text-lbg-sub-dark dark:text-lbg-sub-dark whitespace-nowrap">Sort by:</span>
+                <span class="text-xs sm:text-sm font-medium text-white dark:text-lbg-sub-dark whitespace-nowrap">Sort by:</span>
                 
                 <input type="hidden" id="sortSelect" value="newest" />
 
@@ -81,9 +81,9 @@
         </div>
 
         <div class="divide-y divide-gray-200 dark:divide-gray-700" id="historyContainer">
-            <div class="p-8 sm:p-12 text-center text-text-sub-light dark:text-lbg-sub-dark">
-                <span class="material-icons-round text-4xl sm:text-6xl mb-3 sm:mb-4 opacity-50">hourglass_empty</span>
-                <p class="text-sm sm:text-base">Loading offense history...</p>
+            <div class="p-8 sm:p-12 text-center text-white dark:text-lbg-sub-dark">
+                <span class="material-icons-round text-4xl sm:text-6xl mb-3 sm:mb-4 text-white">hourglass_empty</span>
+                <p class="text-sm sm:text-base text-white">Loading offense history...</p>
             </div>
         </div>
     </div>
@@ -108,7 +108,7 @@
 </div>
 
 <div id="addOffenseModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-    <div class="bg-white dark:bg-card-dark rounded-xl p-5 sm:p-8 max-w-lg w-full shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+    <div class="bg-white dark:bg-card-dark rounded-xl p-5 sm:p-8 max-w-lg w-full shadow-2xl border border-gray-200 dark:border-gray-700">
         <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-lbg-main-dark mb-4 sm:mb-6">Add New Offense</h3>
         
         <form id="addOffenseForm" class="space-y-4">
@@ -134,7 +134,7 @@
                     <ul
                         id="categoryDropdownMenu"
                         role="listbox"
-                        class="absolute z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden max-h-48 overflow-y-auto"
+                        class="absolute z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg max-h-60 overflow-y-auto hidden"
                     >
                         <li role="option" data-value="UNIFORM" data-label="Uniform Violation"
                             class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">

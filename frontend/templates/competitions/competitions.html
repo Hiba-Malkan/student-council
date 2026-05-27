@@ -13,28 +13,31 @@
 
 {% block content %}
 <!-- View Signups Button -->
-<div id="competitionSignupsButtonContainer" class="mb-6 hidden">
-    <a href="/competitions/signups/" class="inline-flex items-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors" style="background-color: #256a3f !important; color: #ffffff !important;">
-        <span class="material-icons-round text-sm mr-2">assessment</span>
-        View Competition Signups
-    </a>
-</div>
 
 <!-- Add New Competition Button -->
-<section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
-    <div class="relative w-full sm:w-3/5">
-        <div>
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span class="material-icons-round text-gray-400 dark:text-gray-300 text-lg">search</span>
-            </div>
-            <input type="text" id="searchCompetitions" class="block w-full pl-10 pr-6 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-text-main-light dark:text-lbg-main-dark placeholder-text-gray-700 dark:placeholder-text-sub-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors" placeholder="Search competitions...">
+<section class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
+    <div class="relative w-full sm:flex-1">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <span class="material-icons-round text-gray-400 dark:text-gray-300 text-lg">search</span>
         </div>
+        <input type="text" id="searchCompetitions" class="block w-full pl-10 pr-6 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-text-main-light dark:text-lbg-main-dark placeholder-text-gray-700 dark:placeholder-text-sub-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors" placeholder="Search competitions...">
     </div>
-    <div class="w-full sm:w-auto flex items-center justify-center sm:justify-end" id="addCompetitionSection" style="display: none;">
-        <a href="/competitions/new/" class="inline-flex items-center justify-center w-full sm:w-auto px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-            <span class="material-icons-round text-sm mr-2">add</span>
-            Add New Competition
-        </a>
+
+    <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto justify-start sm:justify-end">
+        
+        <div id="addCompetitionSection" class="w-full sm:w-auto" style="display: none;">
+            <a href="/competitions/new/" class="inline-flex items-center justify-center whitespace-nowrap w-full sm:w-auto px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                <span class="material-icons-round text-sm mr-2">add</span>
+                Add New Competition
+            </a>
+        </div>
+
+        <div id="competitionSignupsButtonContainer" class="w-full sm:w-auto" style="display: none;">
+            <a href="/competitions/signups/" class="inline-flex items-center justify-center whitespace-nowrap w-full sm:w-auto px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                <span class="material-icons-round text-sm mr-2">assessment</span>
+                View Competition Signups
+            </a>
+        </div>
     </div>
 </section>
 
@@ -510,13 +513,13 @@ document.getElementById('searchCompetitions').addEventListener('input', (e) => {
 async function checkManagePermission() {
     if (userData.is_staff || userData.is_superuser) {
         document.getElementById('addCompetitionSection').style.display = 'block';
-        document.getElementById('competitionSignupsButtonContainer').classList.remove('hidden');
+        document.getElementById('competitionSignupsButtonContainer').style.display = 'block';
         return;
     }
     
     if (userData.role_detail && userData.role_detail.can_manage_competitions) {
         document.getElementById('addCompetitionSection').style.display = 'block';
-        document.getElementById('competitionSignupsButtonContainer').classList.remove('hidden');
+        document.getElementById('competitionSignupsButtonContainer').style.display = 'block';
     }
 }
 

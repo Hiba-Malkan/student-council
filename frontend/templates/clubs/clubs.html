@@ -12,69 +12,50 @@
 {% block page_subtitle %}Manage and view all registered student organizations.{% endblock %}
 
 {% block content %}
-<div id="clubSignupsButtonContainer" class="mb-6 hidden">
-    <a href="/clubs/signups/" class="inline-flex items-center px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm transition-colors" style="background-color: #256a3f !important; color: #ffffff !important;">
-        <span class="material-icons-round text-sm mr-2">assessment</span>
-        View Club Signups
-    </a>
-</div>
-
-<section class="mb-6">
-    <div>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
-            <div class="relative w-full sm:w-3/5">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span class="material-icons-round text-gray-400 dark:text-gray-300 text-lg">search</span>
-                </div>
-                <input type="text" id="searchClubs" class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-text-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500" placeholder="Search by name, founders, or tutors...">
-            </div>
+<section class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 bg-card-light dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">    
+    <div class="relative w-full sm:flex-1">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <span class="material-icons-round text-gray-400 dark:text-gray-300 text-lg">search</span>
+        </div>
+        <input type="text" id="searchClubs" class="block w-full pl-10 pr-6 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-text-main-light dark:text-lbg-main-dark placeholder-text-gray-700 dark:placeholder-text-sub-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm transition-colors" placeholder="Search by name, founders, or tutors...">
+    </div>
             
-            <div class="relative w-full sm:w-auto sm:min-w-[160px]" id="statusDropdownWrapper">
-                <input type="hidden" id="filterStatus" name="status" value="" />
-                
-                <button
-                    type="button"
-                    id="statusDropdownBtn"
-                    aria-haspopup="listbox"
-                    aria-expanded="false"
-                    class="flex w-full items-center justify-between rounded-lg border border-transparent bg-input-bg-light dark:bg-input-bg-dark text-sm text-lbg-main-light dark:text-lbg-main-dark px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
-                >
-                    <span id="statusDropdownLabel">All Status</span>
-                    <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200 ml-2" id="statusDropdownChevron">expand_more</span>
-                </button>
+    <div class="relative w-full sm:w-auto sm:min-w-[160px]" id="statusDropdownWrapper">
+        <input type="hidden" id="filterStatus" name="status" value="">        
+        <button type="button" id="statusDropdownBtn" aria-haspopup="listbox" aria-expanded="false" class="flex w-full items-center justify-between rounded-lg border border-transparent bg-input-bg-light dark:bg-input-bg-dark text-sm text-lbg-main-light dark:text-lbg-main-dark px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-primary transition-colors">
+            <span id="statusDropdownLabel">All Status</span>
+            <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200 ml-2" id="statusDropdownChevron">expand_more</span>
+        </button>
 
-                <ul
-                    id="statusDropdownMenu"
-                    role="listbox"
-                    class="absolute left-0 z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden"
-                >
-                    <li role="option" data-value="" data-label="All Status"
-                        class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                        <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>All Status
-                    </li>
-                    <li role="option" data-value="active" data-label="Active"
-                        class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                        <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Active
-                    </li>
-                    <li role="option" data-value="under_review" data-label="Under Review"
-                        class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                        <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Under Review
-                    </li>
-                    <li role="option" data-value="inactive" data-label="Inactive"
-                        class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                        <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Inactive
-                    </li>
-                </ul>
-            </div>
+        <ul id="statusDropdownMenu" role="listbox" class="absolute left-0 z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden">
+            <li role="option" data-value="" data-label="All Status" class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>All Status
+            </li>
+            <li role="option" data-value="active" data-label="Active" class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Active
+            </li>
+            <li role="option" data-value="under_review" data-label="Under Review" class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Under Review
+            </li>
+            <li role="option" data-value="inactive" data-label="Inactive" class="status-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
+                <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Inactive
+            </li>
+        </ul>
+    </div>
 
-            <section id="createClubSection" style="display: none;" class="w-full sm:w-auto">
-                <div class="flex justify-center sm:justify-end">
-                    <a href="/clubs/new/" class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-medium rounded-lg shadow-sm transition-colors">
-                        <span class="material-icons-round text-lg">add</span>
-                        Create New Club
-                    </a>
-                </div>
-            </section>
+    <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto justify-start sm:justify-end">    
+        <div id="createClubSection" class="w-full sm:w-auto" style="display: none;">
+            <a href="/clubs/new/" class="inline-flex items-center justify-center whitespace-nowrap w-full sm:w-auto px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                <span class="material-icons-round text-sm mr-2">add</span>
+                Create New Club
+            </a>
+        </div>
+
+        <div id="clubSignupsButtonContainer" class="w-full sm:w-auto" style="display: none;">
+            <a href="/clubs/signups/" class="inline-flex items-center justify-center whitespace-nowrap w-full sm:w-auto px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+                <span class="material-icons-round text-sm mr-2">assessment</span>
+                View Club Signups
+            </a>
         </div>
     </div>
 </section>
@@ -167,7 +148,7 @@ async function checkManagePermission() {
     const canManage = userData.is_superuser || userData.role_detail?.can_add_clubs;
     if (canManage) {
         document.getElementById('createClubSection').style.display = 'block';
-        document.getElementById('clubSignupsButtonContainer').classList.remove('hidden');
+        document.getElementById('clubSignupsButtonContainer').style.display = 'block';
     }
 }
 
