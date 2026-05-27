@@ -46,34 +46,15 @@
 
         <form id="assignDutyForm" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                <!-- Assignee — custom dropdown -->
                 <div>
                     <label class="block text-sm font-medium text-white dark:text-gray-300 mb-2">Assignee</label>
-                    <!-- Hidden input carries the value -->
-                    <input type="hidden" id="assigneeValue" name="assigned_to" required />
-                    <div class="relative" id="assigneeDropdownWrapper">
-                        <button
-                            type="button"
-                            id="assigneeDropdownBtn"
-                            aria-haspopup="listbox"
-                            aria-expanded="false"
-                            class="flex w-full items-center justify-between rounded-lg bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 px-3 py-2.5 text-sm text-lbg-main-light dark:text-lbg-main-dark focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
-                        >
-                            <span class="flex items-center gap-2">
-                                <span class="material-icons-round text-gray-400 text-lg">person</span>
-                                <span id="assigneeDropdownLabel" class="text-gray-400 dark:text-gray-500">Select a member</span>
-                            </span>
-                            <span class="material-icons-round text-gray-400 transition-transform duration-200" id="assigneeDropdownChevron">expand_more</span>
-                        </button>
-
-                        <ul
-                            id="assigneeDropdownMenu"
-                            role="listbox"
-                            class="absolute z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden max-h-56 overflow-y-auto"
-                        >
-                            <!-- Options injected by loadUsers() -->
-                        </ul>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <span class="material-icons-round text-gray-400 text-lg">person</span>
+                        </div>
+                        <select class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="assigned_to" id="assigneeSelect" required>
+                            <option value="">Select a member</option>
+                        </select>
                     </div>
                 </div>
 
@@ -131,7 +112,7 @@
             </div>
 
             <div class="flex justify-end gap-3 pt-2">
-                <button type="button" class="px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors" onclick="resetAssignForm()">
+                <button type="button" class="px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg transition-colors" onclick="this.form.reset()">
                     Cancel
                 </button>
                 <button type="submit" class="flex items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-lg shadow-sm transition-colors" id="submitBtn">
@@ -158,33 +139,14 @@
                     </div>
                     <input type="text" id="searchDuties" class="w-full pl-10 pr-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 lg:w-64" placeholder="Search duties...">
                 </div>
-
-                <!-- Date filter — custom dropdown -->
-                <div class="relative w-full sm:w-auto" id="filterDateWrapper">
-                    <button
-                        type="button"
-                        id="filterDateBtn"
-                        aria-haspopup="listbox"
-                        aria-expanded="false"
-                        class="flex w-full sm:w-44 items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-input-bg-light dark:bg-input-bg-dark px-3 py-2 text-sm text-lbg-main-light dark:text-lbg-main-dark focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
-                    >
-                        <span id="filterDateLabel">All Dates</span>
-                        <span class="material-icons-round text-gray-400 text-base transition-transform duration-200" id="filterDateChevron">expand_more</span>
-                    </button>
-
-                    <ul
-                        id="filterDateMenu"
-                        role="listbox"
-                        class="absolute z-50 right-0 mt-1 w-full sm:w-44 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden"
-                    >
-                        <li role="option" data-value="all"      data-label="All Dates"   class="filter-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700"><span class="material-icons-round text-base mr-2 text-primary filter-check">check</span>All Dates</li>
-                        <li role="option" data-value="today"    data-label="Today"        class="filter-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700"><span class="material-icons-round text-base mr-2 text-primary filter-check opacity-0">check</span>Today</li>
-                        <li role="option" data-value="tomorrow" data-label="Tomorrow"     class="filter-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700"><span class="material-icons-round text-base mr-2 text-primary filter-check opacity-0">check</span>Tomorrow</li>
-                        <li role="option" data-value="week"     data-label="This Week"    class="filter-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700"><span class="material-icons-round text-base mr-2 text-primary filter-check opacity-0">check</span>This Week</li>
-                        <li role="option" data-value="future"   data-label="Upcoming"     class="filter-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700"><span class="material-icons-round text-base mr-2 text-primary filter-check opacity-0">check</span>Upcoming</li>
-                        <li role="option" data-value="past"     data-label="Past"         class="filter-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700"><span class="material-icons-round text-base mr-2 text-primary filter-check opacity-0">check</span>Past</li>
-                    </ul>
-                </div>
+                <select id="filterDate" class="w-full sm:w-auto px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
+                    <option value="all">All Dates</option>
+                    <option value="today">Today</option>
+                    <option value="tomorrow">Tomorrow</option>
+                    <option value="week">This Week</option>
+                    <option value="future">Upcoming</option>
+                    <option value="past">Past</option>
+                </select>
             </div>
         </div>
 
@@ -203,6 +165,7 @@
                     </tr>
                 </thead>
                 <tbody id="dutiesTableBody" class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
+                    <!-- Duties will be loaded here -->
                     <tr>
                         <td colspan="8" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center">
@@ -215,18 +178,18 @@
             </table>
         </div>
         
-        <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 py-3 mt-6">
-            <div class="flex items-center text-sm text-lbg-main-dark dark:text-lbg-main-dark">
+        <div class="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6 mt-6">
+            <div class="flex items-center text-sm text-lbg-main-light dark:text-lbg-main-dark">
                 <span id="dutyCount">Loading...</span>
             </div>
-            <div class="flex gap-1">
-                <button id="prevPage" class="px-1.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+            <div class="flex gap-2">
+                <button id="prevPage" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                     Previous
                 </button>
-                <span class="px-0.5 py-1.5 text-sm text-text-main-dark dark:text-text-main-dark">
+                <span class="px-3 py-1.5 text-sm text-text-main-light dark:text-text-main-dark">
                     Page <span id="currentPage">1</span> of <span id="totalPages">1</span>
                 </span>
-                <button id="nextPage" class="px-1.5 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                <button id="nextPage" class="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                     Next
                 </button>
             </div>
@@ -237,131 +200,33 @@
 
 {% block extra_js %}
 <script>
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// Remove time formatting functions as they're no longer needed
 function formatDate(date) {
     if (!date) return '';
     return new Date(date).toLocaleDateString('en-US', {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
     });
 }
 
-// ── Assignee custom dropdown ──────────────────────────────────────────────────
-const assigneeValue   = document.getElementById('assigneeValue');
-const assigneeBtn     = document.getElementById('assigneeDropdownBtn');
-const assigneeMenu    = document.getElementById('assigneeDropdownMenu');
-const assigneeLabel   = document.getElementById('assigneeDropdownLabel');
-const assigneeChevron = document.getElementById('assigneeDropdownChevron');
-
-function openAssigneeDropdown() {
-    assigneeMenu.classList.remove('hidden');
-    assigneeChevron.style.transform = 'rotate(180deg)';
-    assigneeBtn.setAttribute('aria-expanded', 'true');
-}
-function closeAssigneeDropdown() {
-    assigneeMenu.classList.add('hidden');
-    assigneeChevron.style.transform = '';
-    assigneeBtn.setAttribute('aria-expanded', 'false');
-}
-
-assigneeBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    assigneeMenu.classList.contains('hidden') ? openAssigneeDropdown() : closeAssigneeDropdown();
-});
-
-assigneeBtn.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); assigneeMenu.classList.contains('hidden') ? openAssigneeDropdown() : closeAssigneeDropdown(); }
-    else if (e.key === 'Escape') closeAssigneeDropdown();
-});
-
-document.addEventListener('click', (e) => {
-    if (!document.getElementById('assigneeDropdownWrapper').contains(e.target)) closeAssigneeDropdown();
-});
-
-// Called after users are fetched to wire up click handlers
-function bindAssigneeOptions() {
-    assigneeMenu.querySelectorAll('.assignee-option').forEach(option => {
-        option.addEventListener('click', () => {
-            const val  = option.dataset.value;
-            const name = option.dataset.label;
-            assigneeValue.value = val;
-            // Update label (strip the icon, just show name)
-            assigneeLabel.textContent = name;
-            assigneeLabel.classList.remove('text-gray-400', 'dark:text-gray-500');
-            // Update check icons
-            assigneeMenu.querySelectorAll('.assignee-check').forEach(ic => ic.classList.add('opacity-0'));
-            option.querySelector('.assignee-check').classList.remove('opacity-0');
-            closeAssigneeDropdown();
-        });
-    });
-}
-
-// ── Date filter custom dropdown ───────────────────────────────────────────────
-let activeDateFilter = 'all';
-
-const filterDateBtn     = document.getElementById('filterDateBtn');
-const filterDateMenu    = document.getElementById('filterDateMenu');
-const filterDateLabel   = document.getElementById('filterDateLabel');
-const filterDateChevron = document.getElementById('filterDateChevron');
-const filterOptions     = document.querySelectorAll('.filter-option');
-
-function openFilterDropdown() {
-    filterDateMenu.classList.remove('hidden');
-    filterDateChevron.style.transform = 'rotate(180deg)';
-    filterDateBtn.setAttribute('aria-expanded', 'true');
-}
-function closeFilterDropdown() {
-    filterDateMenu.classList.add('hidden');
-    filterDateChevron.style.transform = '';
-    filterDateBtn.setAttribute('aria-expanded', 'false');
-}
-
-filterDateBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    filterDateMenu.classList.contains('hidden') ? openFilterDropdown() : closeFilterDropdown();
-});
-
-filterDateBtn.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); filterDateMenu.classList.contains('hidden') ? openFilterDropdown() : closeFilterDropdown(); }
-    else if (e.key === 'Escape') closeFilterDropdown();
-});
-
-document.addEventListener('click', (e) => {
-    if (!document.getElementById('filterDateWrapper').contains(e.target)) closeFilterDropdown();
-});
-
-filterOptions.forEach(option => {
-    option.addEventListener('click', () => {
-        activeDateFilter = option.dataset.value;
-        filterDateLabel.textContent = option.dataset.label;
-        filterOptions.forEach(o => o.querySelector('.filter-check').classList.add('opacity-0'));
-        option.querySelector('.filter-check').classList.remove('opacity-0');
-        closeFilterDropdown();
-        loadAllDuties(1, document.getElementById('searchDuties').value, activeDateFilter);
-    });
-});
-
-// ── Reset form helper (replaces this.form.reset() to also clear custom dropdown) ──
-function resetAssignForm() {
-    document.getElementById('assignDutyForm').reset();
-    assigneeValue.value = '';
-    assigneeLabel.textContent = 'Select a member';
-    assigneeLabel.classList.add('text-gray-400', 'dark:text-gray-500');
-    assigneeMenu.querySelectorAll('.assignee-check').forEach(ic => ic.classList.add('opacity-0'));
-}
-
-// ── Today's duty ──────────────────────────────────────────────────────────────
+// Load today's duty for current user
 async function loadTodayDuty() {
     try {
         const today = new Date().toISOString().split('T')[0];
         const response = await apiCall(`/duty-roster/duties/?assigned_to=${userData.id}&date=${today}`);
         if (response && response.ok) {
             const data = await response.json();
+            // Filter duties to only those with date === today
             const duties = (data.results || data).filter(duty => duty.date === today);
             const dutyContent = document.getElementById('dutyContent');
             if (duties.length > 0) {
                 const duty = duties[0];
                 const location = duty.location || 'Not specified';
                 const subsidiaryArea = duty.subsidiary_area || 'Not specified';
+                
+                // Use the assigned user's info from the duty object, not the logged-in user
                 const assignedUser = duty.assigned_to_detail;
                 const firstName = assignedUser?.first_name || assignedUser?.username || 'Unknown';
                 const initial = firstName.charAt(0).toUpperCase();
@@ -375,6 +240,7 @@ async function loadTodayDuty() {
                             </div>
                             <span class="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs font-medium px-3 py-1 rounded-full">ACTIVE</span>
                         </div>  
+
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
                             <div class="text-center">
                                 <span class="block text-xs font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wide mb-2">Assignee</span>
@@ -383,10 +249,12 @@ async function loadTodayDuty() {
                                     <span class="text-sm font-medium text-lbg-main-light dark:text-white">${firstName}</span>
                                 </div>
                             </div>
+                            
                             <div class="text-center">
                                 <span class="block text-xs font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wide mb-2">Duty Type</span>
                                 <span class="text-sm font-medium text-lbg-main-light dark:text-white">${duty.duty_type_name || 'General Duty'}</span>
                             </div>
+                            
                             <div class="text-center">
                                 <span class="block text-xs font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wide mb-2">Location</span>
                                 <div class="flex items-center justify-center gap-1">
@@ -394,6 +262,7 @@ async function loadTodayDuty() {
                                     <span class="text-sm font-medium text-lbg-main-light dark:text-white">${location}</span>
                                 </div>
                             </div>
+                            
                             <div class="text-center">
                                 <span class="block text-xs font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wide mb-2">Subsidiary Area</span>
                                 <div class="flex items-center justify-center gap-1">
@@ -402,6 +271,8 @@ async function loadTodayDuty() {
                                 </div>
                             </div>
                         </div>
+                        
+                        
                         ${duty.instructions ? `
                             <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                                 <span class="block text-xs font-semibold text-lbg-sub-light dark:text-lbg-sub-dark uppercase tracking-wide mb-2">Instructions</span>
@@ -434,65 +305,54 @@ async function loadTodayDuty() {
     }
 }
 
-// ── Load users for assignee dropdown ─────────────────────────────────────────
+// Load users for dropdown — only those marked as visible in the duty roster
 async function loadUsers() {
     try {
         const response = await apiCall('/accounts/users/?duty_roster_only=true');
         if (response && response.ok) {
             const data = await response.json();
             const users = data.results || data;
+            
+            const select = document.getElementById('assigneeSelect');
 
             if (users.length === 0) {
-                assigneeMenu.innerHTML = `
-                    <li class="px-3 py-2.5 text-sm text-gray-400 dark:text-gray-500 cursor-default">No eligible members found</li>
-                `;
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No eligible members found';
+                option.disabled = true;
+                select.appendChild(option);
                 return;
             }
 
-            assigneeMenu.innerHTML = users.map(user => {
-                const displayName = user.first_name && user.last_name
-                    ? `${user.first_name} ${user.last_name}`
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                const displayName = user.first_name && user.last_name 
+                    ? `${user.first_name} ${user.last_name}` 
                     : user.username;
-                const roleName = user.role_detail?.name || 'No Role';
-                return `
-                    <li role="option"
-                        data-value="${user.id}"
-                        data-label="${displayName}"
-                        class="assignee-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                        <span class="material-icons-round text-base mr-2 text-primary assignee-check opacity-0">check</span>
-                        <span class="flex-1">${displayName}</span>
-                        <span class="text-xs text-gray-400 dark:text-gray-500 ml-2">${roleName}</span>
-                    </li>
-                `;
-            }).join('');
-
-            bindAssigneeOptions();
+                option.textContent = `${displayName} (${user.role_detail?.name || 'No Role'})`;
+                select.appendChild(option);
+            });
         }
     } catch (error) {
         console.error('Error loading users:', error);
     }
 }
 
-// ── Form submission ───────────────────────────────────────────────────────────
+// Handle assign duty form submission
 document.getElementById('assignDutyForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-
+    
     const formData = new FormData(e.target);
     const submitBtn = document.getElementById('submitBtn');
-
-    // Validate assignee was selected
-    if (!assigneeValue.value) {
-        showError('Please select a member to assign the duty to.');
-        return;
-    }
-
+    
     const data = {
-        duty_type_name:  formData.get('duty_type'),
-        assigned_to:     parseInt(assigneeValue.value),
-        date:            formData.get('date'),
-        location:        formData.get('location') || '',
+        duty_type_name: formData.get('duty_type'),
+        assigned_to: parseInt(formData.get('assigned_to')),
+        date: formData.get('date'),
+        location: formData.get('location') || '',
         subsidiary_area: formData.get('subsidiary_area') || '',
-        instructions:    formData.get('instructions') || ''
+        instructions: formData.get('instructions') || ''
     };
 
     submitBtn.disabled = true;
@@ -506,14 +366,18 @@ document.getElementById('assignDutyForm').addEventListener('submit', async (e) =
 
         if (response && response.ok) {
             showSuccess('Duty assigned successfully!');
-            resetAssignForm();
-
+            e.target.reset();
+            
+            // Reload duty if assigned to current user and for today
             const today = new Date().toISOString().split('T')[0];
             if (data.assigned_to === userData.id && data.date === today) {
                 loadTodayDuty();
             }
+            // Reload duties list - reset to page 1 with current filters
             currentPage = 1;
-            loadAllDuties(currentPage, document.getElementById('searchDuties').value, activeDateFilter);
+            const searchValue = document.getElementById('searchDuties').value;
+            const filterValue = document.getElementById('filterDate').value;
+            loadAllDuties(currentPage, searchValue, filterValue);
         } else {
             const error = await response.json();
             showError(error.detail || error.message || 'Failed to assign duty');
@@ -523,34 +387,43 @@ document.getElementById('assignDutyForm').addEventListener('submit', async (e) =
         showError('An error occurred while assigning duty');
     } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span class="material-icons-round text-sm mr-2">check</span>Assign Duty`;
+        submitBtn.innerHTML = `
+            <span class="material-icons-round text-sm mr-2">check</span>
+            Assign Duty
+        `;
     }
 });
 
-// ── Duties table ──────────────────────────────────────────────────────────────
-let currentPage  = 1;
-const pageSize   = 10;
-let totalDuties  = 0;
-let allDuties    = [];
+// Variables for duties list pagination
+let currentPage = 1;
+const pageSize = 10;
+let totalDuties = 0;
+let allDuties = [];
 
+// Load all duties with pagination
 async function loadAllDuties(page = 1, search = '', dateFilter = 'all') {
     try {
+        // Build query parameters
         let url = `/duty-roster/duties/?page=${page}&page_size=${pageSize}`;
-        if (search) url += `&search=${encodeURIComponent(search)}`;
-
+        
+        if (search) {
+            url += `&search=${encodeURIComponent(search)}`;
+        }
+        
         if (dateFilter !== 'all') {
-            const today    = new Date();
+            const today = new Date();
             const tomorrow = new Date(today);
             tomorrow.setDate(tomorrow.getDate() + 1);
-
+            
             if (dateFilter === 'today') {
                 url += `&date=${today.toISOString().split('T')[0]}`;
             } else if (dateFilter === 'tomorrow') {
                 url += `&date=${tomorrow.toISOString().split('T')[0]}`;
             } else if (dateFilter === 'week') {
+                const weekStart = today.toISOString().split('T')[0];
                 const weekEnd = new Date(today);
                 weekEnd.setDate(weekEnd.getDate() + 7);
-                url += `&start_date=${today.toISOString().split('T')[0]}&end_date=${weekEnd.toISOString().split('T')[0]}`;
+                url += `&start_date=${weekStart}&end_date=${weekEnd.toISOString().split('T')[0]}`;
             } else if (dateFilter === 'future') {
                 url += `&start_date=${today.toISOString().split('T')[0]}`;
             } else if (dateFilter === 'past') {
@@ -559,12 +432,14 @@ async function loadAllDuties(page = 1, search = '', dateFilter = 'all') {
                 url += `&end_date=${yesterday.toISOString().split('T')[0]}`;
             }
         }
-
+        
         const response = await apiCall(url);
+        
         if (response && response.ok) {
             const data = await response.json();
-            allDuties   = data.results || data;
-            totalDuties = data.count   || allDuties.length;
+            allDuties = data.results || data;
+            totalDuties = data.count || allDuties.length;
+            
             updateDutiesTable(allDuties);
             updatePaginationControls(page, Math.ceil(totalDuties / pageSize));
         } else {
@@ -573,42 +448,52 @@ async function loadAllDuties(page = 1, search = '', dateFilter = 'all') {
     } catch (error) {
         console.error('Error loading duties:', error);
         document.getElementById('dutiesTableBody').innerHTML = `
-            <tr><td colspan="8" class="px-6 py-12 text-center">
-                <div class="flex flex-col items-center">
-                    <span class="material-icons-round text-red-400 text-4xl mb-3">error</span>
-                    <p class="text-red-500">Failed to load duties. Please try again.</p>
-                </div>
-            </td></tr>
+            <tr>
+                <td colspan="8" class="px-6 py-12 text-center">
+                    <div class="flex flex-col items-center">
+                        <span class="material-icons-round text-red-400 text-4xl mb-3">error</span>
+                        <p class="text-red-500">Failed to load duties. Please try again.</p>
+                    </div>
+                </td>
+            </tr>
         `;
     }
 }
 
+// Update duties table with data
 function updateDutiesTable(duties) {
     const tableBody = document.getElementById('dutiesTableBody');
-    const today     = new Date().toISOString().split('T')[0];
-    const filtered  = duties.filter(d => d.date >= today || d.is_completed);
+    const today = new Date().toISOString().split('T')[0];
+    // Only show duties for today or future, or completed duties
+    const filteredDuties = duties.filter(duty => duty.date >= today || duty.is_completed);
 
-    if (filtered.length === 0) {
+    if (filteredDuties.length === 0) {
         tableBody.innerHTML = `
-            <tr><td colspan="8" class="px-6 py-12 text-center">
-                <div class="flex flex-col items-center">
-                    <span class="material-icons-round text-gray-400 dark:text-gray-600 text-4xl mb-3">event_available</span>
-                    <p class="text-gray-500 dark:text-gray-400">No duties found</p>
-                </div>
-            </td></tr>
+            <tr>
+                <td colspan="8" class="px-6 py-12 text-center">
+                    <div class="flex flex-col items-center">
+                        <span class="material-icons-round text-gray-400 dark:text-gray-600 text-4xl mb-3">event_available</span>
+                        <p class="text-gray-500 dark:text-gray-400">No duties found</p>
+                    </div>
+                </td>
+            </tr>
         `;
         return;
     }
-
-    tableBody.innerHTML = filtered.map(duty => {
-        const assigneeName = duty.assigned_to_detail?.first_name && duty.assigned_to_detail?.last_name
+    let html = '';
+    filteredDuties.forEach(duty => {
+        const assigneeName = duty.assigned_to_detail?.first_name && duty.assigned_to_detail?.last_name 
             ? `${duty.assigned_to_detail.first_name} ${duty.assigned_to_detail.last_name}`
             : duty.assigned_to_detail?.username || 'Unknown';
-
-        const assignerName = duty.assigned_by_detail?.first_name && duty.assigned_by_detail?.last_name
+        
+        const assignerName = duty.assigned_by_detail?.first_name && duty.assigned_by_detail?.last_name 
             ? `${duty.assigned_by_detail.first_name} ${duty.assigned_by_detail.last_name}`
             : duty.assigned_by_detail?.username || 'System';
-
+        
+        const today = new Date().toISOString().split('T')[0];
+        const dutyDate = new Date(duty.date);
+        const now = new Date();
+        
         let status = '';
         if (duty.is_completed) {
             status = `<span class="px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full">Completed</span>`;
@@ -619,10 +504,11 @@ function updateDutiesTable(duties) {
         } else {
             status = `<span class="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded-full">Upcoming</span>`;
         }
-
+        
+        // Check if user can delete this duty - anyone with duty roster permission can delete all duties
         const canDelete = userData.role_detail?.can_edit_duty_roster || userData.is_staff || userData.is_superuser;
-
-        return `
+        
+        html += `
             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 <td class="px-6 py-4 whitespace-nowrap">
                     <div class="flex items-center">
@@ -646,40 +532,65 @@ function updateDutiesTable(duties) {
                         </div>
                     </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">${formatDate(duty.date)}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">${duty.location || '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">${duty.subsidiary_area || '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${status}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">${assignerName}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
+                    ${formatDate(duty.date)}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
+                    ${duty.location || '-'}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
+                    ${duty.subsidiary_area || '-'}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    ${status}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-lbg-main-light dark:text-lbg-main-dark">
+                    ${assignerName}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     ${canDelete ? `
                         <button onclick="deleteDuty(${duty.id})" class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors">
                             <span class="material-icons-round text-lg">delete</span>
                         </button>
                     ` : `
-                        <span class="text-gray-400 dark:text-gray-600"><span class="material-icons-round text-lg">lock</span></span>
+                        <span class="text-gray-400 dark:text-gray-600">
+                            <span class="material-icons-round text-lg">lock</span>
+                        </span>
                     `}
                 </td>
             </tr>
         `;
-    }).join('');
+    });
+    
+    tableBody.innerHTML = html;
 }
 
+// Update pagination controls
 function updatePaginationControls(current, total) {
-    document.getElementById('currentPage').textContent  = current;
-    document.getElementById('totalPages').textContent   = total;
-    document.getElementById('dutyCount').textContent    = `Showing ${allDuties.length} of ${totalDuties} duties`;
+    document.getElementById('currentPage').textContent = current;
+    document.getElementById('totalPages').textContent = total;
+    document.getElementById('dutyCount').textContent = `Showing ${allDuties.length} of ${totalDuties} duties`;
+    
     document.getElementById('prevPage').disabled = current === 1;
     document.getElementById('nextPage').disabled = current === total || total === 0;
 }
 
+// Delete duty function
 async function deleteDuty(dutyId) {
-    if (!confirm('Are you sure you want to delete this duty? This action cannot be undone.')) return;
+    if (!confirm('Are you sure you want to delete this duty? This action cannot be undone.')) {
+        return;
+    }
+    
     try {
-        const response = await apiCall(`/duty-roster/duties/${dutyId}/`, { method: 'DELETE' });
+        const response = await apiCall(`/duty-roster/duties/${dutyId}/`, {
+            method: 'DELETE'
+        });
+        
         if (response && response.ok) {
             showSuccess('Duty deleted successfully!');
+            // Reload duties list
             loadAllDuties(currentPage);
+            // Reload today's duty if it was the deleted one
             loadTodayDuty();
         } else {
             const error = await response.json();
@@ -691,44 +602,64 @@ async function deleteDuty(dutyId) {
     }
 }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
+// Initialize page
 async function initDutyRoster() {
     await loadUserProfile();
-
-    if (userData?.role?.is_normal_student) {
+    
+    // Check if user is authorized to access duty roster
+    const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
+    if (isNormalStudent) {
         showError('You do not have permission to access the Duty Roster');
         setTimeout(() => window.location.href = '/announcements/', 1500);
         return;
     }
-
+    
+    // Update greeting and role badge
     const firstName = userData.first_name || userData.username || 'User';
-    document.getElementById('greetingTitle').textContent  = `Hello, ${firstName}!`;
-    document.getElementById('roleBadgeText').textContent  = userData.role_detail?.name || userData.role?.name || 'Member';
-
+    document.getElementById('greetingTitle').textContent = `Hello, ${firstName}!`;
+    document.getElementById('roleBadgeText').textContent = userData.role_detail?.name || userData.role?.name || 'Member';
+    
+    // Show assign duty form if user has permission
     const canAssign = userData.is_staff || userData.is_superuser || userData.is_c_suite ||
                       userData.is_captain || userData.role?.can_edit_duty_roster;
     if (canAssign) {
         document.getElementById('assignDutyCard').style.display = 'block';
         loadUsers();
     }
-
+    
+    // Load today's duty
     await loadTodayDuty();
+    
+    // Load all duties
     await loadAllDuties();
-
+    
+    // Set up search functionality
     document.getElementById('searchDuties').addEventListener('input', (e) => {
         clearTimeout(window.searchTimeout);
         window.searchTimeout = setTimeout(() => {
-            loadAllDuties(1, e.target.value, activeDateFilter);
+            loadAllDuties(1, e.target.value, document.getElementById('filterDate').value);
         }, 300);
     });
-
-    document.getElementById('prevPage').addEventListener('click', () => {
-        if (currentPage > 1) { currentPage--; loadAllDuties(currentPage, document.getElementById('searchDuties').value, activeDateFilter); }
+    
+    // Set up date filter
+    document.getElementById('filterDate').addEventListener('change', (e) => {
+        loadAllDuties(1, document.getElementById('searchDuties').value, e.target.value);
     });
-
+    
+    // Set up pagination buttons
+    document.getElementById('prevPage').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadAllDuties(currentPage, document.getElementById('searchDuties').value, document.getElementById('filterDate').value);
+        }
+    });
+    
     document.getElementById('nextPage').addEventListener('click', () => {
         const totalPages = Math.ceil(totalDuties / pageSize);
-        if (currentPage < totalPages) { currentPage++; loadAllDuties(currentPage, document.getElementById('searchDuties').value, activeDateFilter); }
+        if (currentPage < totalPages) {
+            currentPage++;
+            loadAllDuties(currentPage, document.getElementById('searchDuties').value, document.getElementById('filterDate').value);
+        }
     });
 }
 
