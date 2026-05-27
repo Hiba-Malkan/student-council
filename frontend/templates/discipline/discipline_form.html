@@ -13,6 +13,7 @@
 
 {% block content %}
 <div class="mt-6">
+    <!-- Back Button -->
     <div class="mb-6">
         <button 
             onclick="window.location.href='/discipline/'"
@@ -23,8 +24,10 @@
         </button>
     </div>
 
+    <!-- Form Card -->
     <div class="bg-card-light dark:bg-card-dark rounded-lg shadow-sm p-6">
         <form id="disciplineForm">
+            <!-- Student Name -->
             <div class="mb-6">
                 <label for="studentName" class="block text-white font-medium text-black dark:text-lbg-main-dark mb-2">
                     Student Name *
@@ -39,6 +42,7 @@
                 >
             </div>
 
+            <!-- Class & Section -->
             <div class="mb-6">
                 <label for="classSection" class="block text-white font-medium text-black dark:text-lbg-main-dark mb-2">
                     Class & Section *
@@ -54,6 +58,7 @@
                 <p class="mt-1 text-xs text-white dark:text-lbg-main-dark">Format: Grade + Section (e.g., 10A)</p>
             </div>
 
+            <!-- Dno -->
             <div class="mb-6">
                 <label for="dno" class="block text-white font-medium text-black dark:text-lbg-main-dark mb-2">
                     D.No *
@@ -72,66 +77,30 @@
                 <p class="mt-1 text-xs text-white dark:text-lbg-main-dark">Format: D followed by 4-7 digits (e.g., D1234 to D1234567)</p>
             </div>
 
+            <!-- Category -->
             <div class="mb-6">
-                <label class="block text-sm font-medium text-lbg-main-dark dark:text-gray-300 mb-2">
-                    Category <span class="text-red-500">*</span>
+                <label for="category" class="block text-white font-medium text-black dark:text-lbg-main-dark mb-2">
+                    Category *
                 </label>
-
-                <input type="hidden" id="category" name="category" value="" required />
-
-                <div class="relative" id="categoryDropdownWrapper">
-                    <button
-                        type="button"
-                        id="categoryDropdownBtn"
-                        aria-haspopup="listbox"
-                        aria-expanded="false"
-                        class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
-                    >
-                        <span id="categoryDropdownLabel" class="text-gray-400 dark:placeholder-gray-500">Select category</span>
-                        <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200" id="categoryDropdownChevron">expand_more</span>
-                    </button>
-
-                    <ul
-                        id="categoryDropdownMenu"
-                        role="listbox"
-                        class="absolute z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg overflow-hidden hidden max-h-60 overflow-y-auto"
-                    >
-                        <li role="option" data-value="UNIFORM" data-label="Uniform Violation"
-                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Uniform Violation
-                        </li>
-                        <li role="option" data-value="LATE" data-label="Late Arrival / Submission"
-                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Late Arrival / Submission
-                        </li>
-                        <li role="option" data-value="BEHAVIOR" data-label="Misbehavior"
-                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Misbehavior
-                        </li>
-                        <li role="option" data-value="ACADEMIC" data-label="Academic Misconduct"
-                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Academic Misconduct
-                        </li>
-                        <li role="option" data-value="ABSENCE" data-label="Unauthorized Absence"
-                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Unauthorized Absence
-                        </li>
-                        <li role="option" data-value="SUBSTANCES" data-label="Substances"
-                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Substances
-                        </li>
-                        <li role="option" data-value="VPN" data-label="VPN Usage"
-                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>VPN Usage
-                        </li>
-                        <li role="option" data-value="OTHER" data-label="Other"
-                            class="category-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light">
-                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Other
-                        </li>
-                    </ul>
-                </div>
+                <select 
+                    id="category" 
+                    name="category"
+                    required
+                    class="w-full px-4 py-2 text-black dark:text-lbg-main-dark bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+                    <option value="">Select category</option>
+                    <option value="UNIFORM">Uniform Violation</option>
+                    <option value="LATE">Late Arrival / Submission</option>
+                    <option value="BEHAVIOR">Misbehavior</option>
+                    <option value="ACADEMIC">Academic Misconduct</option>
+                    <option value="ABSENCE">Unauthorized Absence</option>
+                    <option value="SUBSTANCES">Substances</option>
+                    <option value="VPN">VPN Usage</option>
+                    <option value="OTHER">Other</option>
+                </select>
             </div>
 
+            <!-- Reason -->
             <div class="mb-6">
                 <label for="reason" class="block text-white font-medium text-black dark:text-lbg-main-dark mb-2">
                     Reason *
@@ -146,6 +115,7 @@
                 ></textarea>
             </div>
 
+            <!-- Offense Count --> <!-- NEW: Hidden since we always add +1; no need for user input on create/add -->
             <input 
                 type="hidden" 
                 id="offenseCount" 
@@ -153,6 +123,7 @@
                 value="1"
             >
 
+            <!-- Form Actions -->
             <div class="flex gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                 <button 
                     type="submit"
@@ -192,67 +163,6 @@
     const dnoInput = document.getElementById('dno');
     const submitBtn = form.querySelector('button[type="submit"]');
 
-    // Custom Category Dropdown Logic & Styling Interactions
-    const categoryInput = document.getElementById('category');
-    const categoryBtn = document.getElementById('categoryDropdownBtn');
-    const categoryMenu = document.getElementById('categoryDropdownMenu');
-    const categoryLabel = document.getElementById('categoryDropdownLabel');
-    const categoryChevron = document.getElementById('categoryDropdownChevron');
-    const categoryOptions = document.querySelectorAll('.category-option');
-
-    function openDropdown() {
-        categoryMenu.classList.remove('hidden');
-        categoryChevron.style.transform = 'rotate(180deg)';
-        categoryBtn.setAttribute('aria-expanded', 'true');
-    }
-
-    function closeDropdown() {
-        categoryMenu.classList.add('hidden');
-        categoryChevron.style.transform = '';
-        categoryBtn.setAttribute('aria-expanded', 'false');
-    }
-
-    categoryBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        categoryMenu.classList.contains('hidden') ? openDropdown() : closeDropdown();
-    });
-
-    categoryOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            const value = option.dataset.value;
-            const label = option.dataset.label;
-
-            // Set hidden field value and switch typography style from placeholder to normal text colors
-            categoryInput.value = value;
-            categoryLabel.textContent = label;
-            categoryLabel.classList.remove('text-gray-400', 'dark:placeholder-gray-500');
-            categoryLabel.classList.add('text-gray-900', 'dark:text-white');
-
-            // Handle visual checkmark transitions
-            categoryOptions.forEach(opt => opt.querySelector('.check-icon').classList.add('opacity-0'));
-            option.querySelector('.check-icon').classList.remove('opacity-0');
-
-            closeDropdown();
-        });
-    });
-
-    // Close menu when clicking anywhere else outside the menu boundary box
-    document.addEventListener('click', (e) => {
-        if (!document.getElementById('categoryDropdownWrapper').contains(e.target)) {
-            closeDropdown();
-        }
-    });
-
-    // Keyboard Accessibility Handler
-    categoryBtn.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            categoryMenu.classList.contains('hidden') ? openDropdown() : closeDropdown();
-        } else if (e.key === 'Escape') {
-            closeDropdown();
-        }
-    });
-
     // Auto-format Dno
     dnoInput.addEventListener('input', (e) => {
         let value = e.target.value.toUpperCase().replace(/[^D0-9]/g, '');
@@ -272,12 +182,6 @@
             category: document.getElementById('category').value || 'OTHER',
             reason: document.getElementById('reason').value.trim() || 'No reason provided'
         };
-
-        // Validate Category selection presence since it's a required pseudo-input field now
-        if (!formData.category) {
-            showError('Please select a discipline category');
-            return;
-        }
 
         // Validate Dno
         if (!/^D\d{4,8}$/.test(formData.dno)) {
