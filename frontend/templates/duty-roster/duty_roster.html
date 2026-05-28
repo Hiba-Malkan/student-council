@@ -46,15 +46,33 @@
 
         <form id="assignDutyForm" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Mobile-Friendly Custom Assignee Dropdown -->
                 <div>
-                    <label class="block text-sm font-medium text-white dark:text-gray-300 mb-2">Assignee</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <label class="block text-sm font-medium text-white dark:text-gray-300 mb-2">Assignee <span class="text-red-500">*</span></label>
+                    <input type="hidden" id="assigned_to" name="assigned_to" required />
+                    
+                    <div class="relative w-full" id="assigneeDropdownWrapper">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
                             <span class="material-icons-round text-gray-400 text-lg">person</span>
                         </div>
-                        <select class="w-full pl-10 pr-4 py-2.5 bg-input-bg-light dark:bg-input-bg-dark border-transparent focus:border-primary focus:ring-0 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 transition-colors" name="assigned_to" id="assigneeSelect" required>
-                            <option value="">Select a member</option>
-                        </select>
+                        <button
+                            type="button"
+                            id="assigneeDropdownBtn"
+                            aria-haspopup="listbox"
+                            aria-expanded="false"
+                            class="flex w-full items-center justify-between rounded-lg bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 focus:border-primary focus:ring-2 focus:ring-primary pl-10 pr-4 py-2.5 text-sm text-lbg-main-light dark:text-lbg-main-dark transition-colors relative"
+                        >
+                            <span id="assigneeDropdownLabel" class="truncate text-gray-400 dark:text-gray-500">Select a member</span>
+                            <span class="material-icons-round text-gray-400 transition-transform duration-200" id="assigneeDropdownChevron">expand_more</span>
+                        </button>
+
+                        <ul
+                            id="assigneeDropdownMenu"
+                            role="listbox"
+                            class="absolute z-50 mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg overflow-y-auto max-h-60 hidden"
+                        >
+                            <!-- Populated dynamically via JavaScript loadUsers() -->
+                        </ul>
                     </div>
                 </div>
 
@@ -133,20 +151,52 @@
                 <p class="text-sm text-white dark:text-lbg-sub-dark mt-1">View and manage all assigned duties.</p>
             </div>
             <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-                <div class="relative w-full sm:flex-1 lg:w-auto">
+                <div class="relative w-full sm:flex-1 lg:w-auto sm:mr-1">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span class="material-icons-round text-gray-400 text-lg">search</span>
                     </div>
                     <input type="text" id="searchDuties" class="w-full pl-10 pr-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark placeholder-gray-400 dark:placeholder-gray-500 lg:w-64" placeholder="Search duties...">
                 </div>
-                <select id="filterDate" class="w-full sm:w-auto px-4 py-2 bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-lbg-main-light dark:text-lbg-main-dark">
-                    <option value="all">All Dates</option>
-                    <option value="today">Today</option>
-                    <option value="tomorrow">Tomorrow</option>
-                    <option value="week">This Week</option>
-                    <option value="future">Upcoming</option>
-                    <option value="past">Past</option>
-                </select>
+
+                <!-- Custom Mobile-Friendly Date Filter Dropdown Wrapper -->
+                <div class="relative w-full sm:w-auto" id="filterDateDropdownWrapper">
+                    <input type="hidden" id="filterDate" name="filter_date" value="all" />
+                    <button
+                        type="button"
+                        id="filterDateDropdownBtn"
+                        aria-haspopup="listbox"
+                        aria-expanded="false"
+                        class="flex w-full sm:w-auto items-center justify-between gap-3 rounded-lg bg-input-bg-light dark:bg-input-bg-dark border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm text-lbg-main-light dark:text-lbg-main-dark transition-colors relative"
+                    >
+                        <span id="filterDateDropdownLabel" class="truncate font-medium">All Dates</span>
+                        <span class="material-icons-round text-gray-400 transition-transform duration-200" id="filterDateDropdownChevron">expand_more</span>
+                    </button>
+
+                    <ul
+                        id="filterDateDropdownMenu"
+                        role="listbox"
+                        class="absolute z-50 mt-1 right-0 w-full sm:w-48 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg overflow-y-auto max-h-60 hidden"
+                    >
+                        <li role="option" data-value="all" class="filter-date-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light transition-colors duration-150">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>All Dates
+                        </li>
+                        <li role="option" data-value="today" class="filter-date-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light transition-colors duration-150">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Today
+                        </li>
+                        <li role="option" data-value="tomorrow" class="filter-date-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light transition-colors duration-150">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Tomorrow
+                        </li>
+                        <li role="option" data-value="week" class="filter-date-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light transition-colors duration-150">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>This Week
+                        </li>
+                        <li role="option" data-value="future" class="filter-date-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light transition-colors duration-150">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Upcoming
+                        </li>
+                        <li role="option" data-value="past" class="filter-date-option flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light transition-colors duration-150">
+                            <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Past
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -210,6 +260,102 @@ function formatDate(date) {
         day: 'numeric'
     });
 }
+
+// ── Custom Dropdown Initialization and State Management ─────────────────
+const assigneeInput     = document.getElementById('assigned_to');
+const assigneeBtn       = document.getElementById('assigneeDropdownBtn');
+const assigneeMenu      = document.getElementById('assigneeDropdownMenu');
+const assigneeLabel     = document.getElementById('assigneeDropdownLabel');
+const assigneeChevron   = document.getElementById('assigneeDropdownChevron');
+const assigneeWrapper   = document.getElementById('assigneeDropdownWrapper');
+
+function openAssigneeDropdown() {
+    assigneeMenu.classList.remove('hidden');
+    assigneeChevron.style.transform = 'rotate(180deg)';
+    assigneeBtn.setAttribute('aria-expanded', 'true');
+}
+
+function closeAssigneeDropdown() {
+    assigneeMenu.classList.add('hidden');
+    assigneeChevron.style.transform = '';
+    assigneeBtn.setAttribute('aria-expanded', 'false');
+}
+
+assigneeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    assigneeMenu.classList.contains('hidden') ? openAssigneeDropdown() : closeAssigneeDropdown();
+});
+
+document.addEventListener('click', (e) => {
+    if (!assigneeWrapper.contains(e.target)) {
+        closeAssigneeDropdown();
+    }
+});
+
+// Sync manual custom dropdown elements on Native form resets
+document.getElementById('assignDutyForm').addEventListener('reset', () => {
+    assigneeInput.value = '';
+    assigneeLabel.textContent = 'Select a member';
+    assigneeLabel.classList.add('text-gray-400', 'dark:text-gray-500');
+    
+    // Clear check-icon status highlights
+    const allCheckIcons = assigneeMenu.querySelectorAll('.check-icon');
+    allCheckIcons.forEach(icon => icon.classList.add('opacity-0'));
+    
+    closeAssigneeDropdown();
+});
+
+// ── Custom Filter Date Dropdown UI Logic ─────────────────────────────────
+const filterDateInput     = document.getElementById('filterDate');
+const filterDateBtn       = document.getElementById('filterDateDropdownBtn');
+const filterDateMenu      = document.getElementById('filterDateDropdownMenu');
+const filterDateLabel     = document.getElementById('filterDateDropdownLabel');
+const filterDateChevron   = document.getElementById('filterDateDropdownChevron');
+const filterDateWrapper   = document.getElementById('filterDateDropdownWrapper');
+const filterDateOptions   = document.querySelectorAll('.filter-date-option');
+
+function openFilterDateDropdown() {
+    filterDateMenu.classList.remove('hidden');
+    filterDateChevron.style.transform = 'rotate(180deg)';
+    filterDateBtn.setAttribute('aria-expanded', 'true');
+}
+
+function closeFilterDateDropdown() {
+    filterDateMenu.classList.add('hidden');
+    filterDateChevron.style.transform = '';
+    filterDateBtn.setAttribute('aria-expanded', 'false');
+}
+
+filterDateBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    filterDateMenu.classList.contains('hidden') ? openFilterDateDropdown() : closeFilterDateDropdown();
+});
+
+document.addEventListener('click', (e) => {
+    if (!filterDateWrapper.contains(e.target)) {
+        closeFilterDateDropdown();
+    }
+});
+
+filterDateOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        const val = option.dataset.value;
+        const label = option.textContent.trim().replace('check', '').trim();
+
+        filterDateInput.value = val;
+        filterDateLabel.textContent = label;
+
+        // Toggle check mark state
+        filterDateOptions.forEach(o => o.querySelector('.check-icon').classList.add('opacity-0'));
+        option.querySelector('.check-icon').classList.remove('opacity-0');
+
+        closeFilterDateDropdown();
+
+        // Trigger date change search reload
+        loadAllDuties(1, document.getElementById('searchDuties').value, val);
+    });
+});
+
 
 // Load today's duty for current user
 async function loadTodayDuty() {
@@ -305,7 +451,7 @@ async function loadTodayDuty() {
     }
 }
 
-// Load users for dropdown — only those marked as visible in the duty roster
+// Load users into custom drop-down menu structure — only those marked as visible in the duty roster
 async function loadUsers() {
     try {
         const response = await apiCall('/accounts/users/?duty_roster_only=true');
@@ -313,25 +459,46 @@ async function loadUsers() {
             const data = await response.json();
             const users = data.results || data;
             
-            const select = document.getElementById('assigneeSelect');
+            assigneeMenu.innerHTML = '';
 
             if (users.length === 0) {
-                const option = document.createElement('option');
-                option.value = '';
-                option.textContent = 'No eligible members found';
-                option.disabled = true;
-                select.appendChild(option);
+                const li = document.createElement('li');
+                li.className = 'px-4 py-2.5 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed select-none';
+                li.textContent = 'No eligible members found';
+                assigneeMenu.appendChild(li);
                 return;
             }
 
             users.forEach(user => {
-                const option = document.createElement('option');
-                option.value = user.id;
+                const li = document.createElement('li');
+                li.setAttribute('role', 'option');
+                li.className = 'flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light transition-colors duration-150';
+                
                 const displayName = user.first_name && user.last_name 
                     ? `${user.first_name} ${user.last_name}` 
                     : user.username;
-                option.textContent = `${displayName} (${user.role_detail?.name || 'No Role'})`;
-                select.appendChild(option);
+                const roleName = user.role_detail?.name || 'No Role';
+                const optionText = `${displayName} (${roleName})`;
+                
+                li.innerHTML = `
+                    <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>
+                    <span class="truncate">${optionText}</span>
+                `;
+                
+                li.addEventListener('click', () => {
+                    assigneeInput.value = user.id;
+                    assigneeLabel.textContent = optionText;
+                    assigneeLabel.classList.remove('text-gray-400', 'dark:text-gray-500');
+                    
+                    // Toggle check indicators
+                    const allCheckIcons = assigneeMenu.querySelectorAll('.check-icon');
+                    allCheckIcons.forEach(icon => icon.classList.add('opacity-0'));
+                    li.querySelector('.check-icon').classList.remove('opacity-0');
+                    
+                    closeAssigneeDropdown();
+                });
+                
+                assigneeMenu.appendChild(li);
             });
         }
     } catch (error) {
@@ -346,9 +513,15 @@ document.getElementById('assignDutyForm').addEventListener('submit', async (e) =
     const formData = new FormData(e.target);
     const submitBtn = document.getElementById('submitBtn');
     
+    const selectedAssignee = assigneeInput.value;
+    if (!selectedAssignee) {
+        showError('Please select an assignee.');
+        return;
+    }
+    
     const data = {
         duty_type_name: formData.get('duty_type'),
-        assigned_to: parseInt(formData.get('assigned_to')),
+        assigned_to: parseInt(selectedAssignee),
         date: formData.get('date'),
         location: formData.get('location') || '',
         subsidiary_area: formData.get('subsidiary_area') || '',
@@ -376,7 +549,7 @@ document.getElementById('assignDutyForm').addEventListener('submit', async (e) =
             // Reload duties list - reset to page 1 with current filters
             currentPage = 1;
             const searchValue = document.getElementById('searchDuties').value;
-            const filterValue = document.getElementById('filterDate').value;
+            const filterValue = filterDateInput.value;
             loadAllDuties(currentPage, searchValue, filterValue);
         } else {
             const error = await response.json();
@@ -637,20 +810,15 @@ async function initDutyRoster() {
     document.getElementById('searchDuties').addEventListener('input', (e) => {
         clearTimeout(window.searchTimeout);
         window.searchTimeout = setTimeout(() => {
-            loadAllDuties(1, e.target.value, document.getElementById('filterDate').value);
+            loadAllDuties(1, e.target.value, filterDateInput.value);
         }, 300);
-    });
-    
-    // Set up date filter
-    document.getElementById('filterDate').addEventListener('change', (e) => {
-        loadAllDuties(1, document.getElementById('searchDuties').value, e.target.value);
     });
     
     // Set up pagination buttons
     document.getElementById('prevPage').addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
-            loadAllDuties(currentPage, document.getElementById('searchDuties').value, document.getElementById('filterDate').value);
+            loadAllDuties(currentPage, document.getElementById('searchDuties').value, filterDateInput.value);
         }
     });
     
@@ -658,7 +826,7 @@ async function initDutyRoster() {
         const totalPages = Math.ceil(totalDuties / pageSize);
         if (currentPage < totalPages) {
             currentPage++;
-            loadAllDuties(currentPage, document.getElementById('searchDuties').value, document.getElementById('filterDate').value);
+            loadAllDuties(currentPage, document.getElementById('searchDuties').value, filterDateInput.value);
         }
     });
 }
