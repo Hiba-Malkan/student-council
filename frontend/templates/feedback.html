@@ -7,7 +7,6 @@
 
 {% block extra_css %}
 <style>
-    /* ── Custom dropdown (matches new-announcement style) ── */
     .custom-dropdown-menu {
         position: absolute;
         z-index: 50;
@@ -20,7 +19,6 @@
     }
     .custom-dropdown-menu.hidden { display: none; }
 
-    /* ── Prevent text overflow everywhere ── */
     .feedback-card h3 {
         overflow-wrap: break-word;
         word-break: break-word;
@@ -31,7 +29,6 @@
         word-break: break-word;
     }
 
-    /* ── Stat cards: always 2-col grid on mobile, 4-col on md ── */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
@@ -41,7 +38,6 @@
         .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 1rem; }
     }
 
-    /* ── Filters: 2-col on mobile ── */
     .filters-grid {
         display: grid;
         grid-template-columns: 1fr;
@@ -54,7 +50,6 @@
         .filters-grid { grid-template-columns: repeat(4, 1fr); }
     }
 
-    /* ── Feedback card badges don't overflow ── */
     .badge-row {
         display: flex;
         flex-wrap: wrap;
@@ -66,7 +61,6 @@
         flex-shrink: 0;
     }
 
-    /* ── Card footer: wrap nicely on mobile ── */
     .card-footer {
         display: flex;
         flex-wrap: wrap;
@@ -75,7 +69,6 @@
         gap: 0.5rem;
     }
 
-    /* ── Stat card number size: smaller on mobile ── */
     .stat-number {
         font-size: 1.75rem;
         font-weight: 700;
@@ -87,7 +80,6 @@
         .stat-number { font-size: 1.875rem; }
     }
 
-    /* ── Prevent horizontal scroll on page ── */
     body { overflow-x: hidden; }
     #paginationContainer {
         display: flex;
@@ -97,7 +89,6 @@
         margin-top: 1.5rem;
     }
 
-    /* ── Input font-size fix for iOS (prevents zoom) ── */
     input[type="text"],
     input[type="email"],
     textarea {
@@ -161,7 +152,6 @@
     <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
         <div class="filters-grid">
 
-            <!-- Search (plain input, no dropdown needed) -->
             <div>
                 <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Search</label>
                 <input type="text" id="searchFeedback" placeholder="Search by subject..."
@@ -505,7 +495,6 @@ function initCustomDropdown({ wrapperId, btnId, menuId, chevronId, labelId, opti
             const optLabel = opt.dataset.label;
             input.value    = value;
 
-            // Update label (grey placeholder if empty)
             if (value === '') {
                 label.textContent = opt.textContent.trim();
                 label.className = 'text-gray-400 dark:text-gray-500';
@@ -514,7 +503,6 @@ function initCustomDropdown({ wrapperId, btnId, menuId, chevronId, labelId, opti
                 label.className = '';
             }
 
-            // Update check icons
             options.forEach(o => o.querySelector('.check-icon').classList.add('opacity-0'));
             opt.querySelector('.check-icon').classList.remove('opacity-0');
 
@@ -528,11 +516,9 @@ function initCustomDropdown({ wrapperId, btnId, menuId, chevronId, labelId, opti
         else if (e.key === 'Escape') close();
     });
 
-    // Close on outside click — store refs for global handler
     wrapper._closeDropdown = close;
 }
 
-// Close all dropdowns when clicking outside
 document.addEventListener('click', () => {
     document.querySelectorAll('[id$="Wrapper"]').forEach(w => {
         if (w._closeDropdown) w._closeDropdown();
@@ -568,10 +554,10 @@ async function loadFeedback() {
 }
 
 function updateStats() {
-    document.getElementById('totalFeedback').textContent   = allFeedback.length;
-    document.getElementById('openIssues').textContent      = allFeedback.filter(f => f.status === 'OPEN').length;
-    document.getElementById('resolvedFeedback').textContent= allFeedback.filter(f => f.status === 'RESOLVED').length;
-    document.getElementById('bugReports').textContent      = allFeedback.filter(f => f.type === 'BUG').length;
+    document.getElementById('totalFeedback').textContent    = allFeedback.length;
+    document.getElementById('openIssues').textContent       = allFeedback.filter(f => f.status === 'OPEN').length;
+    document.getElementById('resolvedFeedback').textContent = allFeedback.filter(f => f.status === 'RESOLVED').length;
+    document.getElementById('bugReports').textContent       = allFeedback.filter(f => f.type === 'BUG').length;
 }
 
 function renderFeedback(feedback) {
@@ -681,8 +667,8 @@ async function viewFeedback(event, id) {
 }
 
 function displayFeedbackDetail(feedback) {
-    const modal    = document.getElementById('detailModal');
-    const content  = document.getElementById('detailContent');
+    const modal     = document.getElementById('detailModal');
+    const content   = document.getElementById('detailContent');
     const canManage = userData && (userData.is_staff || userData.is_superuser || userData.role?.can_manage_feedback);
 
     const typeColors     = { FEEDBACK:'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400', BUG:'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400', FEATURE_REQUEST:'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400', PERFORMANCE:'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400', OTHER:'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400' };
@@ -710,7 +696,11 @@ function displayFeedbackDetail(feedback) {
                 <p class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2">Description</p>
                 <p class="text-sm text-white dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words">${feedback.description}</p>
             </div>
-            ${feedback.screenshot ? `<div class="border-t border-gray-200 dark:border-gray-700 pt-4"><p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Screenshot</p><img src="${feedback.screenshot}" class="max-w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700"></div>` : ''}
+            ${feedback.screenshot ? `
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Screenshot</p>
+                <img src="${feedback.screenshot}" class="max-w-full h-auto rounded-lg border border-gray-200 dark:border-gray-700">
+            </div>` : ''}
             ${canManage ? `
             <div class="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-4">
                 <div>
@@ -732,7 +722,16 @@ function displayFeedbackDetail(feedback) {
                     </div>
                 </div>
                 <div>
-                    <label for="adminNotesInput" class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Add Admin Notes</label>
+                    <label class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Admin Notes</label>
+                    ${feedback.admin_notes ? `
+                    <div class="mb-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                        <p class="text-xs font-semibold text-yellow-700 dark:text-yellow-400 mb-1 flex items-center gap-1">
+                            <span class="material-icons-round text-sm">sticky_note_2</span> Saved Notes
+                        </p>
+                        <p class="text-sm text-yellow-900 dark:text-yellow-200 whitespace-pre-wrap break-words">${feedback.admin_notes}</p>
+                    </div>` : `
+                    <p class="text-xs text-gray-400 dark:text-gray-500 italic mb-3">No notes yet.</p>`}
+                    <label for="adminNotesInput" class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Add / Update Notes</label>
                     <textarea id="adminNotesInput" placeholder="Add internal notes..." rows="3"
                         class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"></textarea>
                     <button onclick="addFeedbackNotes(${feedback.id})" class="mt-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors text-sm">Save Notes</button>
@@ -850,8 +849,9 @@ async function addFeedbackNotes(feedbackId) {
     try {
         const r = await apiCall(`/feedback/${feedbackId}/add_notes/`, { method:'POST', body: JSON.stringify({ notes }) });
         if (!r.ok) { const d = await r.json(); showError(d.error || 'Failed to add notes'); return; }
-        showSuccess('Notes added successfully');
+        showSuccess('Notes saved successfully');
         document.getElementById('adminNotesInput').value = '';
+        // Re-fetch and redisplay so the saved notes panel updates immediately
         viewFeedback({ stopPropagation:()=>{} }, feedbackId);
     } catch (e) { showError('Failed to add notes'); }
 }
@@ -875,7 +875,6 @@ function clearScreenshot() {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 function initFormListeners() {
-    // Screenshot drag/drop
     const uploadArea = document.getElementById('uploadArea');
     uploadArea.addEventListener('click', () => document.getElementById('screenshot').click());
     uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('border-primary'); });
@@ -887,7 +886,6 @@ function initFormListeners() {
     });
     document.getElementById('screenshot').addEventListener('change', previewScreenshot);
 
-    // Form submit
     document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const subject     = document.getElementById('subject').value.trim();
@@ -935,10 +933,8 @@ function initFormListeners() {
         }
     });
 
-    // Filter search input
     document.getElementById('searchFeedback').addEventListener('input', applyFilters);
 
-    // Init all custom dropdowns
     initCustomDropdown({ wrapperId:'typeFilterWrapper', btnId:'typeFilterBtn', menuId:'typeFilterMenu', chevronId:'typeFilterChevron', labelId:'typeFilterLabel', optionClass:'filter-type-option', hiddenInputId:'filterType', onChange: applyFilters });
     initCustomDropdown({ wrapperId:'statusFilterWrapper', btnId:'statusFilterBtn', menuId:'statusFilterMenu', chevronId:'statusFilterChevron', labelId:'statusFilterLabel', optionClass:'filter-status-option', hiddenInputId:'filterStatus', onChange: applyFilters });
     initCustomDropdown({ wrapperId:'priorityFilterWrapper', btnId:'priorityFilterBtn', menuId:'priorityFilterMenu', chevronId:'priorityFilterChevron', labelId:'priorityFilterLabel', optionClass:'filter-priority-option', hiddenInputId:'filterPriority', onChange: applyFilters });
