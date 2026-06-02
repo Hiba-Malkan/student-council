@@ -137,7 +137,11 @@
     }
 
     function checkPermissions() {
-        canManageRecords = userData.is_staff || userData.is_superuser || userData.role?.can_record_discipline;
+        const hasRecordPermission = userData.role_detail?.can_record_discipline;
+        const hasViewPermission = userData.role_detail?.can_view_discipline;
+        const hasLegacyRole = userData.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(userData.role_detail.name);
+        
+        canManageRecords = userData.is_staff || userData.is_superuser || hasRecordPermission || hasLegacyRole;
         
         if (!canManageRecords) {
             document.getElementById('addRecordBtn').style.display = 'none';

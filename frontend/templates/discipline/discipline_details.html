@@ -214,8 +214,10 @@ async function loadRecord() {
 
 function checkPermissions() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    canManageRecords = user.is_staff || user.is_superuser || 
-        (user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name));
+    const hasRecordPermission = user.role_detail?.can_record_discipline;
+    const hasLegacyRole = user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name);
+    
+    canManageRecords = user.is_staff || user.is_superuser || hasRecordPermission || hasLegacyRole;
     
     if (canManageRecords) {
         document.getElementById('addOffenseBtn').classList.remove('hidden');
