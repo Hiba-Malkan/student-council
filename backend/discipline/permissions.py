@@ -3,35 +3,46 @@ from rest_framework import permissions
 
 class IsDisciplineManager(permissions.BasePermission):
     """
-    Permission to allow only staff members and discipline managers to create/edit records.
-    All authenticated users can view records.
+    Permission to allow only staff members and users with can_record_discipline permission.
+    All authenticated users can view records if they have can_view_discipline permission.
     """
     
     def has_permission(self, request, view):
-        # Allow read permissions for authenticated users
-        if request.method in permissions.SAFE_METHODS:
-            return request.user and request.user.is_authenticated
+        if not request.user or not request.user.is_authenticated:
+            return False
         
-        # Write permissions only for staff or users with specific role
-        return request.user and request.user.is_authenticated and (
-            request.user.is_staff or 
-            request.user.is_superuser or
-            hasattr(request.user, 'role_detail') and 
-            request.user.role_detail and 
-            request.user.role_detail.name in ['President', 'Vice President', 'Discipline Manager']
-        )
+        # Read permissions for users with can_view_discipline
+        if request.method in permissions.SAFE_METHODS:
+            if request.user.is_staff or request.user.is_superuser:
+                return True
+            if request.user.role and request.user.role.can_view_discipline:
+                return True
+            return False
+        
+        # Write permissions for users with can_record_discipline
+        if request.user.is_staff or request.user.is_superuser:
+            return True
+        if request.user.role and request.user.role.can_record_discipline:
+            return True
+        return False
 
     def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed for authenticated users
-        if request.method in permissions.SAFE_METHODS:
-            return request.user and request.user.is_authenticated
+        if not request.user or not request.user.is_authenticated:
+            return False
         
-        # Write permissions only for staff, creator, or authorized roles
-        return request.user and request.user.is_authenticated and (
-            request.user.is_staff or 
-            request.user.is_superuser or
-            obj.created_by == request.user or
-            hasattr(request.user, 'role_detail') and 
-            request.user.role_detail and 
-            request.user.role_detail.name in ['President', 'Vice President', 'Discipline Manager']
-        )
+        # Read permissions for users with can_view_discipline
+        if request.method in permissions.SAFE_METHODS:
+            if request.user.is_staff or request.user.is_superuser:
+                return True
+            if request.user.role and request.user.role.can_view_discipline:
+                return True
+            return False
+        
+        # Write permissions for staff, creator, or users with can_record_discipline
+        if request.user.is_staff or request.user.is_superuser:
+            return True
+        if obj.created_by == request.user:
+            return True
+        if request.user.role and request.user.role.can_record_discipline:
+            return True
+        return False
