@@ -110,27 +110,33 @@
     let deleteRecordId = null;
     let canManageRecords = false;
 
-    async function loadRecords() {
+    async function loadRecords(url = '/discipline/records/') {
         try {
-            // Check if user is authorized to view discipline
             await loadUserProfile();
-            const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
-            
+
+            const isNormalStudent = userData?.role?.is_normal_student;
             if (isNormalStudent) {
                 showError('You do not have permission to access Discipline Records');
                 setTimeout(() => window.location.href = '/announcements/', 1500);
                 return;
             }
 
-            const response = await apiCall('/discipline/records/');
-            if (response && response.ok) {
+            let records = [];
+            let nextUrl = url;
+
+            while (nextUrl) {
+                const response = await apiCall(nextUrl);
                 const data = await response.json();
-                allRecords = Array.isArray(data) ? data : (data.results || []);
-                checkPermissions();
-                renderRecords(allRecords);
-            } else {
-                showError('Failed to load records');
+
+                records = records.concat(data.results);
+                nextUrl = data.next;
             }
+
+            allRecords = records;
+
+            checkPermissions();
+            renderRecords(allRecords);
+
         } catch (error) {
             showError('Failed to load records');
         }
