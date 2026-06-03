@@ -535,59 +535,79 @@ async function loadTodayDuty() {
     }
 }
 
-// Load users into custom drop-down menu structure — only those marked as visible in the duty roster
+// Load users 
 async function loadUsers() {
     try {
-        const response = await apiCall('/accounts/users/?duty_roster_only=true');
-        if (response && response.ok) {
-            const data = await response.json();
-            const users = data.results || data;
-            
-            assigneeOptionsList.innerHTML = '';
-
-            if (users.length === 0) {
-                const li = document.createElement('li');
-                li.className = 'px-4 py-2.5 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed select-none';
-                li.textContent = 'No eligible members found';
-                assigneeOptionsList.appendChild(li);
-                return;
+        let allUsers = [];
+        let nextPageUrl = '/accounts/users/?duty_roster_only=true&page=1';
+        
+        while (nextPageUrl) {
+            const response = await apiCall(nextPageUrl);
+            if (response && response.ok) {
+                const data = await response.json();
+                
+                const pageUsers = data.results || data;
+                
+                if (Array.isArray(pageUsers)) {
+                    allUsers = allUsers.concat(pageUsers);
+                } else {
+                    break;
+                }
+                
+                if (data.next) {
+                    const urlObj = new URL(data.next, window.location.origin);
+                    nextPageUrl = `/accounts/users/${urlObj.search}`;
+                } else {
+                    nextPageUrl = null;
+                }
+            } else {
+                break;
             }
-
-            users.forEach(user => {
-                const li = document.createElement('li');
-                li.setAttribute('role', 'option');
-                li.className = 'flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light transition-colors duration-150';
-                
-                const displayName = user.first_name && user.last_name 
-                    ? `${user.first_name} ${user.last_name}` 
-                    : user.username;
-                const roleName = user.role_detail?.name || 'No Role';
-                const optionText = `${displayName} (${roleName})`;
-                
-                // Store lowercase text for fast filtering
-                li.dataset.searchText = optionText.toLowerCase();
-                
-                li.innerHTML = `
-                    <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>
-                    <span class="truncate">${optionText}</span>
-                `;
-                
-                li.addEventListener('click', () => {
-                    assigneeInput.value = user.id;
-                    assigneeLabel.textContent = optionText;
-                    assigneeLabel.classList.remove('text-gray-400', 'dark:text-gray-500');
-                    
-                    // Toggle check indicators
-                    const allCheckIcons = assigneeOptionsList.querySelectorAll('.check-icon');
-                    allCheckIcons.forEach(icon => icon.classList.add('opacity-0'));
-                    li.querySelector('.check-icon').classList.remove('opacity-0');
-                    
-                    closeAssigneeDropdown();
-                });
-                
-                assigneeOptionsList.appendChild(li);
-            });
         }
+
+      
+        assigneeOptionsList.innerHTML = '';
+
+        if (allUsers.length === 0) {
+            const li = document.createElement('li');
+            li.className = 'px-4 py-2.5 text-sm text-gray-500 dark:text-gray-400 cursor-not-allowed select-none';
+            li.textContent = 'No eligible members found';
+            assigneeOptionsList.appendChild(li);
+            return;
+        }
+
+        allUsers.forEach(user => {
+            const li = document.createElement('li');
+            li.setAttribute('role', 'option');
+            li.className = 'flex items-center px-4 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700 active:bg-primary-light transition-colors duration-150';
+            
+            const displayName = user.first_name && user.last_name 
+                ? `${user.first_name} ${user.last_name}` 
+                : user.username;
+            const roleName = user.role_detail?.name || 'No Role';
+            const optionText = `${displayName} (${roleName})`;
+            
+            li.dataset.searchText = optionText.toLowerCase();
+            
+            li.innerHTML = `
+                <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>
+                <span class="truncate">${optionText}</span>
+            `;
+            
+            li.addEventListener('click', () => {
+                assigneeInput.value = user.id;
+                assigneeLabel.textContent = optionText;
+                assigneeLabel.classList.remove('text-gray-400', 'dark:text-gray-500');
+                
+                const allCheckIcons = assigneeOptionsList.querySelectorAll('.check-icon');
+                allCheckIcons.forEach(icon => icon.classList.add('opacity-0'));
+                li.querySelector('.check-icon').classList.remove('opacity-0');
+                
+                closeAssigneeDropdown();
+            });
+            
+            assigneeOptionsList.appendChild(li);
+        });
     } catch (error) {
         console.error('Error loading users:', error);
     }
@@ -628,12 +648,10 @@ document.getElementById('assignDutyForm').addEventListener('submit', async (e) =
             showSuccess('Duty assigned successfully!');
             e.target.reset();
             
-            // Reload duty if assigned to current user and for today
             const today = new Date().toISOString().split('T')[0];
             if (data.assigned_to === userData.id && data.date === today) {
                 loadTodayDuty();
             }
-            // Reload duties list - reset to page 1 with current filters
             currentPage = 1;
             const searchValue = document.getElementById('searchDuties').value;
             const filterValue = filterDateInput.value;
@@ -663,7 +681,6 @@ let allDuties = [];
 // Load all duties with pagination
 async function loadAllDuties(page = 1, search = '', dateFilter = 'all') {
     try {
-        // Build query parameters
         let url = `/duty-roster/duties/?page=${page}&page_size=${pageSize}`;
         
         if (search) {
@@ -765,7 +782,6 @@ function updateDutiesTable(duties) {
             status = `<span class="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded-full">Upcoming</span>`;
         }
         
-        // Check if user can delete this duty - anyone with duty roster permission can delete all duties
         const canDelete = userData.role_detail?.can_edit_duty_roster || userData.is_staff || userData.is_superuser;
         
         html += `
