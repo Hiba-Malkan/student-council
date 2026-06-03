@@ -3,16 +3,22 @@ from rest_framework import viewsets, filters, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination
 from .models import DisciplineRecord, OffenseLog  # Added OffenseLog
 from .serializers import DisciplineRecordSerializer, OffenseLogSerializer
 from .permissions import IsDisciplineManager
 
+class DisciplinePagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
 
 class OffenseLogViewSet(viewsets.ModelViewSet):
     """ViewSet for managing individual offense logs"""
     queryset = OffenseLog.objects.all()
     serializer_class = OffenseLogSerializer
     permission_classes = [IsAuthenticated, IsDisciplineManager]
+    
     
     def perform_destroy(self, instance):
         """When deleting an offense log, decrease the parent record's offense_count or delete the record"""
@@ -37,6 +43,7 @@ class DisciplineRecordViewSet(viewsets.ModelViewSet):
     queryset = DisciplineRecord.objects.all()
     serializer_class = DisciplineRecordSerializer
     permission_classes = [IsAuthenticated, IsDisciplineManager]
+    pagination_class = DisciplinePagination          # ← add this line
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     
     # Filter by fields (NEW: added category for filtering if needed via logs)
