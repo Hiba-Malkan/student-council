@@ -1,0 +1,504 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Contact Messages - CouncilApp{% endblock %}
+{% block nav_contact %}bg-primary-light text-primary dark:bg-primary-hover dark:text-white{% endblock %}
+{% block page_title %}Contact Messages{% endblock %}
+{% block page_subtitle %}View and respond to messages from users{% endblock %}
+{% block extra_css %}
+<link href="{% static 'css/contact_messages.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div id="accessDenied" class="hidden">
+        <div class="bg-card-light dark:bg-card-dark rounded-lg p-8 border border-gray-100 dark:border-gray-800 text-center">
+            <span class="material-icons-round text-yellow-400 text-5xl mb-3">admin_panel_settings</span>
+            <h3 class="text-xl font-semibold text-white dark:text-white mb-2">Access Restricted</h3>
+            <p class="text-gray-600 dark:text-gray-400">Only administrators can view contact messages.</p>
+        </div>
+    </div>
+
+    <div id="adminContent" class="hidden">
+        <div class="contact-grid">
+            <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-white dark:text-gray-400 font-medium">Total Messages</p>
+                        <p class="stat-number" id="totalMessages">0</p>
+                    </div>
+                    <span class="material-icons-round text-3xl md:text-4xl text-blue-500">contact_mail</span>
+                </div>
+            </div>
+            <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-white dark:text-gray-400 font-medium">Pending</p>
+                        <p class="stat-number" id="pendingMessages">0</p>
+                    </div>
+                    <span class="material-icons-round text-3xl md:text-4xl text-yellow-500">pending</span>
+                </div>
+            </div>
+            <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-white dark:text-gray-400 font-medium">In Progress</p>
+                        <p class="stat-number" id="inProgressMessages">0</p>
+                    </div>
+                    <span class="material-icons-round text-3xl md:text-4xl text-orange-500">hourglass_empty</span>
+                </div>
+            </div>
+            <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-white dark:text-gray-400 font-medium">Resolved</p>
+                        <p class="stat-number" id="resolvedMessages">0</p>
+                    </div>
+                    <span class="material-icons-round text-3xl md:text-4xl text-green-500">check_circle</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-card-light dark:bg-card-dark rounded-lg p-4 border border-gray-100 dark:border-gray-800">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Search</label>
+                    <input type="text" id="searchMessages" placeholder="Search by name or subject..."
+                        class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary search-input">
+                </div>
+                <div>
+                    <label class="text-sm font-medium text-white dark:text-gray-300 mb-2 block">Status</label>
+                    <div class="relative" id="statusFilterWrapper">
+                        <input type="hidden" id="filterStatus" value="">
+                        <button type="button" id="statusFilterBtn" aria-haspopup="listbox" aria-expanded="false"
+                            class="flex w-full items-center justify-between rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary transition-colors">
+                            <span id="statusFilterLabel">All Statuses</span>
+                            <span class="material-icons-round text-gray-500 dark:text-gray-400 transition-transform duration-200 text-lg" id="statusFilterChevron">expand_more</span>
+                        </button>
+                        <ul id="statusFilterMenu" role="listbox"
+                            class="custom-dropdown-menu hidden border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                            <li role="option" data-value="" data-label="All Statuses" class="filter-status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary check-icon">check</span>All Statuses
+                            </li>
+                            <li role="option" data-value="pending" data-label="Pending" class="filter-status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Pending
+                            </li>
+                            <li role="option" data-value="in_progress" data-label="In Progress" class="filter-status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>In Progress
+                            </li>
+                            <li role="option" data-value="resolved" data-label="Resolved" class="filter-status-option flex items-center px-3 py-2.5 text-sm text-gray-900 dark:text-white cursor-pointer hover:bg-primary-light dark:hover:bg-gray-700">
+                                <span class="material-icons-round text-base mr-2 text-primary check-icon opacity-0">check</span>Resolved
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="messagesContainer" class="space-y-4">
+            <div class="text-center py-12">
+                <span class="material-icons-round text-5xl text-gray-400 mb-3">contact_mail</span>
+                <p class="text-gray-600 dark:text-gray-400">Loading contact messages...</p>
+            </div>
+        </div>
+
+        <div id="paginationContainer"></div>
+    </div>
+</div>
+
+<div id="detailModal" class="hidden fixed inset-0 z-[99999] bg-black bg-opacity-50 flex items-start justify-center pt-8 pb-8 overflow-y-auto px-4" onclick="closeDetailModalOutside(event)">
+    <div class="bg-card-light dark:bg-card-dark rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <div class="bg-gradient-to-r from-primary to-primary-hover px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+            <h2 class="text-xl font-bold text-white" id="detailTitle">Message Details</h2>
+            <button onclick="closeDetailModal()" class="text-white hover:text-gray-200 transition-colors">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <div id="detailContent" class="p-4 sm:p-6"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let allMessages = [];
+let currentFilters = { search: '', status: '' };
+let currentPage = 1;
+const itemsPerPage = 10;
+
+function checkAdminAccess() {
+    if (!userData || (!userData.is_staff && !userData.is_superuser)) {
+        document.getElementById('accessDenied').classList.remove('hidden');
+        document.getElementById('adminContent').classList.add('hidden');
+        return false;
+    }
+    document.getElementById('accessDenied').classList.add('hidden');
+    document.getElementById('adminContent').classList.remove('hidden');
+    return true;
+}
+
+function initStatusDropdown() {
+    const wrapper = document.getElementById('statusFilterWrapper');
+    const btn = document.getElementById('statusFilterBtn');
+    const menu = document.getElementById('statusFilterMenu');
+    const chevron = document.getElementById('statusFilterChevron');
+    const label = document.getElementById('statusFilterLabel');
+    const input = document.getElementById('filterStatus');
+    const options = wrapper.querySelectorAll('.filter-status-option');
+
+    function open() {
+        menu.classList.remove('hidden');
+        chevron.style.transform = 'rotate(180deg)';
+        btn.setAttribute('aria-expanded', 'true');
+    }
+    function close() {
+        menu.classList.add('hidden');
+        chevron.style.transform = '';
+        btn.setAttribute('aria-expanded', 'false');
+    }
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.contains('hidden') ? open() : close();
+    });
+
+    options.forEach(opt => {
+        opt.addEventListener('click', () => {
+            const value = opt.dataset.value;
+            const optLabel = opt.dataset.label;
+            input.value = value;
+            label.textContent = optLabel;
+            options.forEach(o => o.querySelector('.check-icon').classList.add('opacity-0'));
+            opt.querySelector('.check-icon').classList.remove('opacity-0');
+            close();
+            applyFilters();
+        });
+    });
+
+    wrapper._closeDropdown = close;
+}
+
+document.addEventListener('click', () => {
+    document.querySelectorAll('[id$="Wrapper"]').forEach(w => {
+        if (w._closeDropdown) w._closeDropdown();
+    });
+});
+
+async function loadMessages() {
+    try {
+        const response = await apiCall('/accounts/contact-messages/');
+        if (response.status === 403) {
+            showError("Access denied. Admin privileges required.");
+            return;
+        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        allMessages = data.results || data;
+        updateStats();
+        renderMessages(allMessages);
+    } catch (error) {
+        console.error('Error loading messages:', error);
+        document.getElementById('messagesContainer').innerHTML = `
+            <div class="text-center py-12">
+                <span class="material-icons-round text-red-400 text-5xl mb-3">error</span>
+                <p class="text-red-500">Failed to load messages. Please try again.</p>
+            </div>`;
+    }
+}
+
+function updateStats() {
+    document.getElementById('totalMessages').textContent = allMessages.length;
+    document.getElementById('pendingMessages').textContent = allMessages.filter(m => m.status === 'pending').length;
+    document.getElementById('inProgressMessages').textContent = allMessages.filter(m => m.status === 'in_progress').length;
+    document.getElementById('resolvedMessages').textContent = allMessages.filter(m => m.status === 'resolved').length;
+}
+
+function renderMessages(messages) {
+    const container = document.getElementById('messagesContainer');
+    if (messages.length === 0) {
+        container.innerHTML = `<div class="text-center py-12"><span class="material-icons-round text-gray-400 text-5xl mb-3">contact_mail</span><p class="text-gray-600 dark:text-gray-400">No messages found.</p></div>`;
+        document.getElementById('paginationContainer').innerHTML = '';
+        return;
+    }
+
+    const totalPages = Math.ceil(messages.length / itemsPerPage);
+    const start = (currentPage - 1) * itemsPerPage;
+    const pageItems = messages.slice(start, start + itemsPerPage);
+
+    let html = '';
+    pageItems.forEach(item => {
+        const statusClasses = {
+            pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+            in_progress: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+            resolved: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+        };
+        
+        html += `
+        <div class="message-card bg-card-light dark:bg-card-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-4 sm:p-6 relative">
+            <div class="flex items-start justify-between mb-3 gap-2">
+                <div class="flex flex-wrap gap-2">
+                    <span class="status-badge ${statusClasses[item.status] || statusClasses['pending']}">${item.status.replace('_', ' ')}</span>
+                    ${item.admin_response ? `<span class="status-badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">Responded</span>` : ''}
+                </div>
+                <button onclick="viewMessage(event, ${item.id})" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium text-xs transition-colors">
+                    <span class="material-icons-round text-sm">visibility</span> View
+                </button>
+            </div>
+            
+            <h3 class="text-lg font-bold text-lbg-main-dark dark:text-lbg-main-dark mb-2 break-words">${item.subject}</h3>
+            <p class="text-sm text-white dark:text-gray-400 mb-3 break-words" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${item.message || 'No message'}</p>
+            
+            <div class="flex items-center justify-between text-xs text-lbg-main-dark dark:text-lbg-sub-dark">
+                <span>${item.name} • ${item.email}</span>
+                <span>${formatDate(item.created_at)}</span>
+            </div>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+    renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+    const pc = document.getElementById('paginationContainer');
+    if (totalPages <= 1) { pc.innerHTML = ''; return; }
+    let html = '';
+    if (currentPage > 1) html += `<button onclick="goToPage(${currentPage-1})" class="px-3 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm"><span class="material-icons-round text-base" style="vertical-align:middle">chevron_left</span></button>`;
+    for (let i = 1; i <= totalPages; i++) {
+        html += i === currentPage
+            ? `<button class="px-3 py-2 bg-primary text-white rounded-lg font-medium text-sm">${i}</button>`
+            : `<button onclick="goToPage(${i})" class="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg text-sm font-medium">${i}</button>`;
+    }
+    if (currentPage < totalPages) html += `<button onclick="goToPage(${currentPage+1})" class="px-3 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm"><span class="material-icons-round text-base" style="vertical-align:middle">chevron_right</span></button>`;
+    pc.innerHTML = html;
+}
+
+function goToPage(page) {
+    currentPage = page;
+    renderMessages(getFilteredMessages());
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function applyFilters() {
+    currentFilters.search = document.getElementById('searchMessages').value.toLowerCase();
+    currentFilters.status = document.getElementById('filterStatus').value;
+    currentPage = 1;
+    renderMessages(getFilteredMessages());
+}
+
+function getFilteredMessages() {
+    return allMessages.filter(item => {
+        const s = currentFilters.search;
+        return (!s || item.name.toLowerCase().includes(s) || item.subject.toLowerCase().includes(s) || item.email.toLowerCase().includes(s))
+            && (!currentFilters.status || item.status === currentFilters.status);
+    });
+}
+
+async function viewMessage(event, id) {
+    if (event && event.stopPropagation) {
+        event.stopPropagation();
+    }
+    try {
+        const response = await apiCall(`/accounts/contact-messages/${id}/`);
+        if (response.status === 403) { showError("You don't have permission"); return; }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        displayMessageDetail(data);
+    } catch (error) {
+        console.error('Error loading message details:', error);
+        showError('Failed to load message details');
+    }
+}
+
+function displayMessageDetail(message) {
+    const modal = document.getElementById('detailModal');
+    const content = document.getElementById('detailContent');
+
+    const statusClasses = {
+        pending: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
+        in_progress: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+        resolved: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+    };
+
+    content.innerHTML = `
+        <div class="space-y-5">
+            <div class="flex flex-wrap gap-2">
+                <button onclick="updateMessageStatus(${message.id}, 'pending')" class="px-3 py-1.5 ${message.status === 'pending' ? 'ring-2 ring-yellow-500 ' : ''}bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400 rounded-lg text-xs font-medium hover:bg-yellow-200 transition-colors">Pending</button>
+                <button onclick="updateMessageStatus(${message.id}, 'in_progress')" class="px-3 py-1.5 ${message.status === 'in_progress' ? 'ring-2 ring-orange-500 ' : ''}bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 rounded-lg text-xs font-medium hover:bg-orange-200 transition-colors">In Progress</button>
+                <button onclick="updateMessageStatus(${message.id}, 'resolved')" class="px-3 py-1.5 ${message.status === 'resolved' ? 'ring-2 ring-green-500 ' : ''}bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-lg text-xs font-medium hover:bg-green-200 transition-colors">Resolved</button>
+            </div>
+
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <h3 class="text-sm font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-3">Contact Information</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><p class="detail-label text-white dark:text-gray-400 mb-1">Name</p><p class="text-sm text-white dark:text-white font-medium break-words">${message.name}</p></div>
+                    <div><p class="detail-label text-white dark:text-gray-400 mb-1">Email</p><p class="text-sm text-white dark:text-white font-medium break-words">${message.email}</p></div>
+                    <div><p class="detail-label text-white dark:text-gray-400 mb-1">Username</p><p class="text-sm text-white dark:text-white font-medium">${message.username || 'N/A'}</p></div>
+                    <div><p class="detail-label text-white dark:text-gray-400 mb-1">Submitted</p><p class="text-sm text-white dark:text-white font-medium">${formatDate(message.created_at)}</p></div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <h3 class="text-sm font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-3">Message</h3>
+                <div class="space-y-3">
+                    <div><p class="detail-label text-white dark:text-gray-400 mb-1">Subject</p><p class="text-base font-semibold text-white dark:text-white break-words">${message.subject}</p></div>
+                    <div><p class="detail-label text-white dark:text-gray-400 mb-1">Message</p><p class="text-sm text-white dark:text-gray-300 leading-relaxed whitespace-pre-wrap break-words">${message.message}</p></div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <h3 class="text-sm font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-3">Status & Response</h3>
+                <div class="space-y-4">
+                    <div><p class="detail-label text-white dark:text-gray-400 mb-1">Status</p><p class="text-sm text-white dark:text-white font-medium">${message.status.replace('_', ' ')}</p></div>
+                    
+                    ${message.admin_response ? `
+                    <div class="admin-response-box">
+                        <p class="text-xs font-semibold text-blue-700 dark:text-blue-400 mb-2">Admin Response</p>
+                        <p class="text-sm text-blue-900 dark:text-blue-200 leading-relaxed whitespace-pre-wrap break-words mb-3">${message.admin_response}</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3 pt-3 border-t border-blue-200 dark:border-blue-800">
+                            <div><p class="detail-label text-blue-600 dark:text-blue-400 mb-1">Responded by</p><p class="text-sm text-blue-800 dark:text-blue-300 font-medium">${message.responded_by_name || message.responded_by}</p></div>
+                            <div><p class="detail-label text-blue-600 dark:text-blue-400 mb-1">Responded at</p><p class="text-sm text-blue-800 dark:text-blue-300 font-medium">${formatDateTime(message.responded_at) || 'N/A'}</p></div>
+                        </div>
+                    </div>` : ''}
+
+                    <div>
+                        <label class="text-xs font-semibold text-white dark:text-gray-400 uppercase tracking-wider mb-2 block">Respond</label>
+                        <textarea id="adminResponse" rows="4" placeholder="Type your response here..." class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-input-bg-dark text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm mb-3">${message.admin_response || ''}</textarea>
+                        <div class="char-counter text-white dark:text-gray-400"><span id="responseCharCount">${(message.admin_response || '').length}</span> / 2000</div>
+                        <button onclick="saveResponse(${message.id})" class="mt-3 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors text-sm">Save Response</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const responseInput = document.getElementById('adminResponse');
+    const charCount = document.getElementById('responseCharCount');
+    responseInput.addEventListener('input', () => {
+        charCount.textContent = responseInput.value.length;
+    });
+
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDetailModal() {
+    document.getElementById('detailModal').classList.add('hidden');
+    document.body.style.overflow = '';
+}
+function closeDetailModalOutside(e) { if (e.target.id === 'detailModal') closeDetailModal(); }
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+async function saveResponse(messageId) {
+    const response = document.getElementById('adminResponse').value.trim();
+    if (!response) {
+        alert('Please enter a response');
+        return;
+    }
+
+    try {
+        const r = await apiCall(`/accounts/contact-messages/${messageId}/respond/`, {
+            method: 'PATCH', 
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ admin_response: response }) 
+        });
+        
+        if (!r.ok) {
+            const d = await r.json();
+            showError(d.error || 'Failed to save response');
+            return;
+        }
+        
+        showSuccess('Response saved successfully');
+        loadMessages();
+        
+        const freshData = await apiCall(`/accounts/contact-messages/${messageId}/`);
+        if (freshData.ok) {
+            const data = await freshData.json();
+            displayMessageDetail(data);
+        }
+    } catch (e) {
+        showError('Failed to save response');
+    }
+}
+
+async function updateMessageStatus(messageId, newStatus) {
+    try {
+        const r = await apiCall(`/accounts/contact-messages/${messageId}/status/`, {
+            method: 'PATCH', 
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+        if (!r.ok) {
+            const d = await r.json();
+            showError(d.error || 'Failed to update status');
+            return;
+        }
+        showSuccess('Status updated');
+        loadMessages();
+        
+        const freshData = await apiCall(`/accounts/contact-messages/${messageId}/`);
+        if (freshData.ok) {
+            const data = await freshData.json();
+            displayMessageDetail(data);
+        }
+    } catch (e) {
+        showError('Failed to update status');
+    }
+}
+
+function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+function formatDateTime(dateString) {
+    const d = new Date(dateString);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+}
+function showSuccess(msg) {
+    const container = document.getElementById('successContainer');
+    if (container) {
+        container.innerHTML = `<div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg mb-4">${msg}</div>`;
+        setTimeout(() => container.innerHTML = '', 3000);
+    } else {
+        console.log("Success: " + msg);
+    }
+}
+function showError(msg) {
+    const container = document.getElementById('errorContainer');
+    if (container) {
+        container.innerHTML = `<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg mb-4">${msg}</div>`;
+        setTimeout(() => container.innerHTML = '', 4000);
+    } else {
+        alert("Error: " + msg);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (checkAdminAccess()) {
+        loadUserProfile().then(() => {
+            loadMessages();
+            initStatusDropdown();
+            document.getElementById('searchMessages').addEventListener('input', applyFilters);
+        });
+    }
+});
+</script>
+{% endblock %}

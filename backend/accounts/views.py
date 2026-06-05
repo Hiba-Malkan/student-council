@@ -386,3 +386,59 @@ class ContactMessageListView(generics.ListAPIView):
         if not self.request.user.is_staff:
             return ContactMessage.objects.none()
         return ContactMessage.objects.all()
+
+
+class ContactMessageDetailView(generics.RetrieveAPIView):
+    serializer_class = ContactMessageSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return ContactMessage.objects.none()
+        return ContactMessage.objects.all()
+
+
+class ContactMessageResponseView(generics.UpdateAPIView):
+    serializer_class = ContactMessageSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return ContactMessage.objects.none()
+        return ContactMessage.objects.all()
+    
+    def update(self, request, *args, **kwargs):
+        message = self.get_object()
+        admin_response = request.data.get('admin_response', '')
+        new_status = request.data.get('status')
+        
+        if admin_response:
+            message.admin_response = admin_response
+            message.responded_by = request.user
+            message.responded_at = timezone.now()
+        
+        if new_status:
+            message.status = new_status
+        
+        message.save()
+        return Response(ContactMessageSerializer(message).data)
+
+
+class ContactMessageStatusView(generics.UpdateAPIView):
+    serializer_class = ContactMessageSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return ContactMessage.objects.none()
+        return ContactMessage.objects.all()
+    
+    def update(self, request, *args, **kwargs):
+        message = self.get_object()
+        new_status = request.data.get('status')
+        
+        if new_status in ['pending', 'in_progress', 'resolved']:
+            message.status = new_status
+            message.save()
+        
+        return Response(ContactMessageSerializer(message).data)

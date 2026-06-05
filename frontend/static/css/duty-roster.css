@@ -496,3 +496,19 @@
         display: none;
     }
 }
+
+#assigneeDropdownMenu,
+#filterDateDropdownMenu {
+    top: 100% !important;
+    bottom: auto !important;
+    margin-top: 0.25rem !important;
+}
+
+@media (max-width: 640px) {
+    #assigneeDropdownMenu,
+    #filterDateDropdownMenu {
+        position: absolute !important;
+        top: 100% !important;
+        bottom: auto !important;
+    }
+}

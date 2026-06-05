@@ -91,6 +91,8 @@ urlpatterns = [
 
     # Feedback
     path('feedback/', TemplateView.as_view(template_name='feedback.html'), name='feedback'),
+    #Contacty Messages
+    path('contact-messages/', TemplateView.as_view(template_name='contact_messages.html'), name='contact-messages'),
 ]
 
 if settings.DEBUG:
