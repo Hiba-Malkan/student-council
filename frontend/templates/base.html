@@ -55,7 +55,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                position: absolute; /* Pull button completely out of layout flow */
+                position: absolute; 
                 top: 1rem;
                 left: 1rem;
             }
@@ -66,7 +66,7 @@
                 top: 0;
                 height: 100vh;
                 width: 260px;
-                z-index: 50; /* Ensure it stays cleanly above all content components */
+                z-index: 50; 
                 transform: translateX(-100%);
                 transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
@@ -82,8 +82,8 @@
                 position: fixed;
                 inset: 0;
                 background: rgba(0, 0, 0, 0.4);
-                backdrop-filter: blur(2px); /* Soft focus separation */
-                z-index: 40; /* Sit exactly behind sidebar but over active dashboard views */
+                backdrop-filter: blur(2px); 
+                z-index: 40; 
                 opacity: 0;
                 visibility: hidden;
                 transition: opacity 0.25s ease, visibility 0.25s ease;
@@ -94,7 +94,6 @@
                 visibility: visible;
             }
 
-            /* Responsive container safeguards against squeezed inputs */
             .flex-1 {
                 padding-left: 1rem !important;
                 padding-right: 1rem !important;
@@ -103,7 +102,7 @@
             header {
                 padding-right: 0.5rem !important;
                 padding-left: 0.5rem !important;
-                padding-top: 4.5rem !important; /* Clear room for hamburger menu element safely */
+                padding-top: 4.5rem !important; 
             }
 
             footer {
@@ -160,7 +159,7 @@
                         </div>
                     </a>
                 </div>
-                <nav class="mt-6 px-3 space-y-1">
+                <nav class="mt-6 px-3 space-y-1 overflow-y-auto max-h-[calc(100vh-10rem)]">
                     <a id="dashButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_dashboard %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/dashboard/">
                         <span class="material-icons-round mr-3 text-xl transition-colors">dashboard</span>
                         Dashboard
@@ -201,9 +200,13 @@
                         <span class="material-icons-round mr-3 text-xl transition-colors">feedback</span>
                         Feedback
                     </a>
-                    <a id="adminpanelButton" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_admin %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/admin/" id="adminPanelLink" style="display: none;">
+                    <a id="adminPanelLink" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_admin %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/admin/" style="display: none;">
                         <span class="material-icons-round mr-3 text-xl transition-colors">admin_panel_settings</span>
                         Admin Panel
+                    </a>
+                    <a id="contactMessagesLink" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg {% block nav_contact %}text-white hover:bg-white/10 hover:text-white{% endblock %} transition-colors" href="/contact-messages/" style="display: none;">
+                        <span class="material-icons-round mr-3 text-xl transition-colors">contact_mail</span>
+                        Contact Messages
                     </a>
                 </nav>
             </div>
@@ -227,8 +230,8 @@
             <header class="bg-background-light dark:bg-background-dark pt-8 pb-4 px-8 w-full">
                 <div class="flex justify-between items-end gap-4">
                     <div class="min-w-0 flex-1">
-                        <h1 class="text-2xl font-bold text-lbg-main-light dark:text-lbg-main-dark">{% block page_title %}Council App{% endblock %}</h1>
-                        <p class="text-sm text-lbg-sub-light dark:text-lbg-sub-dark mt-1 break-words">{% block page_subtitle %}{% endblock %}</p>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{% block page_title %}Council App{% endblock %}</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 break-words">{% block page_subtitle %}{% endblock %}</p>
                     </div>
                     <button id="darkModeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none transition-colors flex-shrink-0">
                         <span class="material-icons-round text-xl dark:hidden">dark_mode</span>
@@ -244,7 +247,7 @@
                 {% block content %}{% endblock %}
 
                 <footer class="mt-8 text-center px-4">
-                    <p class="text-xs text-lbg-main-light dark:text-lbg-main-dark leading-relaxed">© 2025 Student Council Management System. All rights reserved. Work of Hiba, Hritvik, Ritvick and Stervyn.</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">© 2026 Student Council Management System. All rights reserved. Work of Hiba, Hritvik, Ritvick and Stervyn.</p>
                 </footer>
             </div>
         </main>
@@ -264,7 +267,7 @@
             if (!isNormalStudent) return;
 
             const currentPath = window.location.pathname;
-            const restrictedPaths = ['/dashboard/', '/meetings/', '/duty-roster/', '/discipline/'];
+            const restrictedPaths = ['/dashboard/', '/meetings/', '/duty-roster/', '/discipline/', '/contact-messages/'];
             
             const isRestricted = restrictedPaths.some(path => currentPath.startsWith(path));
             if (isRestricted) {
@@ -281,20 +284,24 @@
 
         function checkPermissions() {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
-            isNormalStudent = user.is_staff || user.is_superuser || 
+            window.isNormalStudent = user.is_staff || user.is_superuser || 
                 (user.role_detail && ['President', 'Vice President', 'Discipline Manager'].includes(user.role_detail.name));
         }
 
         function showError(message) {
             const container = document.getElementById('errorContainer');
-            container.innerHTML = `<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg mb-4">${message}</div>`;
-            setTimeout(() => container.innerHTML = '', 5000);
+            if (container) {
+                container.innerHTML = `<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 px-4 py-3 rounded-lg mb-4">${message}</div>`;
+                setTimeout(() => container.innerHTML = '', 5000);
+            }
         }
 
         function showSuccess(message) {
             const container = document.getElementById('successContainer');
-            container.innerHTML = `<div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg mb-4">${message}</div>`;
-            setTimeout(() => container.innerHTML = '', 5000);
+            if (container) {
+                container.innerHTML = `<div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-3 rounded-lg mb-4">${message}</div>`;
+                setTimeout(() => container.innerHTML = '', 5000);
+            }
         }
 
         function getAccessToken() {
@@ -342,6 +349,7 @@
             const sidebarUserRole = document.getElementById('sidebarUserRole');
             const sidebarAvatar = document.getElementById('sidebarAvatar');
             const adminPanelLink = document.getElementById('adminPanelLink');
+            const contactMessagesLink = document.getElementById('contactMessagesLink');
             const dashButton = document.getElementById('dashButton');
             const dutyButton = document.getElementById('dutyButton');
             const disciplineButton = document.getElementById('disciplineButton');
@@ -358,10 +366,10 @@
                 }
             }
 
+            // FIXED: Toggle layout rules based on authentication status properties
             if (userData.is_staff || userData.is_superuser) {
-                if (adminPanelLink) {
-                    adminPanelLink.style.display = 'flex';
-                }
+                if (adminPanelLink) adminPanelLink.style.display = 'flex';
+                if (contactMessagesLink) contactMessagesLink.style.display = 'flex';
             }
 
             const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
@@ -371,6 +379,9 @@
                 if (meetingButton) meetingButton.style.display = 'none';
                 if (dutyButton) dutyButton.style.display = 'none';
                 if (disciplineButton) disciplineButton.style.display = 'none';
+                if (contactMessagesLink) contactMessagesLink.style.display = 'none';
+                if (adminPanelLink) adminPanelLink.style.display = 'none';
+
             }
 
             const canManageClubs = userData.is_superuser || userData.is_staff || userData.role?.can_add_clubs || userData.role?.can_manage_clubs;
@@ -391,7 +402,7 @@
 
         document.getElementById('logoutBtn').addEventListener('click', async function() {
             try {
-                const response = await fetch('/api/accounts/logout/', {
+                await fetch('/api/accounts/logout/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -410,7 +421,6 @@
             }
         });
 
-        // Mobile Sidebar Display Controller Logic
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');

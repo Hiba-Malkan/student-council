@@ -1,0 +1,100 @@
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem; 
+}
+@media (max-width: 1024px) {
+    .contact-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+    .contact-grid { grid-template-columns: 1fr; }
+}
+
+.message-card {
+    margin-top: 1.5rem;
+    transition: box-shadow 0.2s;
+}
+.message-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.status-pending { background: #fef3c7; color: #92400e; }
+.status-in_progress { background: #dbeafe; color: #1e40af; }
+.status-resolved { background: #dcfce7; color: #166534; }
+
+.priority-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.priority-low { background: #f3f4f6; color: #374151; }
+.priority-medium { background: #dbeafe; color: #1e40af; }
+.priority-high { background: #ffedd5; color: #9a3412; }
+.priority-critical { background: #fee2e2; color: #991b1b; }
+
+.kebab-menu {
+    position: absolute;
+    right: 0;
+    top: 2.5rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e5e7eb;
+    z-index: 50;
+    min-width: 180px;
+}
+.kebab-menu button {
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    transition: background 0.2s;
+}
+.kebab-menu button:hover {
+    background: #f9fafb;
+}
+
+.response-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.admin-response-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.char-counter {
+    font-size: 0.75rem;
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+.search-input {
+    font-size: 16px !important;
+}
+
+@media (max-width: 768px) {
+    .message-stats-grid {
+        grid-template-columns: 1fr !important;
+    }
+}

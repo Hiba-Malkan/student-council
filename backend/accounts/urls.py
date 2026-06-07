@@ -5,7 +5,8 @@ from .views import (
     LoginView, LogoutView, CurrentUserView,
     UserViewSet, RoleViewSet,
     ForgotPasswordView, VerifyOTPView, ResetPasswordView,
-    ContactAdminView, ContactMessageListView
+    ContactAdminView, ContactMessageListView,
+    ContactMessageDetailView, ContactMessageResponseView, ContactMessageStatusView
 )
 
 router = DefaultRouter()
@@ -22,5 +23,8 @@ urlpatterns = [
     path('reset-password/', ResetPasswordView.as_view(), name='reset-password'),
     path('contact-admin/', ContactAdminView.as_view(), name='contact-admin'),
     path('contact-messages/', ContactMessageListView.as_view(), name='contact-messages'),
+    path('contact-messages/<int:pk>/', ContactMessageDetailView.as_view(), name='contact-message-detail'),
+    path('contact-messages/<int:pk>/respond/', ContactMessageResponseView.as_view(), name='contact-message-respond'),
+    path('contact-messages/<int:pk>/status/', ContactMessageStatusView.as_view(), name='contact-message-status'),
     path('', include(router.urls)),
 ]
