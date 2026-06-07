@@ -190,12 +190,12 @@
         }
 
         // no more uniform violations for hiba!! i can now wear pe the entire year!! wooo hoo
-        if (formData.dno === 'D14047') {
+        const protectedDnos = ['D14047', 'D12517'];
+        if (protectedDnos.includes(formData.dno)) {
             showError("nope, sorry! cant call out the creator for uniform!!");
             return;
         }
-
-
+        
         try {
             let response;
             
