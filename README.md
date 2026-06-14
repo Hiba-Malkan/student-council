@@ -325,7 +325,6 @@ Requests that skip steps or ignore the documentation may not receive a response.
 
 The application is built with Django and Django REST Framework, styled with Tailwind CSS, uses Celery for background processing, and PostgreSQL for data storage.
 
-**Written by Hib
-a**
+**Written by Hiba**
 
 Last Updated: Sun, June 14, 2026  
