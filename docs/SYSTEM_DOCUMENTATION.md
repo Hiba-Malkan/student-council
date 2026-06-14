@@ -1285,14 +1285,14 @@ Keep all dependencies up to date. Run pip-audit monthly to find known vulnerabil
 
 ---
 
-Documentation is located in `/path/to/docs/`. Report issues on GitHub. Contact hiba.malkan@gmail.com for questions or emergencies.
+Report issues on GitHub. Contact hiba.malkan@gmail.com for questions or emergencies.
 
 ---
 
 **Document Version:** 1.1  
-**Last Updated:** April 5, 2026  
+**Last Updated:** June 14, 2026  
 **Next Review:** July 5, 2026
+**Written and Maintained by Hiba Malkan**
+Review Note (1): No issues found, however, user logs may be deleted every month to save disk space. 
 
 ---
-
-*This documentation is confidential and intended for authorized personnel only.*
