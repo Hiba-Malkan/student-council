@@ -306,15 +306,11 @@ This project uses a source-available license. See `docs/LICENSE.md` for full ter
 
 ## Support
 
-Comprehensive documentation lives in the `docs/` folder and should be reviewed carefully before requesting assistance. Most setup, usage, and troubleshooting issues are resolved at this step. If followed properly, you will not need to escalate 99% of the time (¬_¬).
+Comprehensive documentation lives in the `docs/` folder and should be reviewed carefully before requesting assistance. Most setup, usage, and troubleshooting issues are resolved at this step. If followed properly, you will not need to escalate most of the time.
 
-For bug reports, open an issue on GitHub. For questions, emergencies, or other inquiries, email hiba.malkan@gmail.com. Support is provided on a selective, best-effort basis. Clear, detailed, and well-prepared requests receive priority. Extra effort or creative persuasion is always appreciated <3.
+For bug reports, open an issue on GitHub. For questions, emergencies, or other inquiries, email hiba.malkan@gmail.com. Support is provided on a selective, best-effort basis. Clear, detailed, and well-prepared requests receive priority. 
 
 Requests that skip steps or ignore the documentation may not receive a response.
-
-## Status
-
-The backend is production ready, the frontend is production ready, the database uses PostgreSQL with 43 tables, the API has 20+ tested endpoints, documentation is complete, security is hardened, and performance is optimized.
 
 ## Quick Links
 
@@ -329,7 +325,7 @@ The backend is production ready, the frontend is production ready, the database 
 
 The application is built with Django and Django REST Framework, styled with Tailwind CSS, uses Celery for background processing, and PostgreSQL for data storage.
 
-**Written by Hiba**
+**Written by Hib
+a**
 
-Last Updated: April 5, 2026  
-Version: 1.1
+Last Updated: Sun, June 14, 2026  
