@@ -4,7 +4,6 @@
 **Version:** 1.1  
 **Date:** April 5, 2026  
 **Organization:** Student Council  
-**Status:** Production Ready
 
 ---
 
@@ -1291,8 +1290,8 @@ Report issues on GitHub. Contact hiba.malkan@gmail.com for questions or emergenc
 
 **Document Version:** 1.1  
 **Last Updated:** June 14, 2026  
-**Next Review:** July 5, 2026
 **Written and Maintained by Hiba Malkan**
-Review Note (1): No issues found, however, user logs may be deleted every month to save disk space. 
+Review 1, Notes (July 14, 2026): No issues found, however, user logs may be deleted every month to save disk space. 
+Next Review: August 14th, 2026
 
 ---
