@@ -794,11 +794,8 @@ Once local development is running smoothly:
 1. Read SYSTEM_DOCUMENTATION.md to understand the codebase structure
 2. Read PRODUCTION_DOCUMENTATION.md to learn about deployment
 3. Test all API endpoints to verify they work correctly
-4. Make a small change to practice the development workflow
-5. Run the test suite with `python manage.py test`
-
 ---
 
 **Document Version:** 1.0  
 **Last Updated:** March 26, 2026  
-**Status:** Ready for Local Development
+**Written by:** Hiba Malkan
