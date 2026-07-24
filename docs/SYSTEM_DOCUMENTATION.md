@@ -1,119 +1,88 @@
-# Student Council Management System
-## Technical Documentation
+# System Documentation
 
-**Version:** 1.1  
-**Date:** April 5, 2026  
-**Organization:** Student Council  
+**Version:** 1.1
+**Last Updated:** July 2026
 **Status:** Production Ready
 
----
-
-This is an enterprise-grade web application built with Django REST Framework and PostgreSQL. It provides complete management capabilities for student organizations, including clubs, competitions, meetings, duty rosters, announcements, and discipline tracking.
-
-The system centralizes student council operations, improves communication between council and students, automates routine administrative tasks, maintains organized records of all council activities, and provides transparent public information about club listings.
-
-The architecture uses an API-first approach with 20+ RESTful endpoints, PostgreSQL 12+ with 42 optimized tables, Celery 5.3.6 with Celery Beat 2.5.0 for asynchronous processing, Redis 5.0+ for message brokering, and a responsive Tailwind CSS frontend with JWT authentication and role-based access control.
-
----
+This document describes the architecture, codebase structure, data model, and API surface of the Student Council Management System.
 
 ## Table of Contents
 
 1. [System Architecture](#system-architecture)
-2. [Codebase Structure](#codebase-structure)
-3. [Module Documentation](#module-documentation)
-4. [Data Models](#data-models)
-5. [API Reference](#api-reference)
-6. [Deployment Architecture](#deployment-architecture)
-7. [Maintenance Procedures](#maintenance-procedures)
-8. [Monitoring & Logging](#monitoring--logging)
-9. [Backup & Recovery](#backup--recovery)
-10. [Troubleshooting](#troubleshooting)
+2. [Authentication and Authorization](#authentication-and-authorization)
+3. [Codebase Structure](#codebase-structure)
+4. [Module Documentation](#module-documentation)
+5. [Data Model](#data-model)
+6. [API Reference](#api-reference)
 
 ## System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        Client Layer                              │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  Web Browser (HTML, CSS, JavaScript, Tailwind CSS)       │   │
-│  │  • Dashboard                                              │   │
-│  │  • Admin Panel                                            │   │
-│  │  • Public Pages                                           │   │
-│  └──────────────────────────────────────────────────────────┘   │
+│  Web Browser (HTML, CSS, JavaScript, Tailwind CSS)               │
+│  Dashboard · Admin Panel · Public Pages                          │
 └─────────────────────┬──────────────────────────────────────────┘
-                      │ HTTP/HTTPS
+                       │ HTTP/HTTPS
 ┌─────────────────────▼──────────────────────────────────────────┐
-│                    API Layer                                    │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  Django REST Framework                                    │   │
-│  │  • REST Endpoints (/api/*)                               │   │
-│  │  • JWT Authentication                                     │   │
-│  │  • Serializers & Validation                              │   │
-│  │  • Permission Classes                                     │   │
-│  └──────────────────────────────────────────────────────────┘   │
+│                    API Layer                                     │
+│  Django REST Framework                                           │
+│  REST Endpoints (/api/*) · JWT Authentication ·                  │
+│  Serializers & Validation · Permission Classes                   │
 └─────────┬──────────────────────────────────────┬────────────────┘
-          │                                      │
           │ SQL                                  │ Tasks
-┌─────────▼──────────────────┐  ┌──────────────▼──────────────┐
-│   PostgreSQL Database      │  │  Message Queue System        │
-│  ┌───────────────────────┐ │  │  ┌────────────────────────┐  │
-│  │ • 42 Tables           │ │  │  │  Redis (Message Broker)│  │
-│  │ • Users & Roles       │ │  │  │  Celery (Task Queue)   │  │
-│  │ • Clubs & Members     │ │  │  │  Celery Beat (Scheduler)  │
-│  │ • Duties & Tasks      │ │  │  └────────────────────────┘  │
-│  │ • Announcements       │ │  │                               │
-│  │ • Competitions        │ │  │  Background Jobs:             │
-│  │ • Meetings            │ │  │  • Email Notifications        │
-│  │ • Discipline Records  │ │  │  • Duty Cycling              │
-│  │ • Notifications       │ │  │  • Scheduled Tasks           │
-│  └───────────────────────┘ │  │                               │
-└────────────────────────────┘  └───────────────────────────────┘
+┌─────────▼──────────────────┐  ┌────────────────▼──────────────┐
+│   PostgreSQL Database       │  │  Message Queue System          │
+│  Users & Roles · Clubs      │  │  Redis (Message Broker)        │
+│  Duties · Announcements     │  │  Celery (Task Queue)           │
+│  Competitions · Meetings    │  │  Celery Beat (Scheduler)       │
+│  Discipline · Notifications │  │                                 │
+│                              │  │  Background Jobs:              │
+│                              │  │  Email Notifications           │
+│                              │  │  Duty Cycling                  │
+│                              │  │  Scheduled Tasks               │
+└──────────────────────────────┘  └─────────────────────────────┘
 ```
 
-The frontend runs on HTML5 with CSS3 for structure and styling, using Tailwind CSS 3+ for responsive design and vanilla JavaScript ES6+ for interactivity. The backend is built with Django 4.2.29 and Django REST Framework 3.15.2 to deliver the API. PostgreSQL 12+ serves as the primary data store with 42 optimized tables. Redis 5.0+ handles message brokering while Celery 5.3.6 manages background tasks with Celery Beat 2.5.0 scheduler. Authentication relies on JWT tokens via djangorestframework-simplejwt 5.5.1 for stateless request validation. Gunicorn serves the Django application in production, and Nginx acts as a reverse proxy handling HTTPS/SSL termination and static file serving.
+The frontend is server-rendered HTML with Tailwind CSS for styling and vanilla JavaScript (ES6+) for interactivity — there is no frontend framework. The backend runs Django 4.2 with Django REST Framework delivering the API. PostgreSQL 12+ is the primary data store. Redis handles message brokering for Celery, which processes background tasks and, via Celery Beat, scheduled tasks. Authentication uses JWT via djangorestframework-simplejwt for stateless request validation. In production, Gunicorn serves the Django application behind Nginx, which terminates SSL and serves static files directly.
 
----
-
-## Authentication & Authorization System
-
-### Overview
-
-The system uses JWT (JSON Web Tokens) for stateless authentication combined with a permission-based Role model for fine-grained authorization. All restricted operations are protected by both frontend permission checks and backend API validation.
+## Authentication and Authorization
 
 ### JWT Authentication Flow
 
-1. **Login**: User submits username/password to `/api/accounts/login/`
-2. **Token Generation**: Backend validates credentials and returns access/refresh tokens
-3. **Token Storage**: Frontend stores tokens in localStorage
-4. **API Requests**: Frontend includes token in Authorization header: `Bearer {access_token}`
-5. **Token Validation**: Backend validates JWT signature and expiration on every request
-6. **Token Refresh**: Expired access tokens are refreshed using the refresh token
-7. **Logout**: User clears localStorage and tokens become invalid
+1. The user submits credentials to `/api/accounts/login/`.
+2. The backend validates credentials and returns an access token and a refresh token.
+3. The frontend stores both tokens in `localStorage`.
+4. Subsequent API requests include the access token in the `Authorization` header as `Bearer {access_token}`.
+5. The backend validates the JWT signature and expiration on every request.
+6. Expired access tokens are refreshed using the refresh token.
+7. On logout, the frontend clears `localStorage`; the tokens themselves are not revoked server-side.
 
-### Role-Based Permission System
+### Role-Based Permissions
 
-The `accounts_role` model uses boolean permission fields instead of hardcoded role names. This provides flexible, maintainable access control:
+The `accounts_role` model uses boolean permission fields rather than hardcoded role names, which keeps access control flexible without requiring code changes when new roles are introduced.
 
-**Permission Fields:**
-- `is_normal_student` — Identifies regular students (blocks access to restricted features)
-- `can_edit_duty_roster` — Permission to create/edit duty assignments
-- `can_schedule_meetings` — Permission to schedule meetings
-- `can_record_discipline` — Permission to add/edit discipline records
-- `can_view_discipline` — Permission to view discipline records
-- `can_manage_announcements` — Permission to create/edit announcements
-- `can_manage_gatepass` — Permission to manage gate pass requests
-- `can_add_clubs` — Permission to create clubs
-- `can_manage_clubs` — Permission to manage club signups
-- `can_manage_competitions` — Permission to create/edit competitions
+| Field | Grants |
+|---|---|
+| `is_normal_student` | Identifies regular students; blocks access to restricted features |
+| `can_edit_duty_roster` | Create and edit duty assignments |
+| `can_schedule_meetings` | Schedule meetings |
+| `can_create_announcements` | Create announcements |
+| `can_edit_announcements` | Edit existing announcements |
+| `can_record_discipline` | Add and edit discipline records |
+| `can_view_discipline` | View discipline records |
+| `can_add_clubs` | Create clubs |
+| `can_manage_competitions` | Create and edit competitions |
+| `can_manage_gatepass` | View, approve, and deny gate pass requests |
+| `show_in_duty_roster` | Eligible to appear in duty roster rotation |
 
 ### Frontend Authorization Pattern
 
-All protected pages use this authorization pattern:
+Protected pages check role permissions on load before rendering restricted content:
 
 ```javascript
-// Check authorization on page load
 await loadUserProfile();
-const isNormalStudent = userData && userData.role && userData.role.is_normal_student;
+const isNormalStudent = userData?.role?.is_normal_student;
 
 if (isNormalStudent) {
     showError('You do not have permission to access this page');
@@ -121,471 +90,343 @@ if (isNormalStudent) {
     return;
 }
 
-// Check specific feature permissions
 if (userData.role?.can_schedule_meetings || userData.is_staff) {
-    // Show meeting scheduling feature
+    // Render meeting scheduling controls
 }
 ```
 
-### Protected Pages & Features
+### Protected Pages
 
-**Council Dashboard** (`/dashboard/`)
-- Restricted: Normal students blocked
-- Shows: Upcoming meetings, duty roster, announcements
-- Requires: Non-student status
-
-**Meetings** (`/meetings/`)
-- Restricted: Normal students blocked
-- Features: View meetings, upload minutes of meetings
-- Requires: `can_schedule_meetings` to schedule new meetings
-
-**Duty Roster** (`/duty-roster/`)
-- Restricted: Normal students blocked
-- Features: View today's duty, manage assignments
-- Requires: `can_edit_duty_roster` to assign duties
-
-**Discipline Records** (`/discipline/`, `/discipline/detail/{id}/`)
-- Restricted: Normal students blocked
-- Features: View student records, add/edit offenses
-- Requires: `can_record_discipline` or staff status
-
-**Club Management** (`/clubs/signups/`, `/clubs/new/`)
-- Restricted: Club signup viewing requires permission
-- Features: Create new clubs, manage signups
-- Requires: `can_add_clubs` or `can_manage_clubs`
-
-**Competition Management** (`/competitions/signups/`, `/competitions/new/`, `/competitions/edit/{id}/`)
-- Restricted: Competition signup viewing requires permission
-- Features: Create competitions, manage signups
-- Requires: `can_manage_competitions` or staff status
-
-### Navigation & Visibility Control
-
-**Sidebar Navigation** (`base.html`)
-- Dashboard link: Hidden if `is_normal_student`
-- Meetings link: Hidden if `is_normal_student`
-- Duty Roster link: Hidden if `is_normal_student`
-- Discipline link: Hidden if `is_normal_student` or lacks permission
-- Club/Competition links: Always visible (public access)
-- Admin Panel: Only visible to staff/superusers
-
-**Login Redirect** (`login.html`)
-- Normal students redirect to `/announcements/`
-- Council members redirect to `/dashboard/`
-- Light mode set as default on login
+| Page | Restriction | Requires |
+|---|---|---|
+| `/dashboard/` | Blocked for normal students | Non-student status |
+| `/meetings/` | Blocked for normal students | `can_schedule_meetings` to create meetings |
+| `/duty-roster/` | Blocked for normal students | `can_edit_duty_roster` to assign duties |
+| `/discipline/`, `/discipline/detail/{id}/` | Blocked for normal students | `can_record_discipline` or staff status |
+| `/clubs/signups/`, `/clubs/new/` | Signup view requires permission | `can_add_clubs` or club management permission |
+| `/competitions/signups/`, `/competitions/new/`, `/competitions/edit/{id}/` | Signup view requires permission | `can_manage_competitions` or staff status |
+| `/gatepass/` (admin section) | Admin panel hidden without permission | `can_manage_gatepass` |
 
 ### Backend Permission Classes
 
-All API endpoints enforce permissions via Django REST Framework permission classes:
+Every protected endpoint enforces permissions server-side via Django REST Framework permission classes, independent of frontend checks:
 
 ```python
-# Example permission class usage
 class CanRecordDiscipline(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_staff or \
                request.user.role.can_record_discipline
 
-# Applied to viewset
+
 class DisciplineViewSet(viewsets.ModelViewSet):
     permission_classes = [CanRecordDiscipline]
 ```
 
 ### Security Considerations
 
-1. **Double Validation**: Frontend permission checks AND backend API validation
-2. **Direct URL Access**: Users cannot bypass authorization by typing URLs
-3. **Permission Inheritance**: Staff/superusers bypass permission checks
-4. **Token Expiration**: Access tokens expire (configurable, default 5 minutes)
-5. **HTTPS Only**: All production deployments must use HTTPS
-6. **CORS Restriction**: API only accessible from configured domains
+Frontend permission checks control what is rendered; backend permission classes control what is executed. A user cannot bypass restrictions by navigating directly to a protected URL, since the API independently validates every request. Staff and superuser accounts bypass role-based permission checks. Access tokens expire on a configurable interval (default 5 minutes) and must be refreshed. All production deployments must run over HTTPS. CORS is restricted to configured domains only.
 
-### Authorization Flow Diagram
+### Authorization Flow
 
 ```
 User Login
-    ↓
+    │
+    ▼
 Backend validates credentials
-    ↓
-Returns JWT tokens + User data with Role
-    ↓
+    │
+    ▼
+Returns JWT tokens + user data with role
+    │
+    ▼
 Frontend stores tokens in localStorage
-    ↓
-User accesses protected page
-    ↓
-Frontend checks userData.role.is_normal_student
-    ├─ YES → Show error + redirect to /announcements/
-    └─ NO → Load page content
-    ↓
-Frontend checks specific permissions (can_schedule_meetings, etc.)
-    ├─ YES → Show feature
-    └─ NO → Hide feature
-    ↓
+    │
+    ▼
+User accesses a protected page
+    │
+    ├── userData.role.is_normal_student = true
+    │       → Show error, redirect to /announcements/
+    │
+    └── userData.role.is_normal_student = false
+            → Load page content
+            → Check feature-specific permissions
+            → Show or hide individual features accordingly
+    │
+    ▼
 API requests include Authorization header with JWT
-    ↓
-Backend validates token signature + expiration
-    ├─ Valid → Check endpoint permission class
-    │   ├─ Authorized → Execute request
-    │   └─ Denied → Return 403 Forbidden
-    └─ Invalid/Expired → Return 401 Unauthorized
+    │
+    ▼
+Backend validates token signature and expiration
+    │
+    ├── Invalid or expired → 401 Unauthorized
+    │
+    └── Valid → Check endpoint permission class
+            ├── Authorized → Execute request
+            └── Denied → 403 Forbidden
 ```
 
----
-
 ## Codebase Structure
-
-### Directory Organization
 
 ```
 student-council/
 │
-├── backend/                          # Django Project Root
-│   ├── manage.py                     # Django CLI tool
-│   ├── requirements.txt              # Python dependencies
-│   ├── .env                          # Environment variables
-│   ├── db.sqlite3                    # SQLite backup (dev)
+├── backend/
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── .env
 │   │
-│   ├── student_council/              # Main Project Package
-│   │   ├── __init__.py
-│   │   ├── settings.py              # Django configuration
-│   │   ├── urls.py                  # URL routing
-│   │   ├── wsgi.py                  # WSGI config (production)
-│   │   ├── celery.py                # Celery configuration
-│   │   └── asgi.py                  # ASGI config (async)
+│   ├── student_council/              Project package
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── wsgi.py
+│   │   ├── celery.py
+│   │   └── asgi.py
 │   │
-│   ├── accounts/                     # Authentication & Users
-│   │   ├── models.py                # User, Role models
-│   │   ├── views.py                 # User API views
-│   │   ├── serializers.py           # User serializers
-│   │   ├── permissions.py           # Custom permissions
-│   │   ├── urls.py                  # User routes
-│   │   └── migrations/              # Database migrations
+│   ├── accounts/                     Authentication and users
+│   │   ├── models.py                  User, Role
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── permissions.py
+│   │   ├── urls.py
+│   │   └── migrations/
 │   │
-│   ├── clubs/                        # Clubs Management
-│   │   ├── models.py                # Club model
-│   │   ├── views.py                 # Club API & HTML views
-│   │   ├── serializers.py           # Club serializers
-│   │   ├── permissions.py           # Club permissions
-│   │   ├── admin.py                 # Django admin config
-│   │   ├── urls.py                  # Club routes
-│   │   └── migrations/              # Database migrations
+│   ├── clubs/                        Club management
+│   │   ├── models.py                  Club, ClubSignup
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── permissions.py
+│   │   ├── admin.py
+│   │   ├── urls.py
+│   │   └── migrations/
 │   │
-│   ├── duty_roster/                 # Duty Management
-│   │   ├── models.py                # Duty model
-│   │   ├── views.py                 # Duty API views
-│   │   ├── serializers.py           # Duty serializers
-│   │   ├── permissions.py           # Duty permissions
-│   │   ├── urls.py                  # Duty routes
-│   │   └── migrations/              # Database migrations
+│   ├── duty_roster/                  Duty management
+│   │   ├── models.py                  Duty, DutyType
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── permissions.py
+│   │   ├── urls.py
+│   │   └── migrations/
 │   │
-│   ├── announcements/               # Announcements
-│   │   ├── models.py                # Announcement model
-│   │   ├── views.py                 # Announcement API
-│   │   ├── serializers.py           # Serializers
-│   │   ├── urls.py                  # Routes
-│   │   └── migrations/              # Migrations
+│   ├── announcements/                Announcements
+│   │   ├── models.py                  Announcement
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── migrations/
 │   │
-│   ├── competitions/                # Competitions
-│   │   ├── models.py                # Competition model
-│   │   ├── views.py                 # API views
-│   │   ├── serializers.py           # Serializers
-│   │   ├── urls.py                  # Routes
-│   │   └── migrations/              # Migrations
+│   ├── competitions/                 Competitions
+│   │   ├── models.py                  Competition, CompetitionSignup
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── migrations/
 │   │
-│   ├── meetings/                    # Meetings
-│   │   ├── models.py                # Meeting model
-│   │   ├── views.py                 # API views
-│   │   ├── serializers.py           # Serializers
-│   │   └── migrations/              # Migrations
+│   ├── meetings/                     Meetings
+│   │   ├── models.py                  Meeting, MeetingAttendance, MinutesOfMeeting
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   └── migrations/
 │   │
-│   ├── discipline/                  # Discipline Records
-│   │   ├── models.py                # Discipline model
-│   │   ├── views.py                 # API views
-│   │   ├── serializers.py           # Serializers
-│   │   └── migrations/              # Migrations
+│   ├── discipline/                   Discipline records
+│   │   ├── models.py                  DisciplineRecord, OffenseLog
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   └── migrations/
 │   │
-│   ├── notifications/               # Email Notifications
-│   │   ├── models.py                # Notification model
-│   │   ├── tasks.py                 # Celery tasks
-│   │   ├── signals.py               # Django signals
-│   │   ├── utils.py                 # Email utilities
-│   │   ├── views.py                 # API views
-│   │   └── migrations/              # Migrations
+│   ├── gatepass/                     Gate pass requests
+│   │   ├── models.py                  GatePass
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   └── migrations/
 │   │
-│   ├── media/                       # User Uploaded Files
+│   ├── notifications/                Email notifications
+│   │   ├── models.py                  Notification, NotificationBatch, EmailTemplate
+│   │   ├── tasks.py                   Celery tasks
+│   │   ├── signals.py                 Django signals
+│   │   ├── utils.py                   Email utilities
+│   │   ├── views.py
+│   │   └── migrations/
+│   │
+│   └── media/                        Uploaded files
+│       ├── announcements/
+│       ├── club_logos/
+│       ├── competitions/
+│       └── meetings/
+│
+├── frontend/
+│   ├── templates/
+│   │   ├── base.html                  Main template with navigation
+│   │   ├── public_base.html
+│   │   ├── login.html
+│   │   ├── dashboard.html
+│   │   ├── forgot_password.html
+│   │   ├── clubs/
 │   │   ├── announcements/
-│   │   ├── club_logos/
+│   │   ├── duty-roster/
 │   │   ├── competitions/
-│   │   └── meetings/
+│   │   ├── meetings/
+│   │   └── discipline/
 │   │
-│   └── venv/                        # Virtual Environment
-│
-├── frontend/                         # Frontend Assets
-│   ├── templates/                   # HTML Templates
-│   │   ├── base.html                # Main template (sidebar)
-│   │   ├── public_base.html         # Public template
-│   │   ├── login.html               # Login page
-│   │   ├── dashboard.html           # Dashboard
-│   │   ├── forgot_password.html     # Password reset
-│   │   │
-│   │   ├── clubs/                   # Club templates
-│   │   │   ├── clubs.html           # Club list (admin)
-│   │   │   └── public_clubs.html    # Club list (public)
-│   │   │
-│   │   ├── announcements/           # Announcement templates
-│   │   │   ├── announcements.html
-│   │   │   ├── new_announcement.html
-│   │   │   └── announcement_detail.html
-│   │   │
-│   │   ├── duty-roster/             # Duty templates
-│   │   │   └── duty_roster.html
-│   │   │
-│   │   ├── competitions/            # Competition templates
-│   │   │   └── competitions.html
-│   │   │
-│   │   ├── meetings/                # Meeting templates
-│   │   │   └── meetings.html
-│   │   │
-│   │   └── discipline/              # Discipline templates
-│   │       ├── discipline.html
-│   │       └── discipline_form.html
+│   ├── static/
+│   │   ├── dist/output.css            Compiled Tailwind
+│   │   ├── src/input.css              Tailwind source
+│   │   ├── css/
+│   │   ├── js/
+│   │   └── images/
 │   │
-│   ├── static/                      # Static Assets
-│   │   ├── dist/                    # Compiled CSS
-│   │   │   └── output.css           # Tailwind compiled CSS
-│   │   ├── src/                     # Source CSS
-│   │   │   └── input.css            # Tailwind input
-│   │   ├── css/                     # Additional CSS
-│   │   ├── js/                      # Additional JS
-│   │   └── images/                  # Static images
-│   │
-│   ├── package.json                 # npm dependencies
-│   ├── tailwind.config.js           # Tailwind configuration
-│   └── TAILWIND_SETUP.md            # Tailwind guide
+│   ├── package.json
+│   └── tailwind.config.js
 │
-├── docs/                            # Documentation Files
-│   ├── COMPLETE_DOCUMENTATION.md    # Full docs (submission)
-│   ├── LOCAL_DEVELOPMENT.md         # Dev setup guide
-│   └── PRODUCTION_DOCUMENTATION.md  # Deployment guide
-│
-├── .gitignore                       # Git ignore rules
-├── start_services.sh                # Service startup script
-├── EMAIL_TROUBLESHOOTING.md        # Email setup guide
-├── ROUTING_UPDATES.md              # Routing changes
-└── POSTGRESQL_MIGRATION.md         # DB migration guide
+└── docs/
 ```
-
----
 
 ## Module Documentation
 
-### Accounts Module
+### Accounts
 
-The accounts module handles user authentication and role management. It implements JWT token-based authentication with role-based access control. Users can log in with their credentials to receive access and refresh tokens for subsequent API requests.
+Handles authentication and role management. Implements JWT-based auth with role-based access control; users log in with credentials and receive access and refresh tokens for subsequent requests.
 
-The system supports the following role types:
+Role types:
 
-**Student** — The default role for all registered users. Students can view the public club listing, browse announcements, and sign up for competitions and clubs. They cannot create or edit any content.
+**Student** — Default role for all registered users. View clubs, browse announcements, sign up for competitions and clubs. No create or edit access.
 
-**Captain** — Assigned to team captains or event leaders. Captains have all Student permissions plus the ability to manage competitions and view participant signups.
+**Captain** — Assigned to team captains or event leaders. All Student permissions plus competition management and signup visibility.
 
-**Class Representative** — Assigned to student class representatives. Class Representatives have all Student permissions plus extended organizational capabilities depending on custom permissions assigned.
+**Class Representative** — Assigned to class representatives. All Student permissions plus extended organizational capabilities, depending on assigned permissions.
 
-**C-Suite** — Includes President, Vice President, Secretary, and Treasurer roles. C-Suite members can edit the duty roster, schedule meetings, create and edit announcements, view discipline records, manage competitions and signups, and perform user role assignments. Only C-Suite can assign or change roles for other users.
+**C-Suite** (President, Vice President, Secretary, Treasurer) — Edit the duty roster, schedule meetings, create and edit announcements, view discipline records, manage competitions and signups, and assign roles to other users. Role assignment is restricted to C-Suite members.
 
-The module contains the User and Role models. Users have usernames, emails, and hashed passwords. Roles define what actions users can perform in the system through a set of granular permissions including `can_edit_duty_roster`, `can_schedule_meetings`, `can_create_announcements`, `can_edit_announcements`, `can_record_discipline`, `can_view_discipline`, `can_add_clubs`, and `can_manage_competitions`.
+Database tables: `accounts_user`, `accounts_role`.
 
-View endpoints allow users to log in, retrieve their profile, and manage their account settings. Permission classes in `permissions.py` check whether a user has the necessary role permissions before allowing access to protected endpoints.
+### Clubs
 
-Database tables:
-- `accounts_user` — Stores user accounts with credentials
-- `accounts_role` — Defines available role types and their permissions
-- `accounts_userrole` — Maps users to roles (many-to-many relationship)
+Manages student organizations. Administrators with the appropriate permission create, edit, and delete clubs. Club status is one of active, under review, or inactive.
 
-### Clubs Module
+Each club stores a name, description, logo, founding year, and member count. The public API endpoint returns active clubs without authentication, powering the public clubs page. Admin endpoints require authentication and the relevant permission.
 
-The clubs module manages student organizations and their memberships. Authorized administrators can create, edit, and delete clubs. The system tracks club status (active, under review, or inactive), membership counts, and founder information.
+Database tables: `clubs_club`, `clubs_clubsignup`.
 
-Each club has a name, description, logo image, founding year, and current member count. The ClubMember model tracks which users belong to which clubs and what role they hold within that club (president, vice-president, or regular member).
+### Duty Roster
 
-The public API endpoint returns all active clubs without requiring authentication, allowing the frontend to display a public clubs page. Admin endpoints require authentication and appropriate permissions to modify club data.
+Assigns rotating maintenance duties to students. Each duty has a type, a date, a location, and a completion status. Duties cycle at the start of each month; overdue duties are flagged for administrator visibility.
 
-Database tables:
-- `clubs_club` — Stores club information including status and metadata
-- `clubs_clubmember` — Tracks club membership and member roles
+Database tables: `duty_roster_duty`, `duty_roster_dutytype`.
 
-### Duty Roster Module
+### Announcements
 
-The duty roster system assigns maintenance duties to students on a rotating basis. Each student receives a duty type (such as green field maintenance or break area cleaning) along with a due date. The system tracks whether the duty is pending, completed, or overdue.
+Allows administrators to post news to the council or to specific roles. Each announcement has a title, content, publication status, and optional event details (date, time, location, registration deadline). Announcements can trigger an email send and support attachments.
 
-Duties are assigned at the start of each month and can be marked complete when the student finishes the work. An automated monthly job cycles duties to new students. The system flags overdue duties to alert administrators that a student has not completed their assigned task.
+Database tables: `announcements_announcement`, `announcements_announcement_target_roles`, `announcements_announcement_target_users`.
 
-Database tables:
-- `duty_roster_duty` — Stores individual duty assignments with status and dates
+### Notifications
 
-### Announcements Module
+Sends email notifications on a schedule and in response to events. Celery tasks in `tasks.py` handle delivery asynchronously so HTTP requests are not blocked on email sending. Django signals trigger notifications automatically when announcements are published, duties are assigned, or meetings are scheduled. Scheduled tasks run twice daily, at 7:00 AM and 4:00 PM, to process pending notifications.
 
-The announcements module allows administrators to post news and information to the student council. Each announcement has a title, content, and publication date. Announcements can target specific roles (such as club presidents) or reach all users. The system stores the author ID and publication status so admins can draft and publish announcements at desired times.
+Key background tasks: sending announcement emails to targeted roles, sending daily duty reminders for overdue tasks, and sending event notifications for upcoming meetings and competitions.
 
-Database tables:
-- `announcements_announcement` — Stores announcement text and metadata
+Database tables: `notifications_notification`, `notifications_notificationbatch`, `notifications_emailtemplate`.
 
-### Notifications Module
+### Competitions
 
-The notifications module sends email messages to users when important events occur. Celery tasks in `tasks.py` handle the actual email sending asynchronously so HTTP requests complete quickly. The system uses Django signals to trigger notifications automatically when announcements are published, duties are assigned, or meetings are scheduled.
+Lets administrators create and manage competitions, each with a title, description, dates, and participation requirements. Students sign up with a name, email, phone number, and optional team name or message. Administrators manage signups through `/competitions/signups/`, including removal via a confirmation modal — see the Signup Management section below and `STYLING_GUIDE.md` for the modal pattern.
 
-Email templates render the HTML content with user-specific information. The notification record stores the recipient, subject, and message text along with a flag indicating whether the email was successfully sent. Scheduled tasks run twice daily (7 AM and 4 PM) to send pending notifications.
-
-Key background tasks:
-- Send announcement emails to subscribed roles
-- Send daily duty reminders for overdue tasks
-- Send event notifications for upcoming meetings and competitions
-
-Database tables:
-- `notifications_notification` — Stores email records and delivery status
-
-### Competitions Module
-
-The competitions module lets administrators create and manage student competitions. Each competition has a title, description, start and end dates, and participation requirements. The system tracks which students have entered each competition.
-
-Students sign up for competitions and can provide additional information like team names or messages. Administrators access the signup management page to view all participants and remove registrations when needed.
-
-The signup confirmation modal displays in both light mode (white background with dark text) and dark mode (gray-900 background with white text). When removing a signup, a confirmation modal appears asking the user to verify the deletion. The implementation uses inline styles for layout properties combined with Tailwind dark: prefix classes for color variants. This hybrid approach ensures reliable styling that works across all browsers and themes.
-
-Database tables:
-- `competitions_competition` — Stores competition information and deadlines
-- `competitions_competitor` or similar — Tracks student entries for each competition
+Database tables: `competitions_competition`, `competitions_competitionsignup`.
 
 ### Signup Management
 
-The signup management system handles registrations for both competitions and clubs. Students can enter competitions and clubs by filling out a form that includes their name, email, phone number, optional team name (competitions only), and optional message.
+Handles registrations for both competitions and clubs. Students enter through a form requiring name, email, phone number, and an optional team name (competitions only) or message.
 
-Administrators view all signups through `/competitions/signups/` and `/clubs/signups/` pages. The signup list is paginated with 10 entries per page. Each signup row shows name, email, phone, team name (competitions), message button, signup date, and a delete action button.
+Administrators view signups at `/competitions/signups/` and `/clubs/signups/`, paginated at 10 entries per page. Each row shows name, email, phone, team name (competitions), a message button, signup date, and a delete action.
 
-Clicking the delete button opens a confirmation modal. The modal displays the student's name in red text and asks for confirmation before removal. The modal has three sections: header with title, body with confirmation text and warning, and footer with Cancel and Delete buttons centered horizontally.
+Deleting a signup opens a confirmation modal displaying the student's name in red text, with Cancel and Delete actions centered in the footer. The modal follows the light/dark styling pattern documented in `STYLING_GUIDE.md`: white background with dark gray (`#111827`) text in light mode, `gray-900` background with white text in dark mode.
 
-The modal styling ensures accessibility in both light and dark modes:
-- Light mode: White background with dark gray (#111827) text
-- Dark mode: Gray-900 background with white text
-- Buttons: Gray-100 (light) / gray-800 (dark) for Cancel, red-600 for Delete
-- Borders: Gray-200 (light) / gray-700 (dark)
+### Meetings
 
-When you need to create similar modals, follow this pattern:
-1. Use fixed positioning with `inset-0` and `flex items-center justify-center` for centering
-2. Add `p-6` padding to the outer container for mobile safety
-3. Apply white/dark:gray-900 background to the modal container
-4. Use inline styles for padding, font sizing, and borders
-5. Use Tailwind dark: prefix classes on text and button elements for dark mode support
-6. Keep button widths consistent and center them with `justify-content: center`
+Schedules council meetings and tracks attendance. Each meeting has a date, time, location, and description, with optional reminder emails sent before the scheduled time. Minutes of meeting can be uploaded per meeting, along with present/absent attendee lists and action items.
 
-### Meetings Module
+Database tables: `meetings_meeting`, `meetings_meeting_attendees`, `meetings_meeting_attendee_roles`, `meetings_meetingattendance`, `meetings_minutesofmeeting`.
 
-The meetings module schedules council meetings and tracks attendance. Each meeting has a date, time, location, and description. The system stores notes from the meeting and can send reminder emails before the scheduled time.
+### Discipline
 
-Database tables:
-- `meetings_meeting` — Stores meeting schedules and details
+Records instances of policy violations. Each discipline record tracks a student, an offense count, and a linked offense log with category, reason, and date. The system maintains a running history per student for reference.
 
-### Discipline Module
+Database tables: `discipline_disciplinerecord`, `discipline_offenselog`.
 
-The discipline module records instances where students violate council policies or rules. Each record includes the student name, violation description, severity level, date of incident, and any actions taken. The system maintains a history of all discipline cases for reference.
+### Gate Pass
 
-Database tables:
-- `discipline_record` — Stores discipline case information and action history
+Manages student gate pass requests and their approval workflow.
 
-### Gate Pass Module
+**Request submission** — Students submit a request with personal details (name, D.No, class, section), parent email, an optional class teacher email, requested date, and reason. Confirmation emails go to the student, parent, and class teacher on submission; gate pass managers are notified as well.
 
-The gate pass module manages student requests for gate pass approvals. Students can submit gate pass requests for specific dates with their details (D.No, class, section) and reasons. Council administrators with the `can_manage_gatepass` permission review submitted requests and either approve or deny them. The system automatically sends email notifications to students, parents, class teachers, and administrators at each step of the workflow.
+**Request management** — Administrators with `can_manage_gatepass` view a paginated, status-filtered list (pending, approved, denied) and approve or deny each request, optionally with a note.
 
-**Key Features:**
+**Approval workflow** — Approving or denying a request records the decision, timestamp, and approving administrator, then triggers decision emails to the student, parent, and class teacher.
 
-**Request Submission** — Students fill out a gate pass request form with their personal information (name, D.No, class, section), parent email, optional class teacher email, requested date, and reason for the gate pass. The system validates the form and sends confirmation emails to the student, parent, and class teacher upon submission. Gate pass managers are also notified of new requests via email.
+**Access control** — `can_manage_gatepass` gates both request visibility (all requests vs. own requests only) and the approve/deny action, enforced on frontend and backend independently.
 
-**Request Management** — Administrators access the Gate Pass dashboard to view all submitted requests filtered by status (pending, approved, or denied). A paginated list shows request details with action buttons to approve or deny each request. When approving or denying, administrators can add optional notes explaining their decision.
-
-**Approval Workflow** — Once an administrator approves or denies a gate pass, the system records the decision, approval timestamp, and approving administrator. Emails are automatically sent to the student, parent, and class teacher notifying them of the decision outcome and any notes from the administrator.
-
-**Email Notifications** — The system uses Celery background tasks to asynchronously send emails:
-- **Submission email**: Sent to student, parent, and optional class teacher when request is submitted; also sent to all gate pass managers
-- **Decision email**: Sent to student, parent, and optional class teacher when request is approved or denied with decision details and administrator notes
-
-**Access Control** — Only users with the `can_manage_gatepass` permission can view all requests and approve/deny them. Students can only view their own submitted requests. This permission is set on the Role model and checked both on the frontend and backend.
-
-**Frontend Components:**
-- `/gatepass/` — Main page with student request form (for all users) and admin request management section (visible only to users with `can_manage_gatepass`)
-- Student view shows: Request form with all required fields, history of own submitted requests with status
-- Admin view shows: All pending requests in a list, approved requests in paginated results, denied requests in paginated results, with approve/deny buttons and note fields
-
-**API Endpoints:**
-
-```
-GET /api/gatepass/
-    Permissions: IsAuthenticated
-    Returns: List of gate pass requests
-    - For admin users (can_manage_gatepass): All requests
-    - For students: Only their own requests
-    Query params: ?status=pending|approved|denied (filters by status)
-    Pagination: 5 results per page
-
-POST /api/gatepass/
-    Permissions: IsAuthenticated
-    Request body: {
-        "dno": "A-101",
-        "name": "John Doe",
-        "student_class": "10",
-        "student_section": "A",
-        "parent_email": "parent@example.com",
-        "ct_email": "teacher@example.com",  // optional
-        "requested_date": "2026-04-20",
-        "reason": "Medical appointment"
-    }
-    Returns: Created gate pass object with status 201
-    Triggers: Submission emails via Celery
-
-POST /api/gatepass/{id}/approve_or_deny/
-    Permissions: IsAuthenticated + can_manage_gatepass
-    Request body: {
-        "status": "approved" | "denied",
-        "note": "Optional approval/denial note"
-    }
-    Returns: Updated gate pass object with status 200
-    Triggers: Decision emails via Celery
-    Error: 403 Forbidden if user lacks can_manage_gatepass
-
-GET /api/gatepass/my_requests/
-    Permissions: IsAuthenticated
-    Returns: All gate pass requests submitted by current user
-
-GET /api/gatepass/processed-requests/
-    Permissions: IsAuthenticated + can_manage_gatepass
-    Returns: Paginated list of approved and denied requests
-    Pagination: 5 results per page, ordered by approval timestamp
-    Error: 403 Forbidden if user lacks can_manage_gatepass
-```
-
-**Database Tables:**
+Database table: `gatepass_gatepass`.
 
 ```
 gatepass_gatepass
 • id (PK)
-• student_id (FK → accounts_user) — Student who submitted the request
-• dno (varchar) — D.No 
-• name (varchar) — Student's full name
-• student_class (varchar) — Class/grade 
-• student_section (varchar) — Section 
-• parent_email (email) — Parent's email address
-• ct_email (email, nullable) — Class teacher's email (optional)
-• requested_date (date) — Date gate pass is needed
-• reason (text) — Reason for gate pass request
-• status (varchar) — One of: 'pending', 'approved', 'denied'
-• approved_by_id (FK → accounts_user, nullable) — Administrator who approved/denied
-• approval_note (text, nullable) — Optional note from administrator
-• approval_timestamp (datetime, nullable) — When decision was made
-• requested_at (datetime) — When request was submitted
-• updated_at (datetime) — Last modification timestamp
+• student_id (FK → accounts_user)
+• dno
+• name
+• student_class
+• student_section
+• parent_email
+• ct_email (nullable)
+• requested_date
+• reason
+• status                       pending | approved | denied
+• approved_by_id (FK → accounts_user, nullable)
+• approval_note (nullable)
+• approval_timestamp (nullable)
+• requested_at
+• updated_at
 ```
 
-**Request/Response Examples:**
+**API endpoints**
 
-Submitting a new gate pass request:
+```
+GET /api/gatepass/
+    Auth: required
+    Admins (can_manage_gatepass) see all requests; students see only their own.
+    Query params: ?status=pending|approved|denied
+    Pagination: 5 per page
+
+POST /api/gatepass/
+    Auth: required
+    Body: {
+        "dno": "D10060",
+        "name": "Alice Johnson",
+        "student_class": "11",
+        "student_section": "B",
+        "parent_email": "alice.parent@email.com",
+        "ct_email": "ct@school.com",
+        "requested_date": "2026-08-25",
+        "reason": "Medical appointment with specialist"
+    }
+    Returns: 201, created gate pass object. Triggers submission emails.
+
+POST /api/gatepass/{id}/approve_or_deny/
+    Auth: required, can_manage_gatepass
+    Body: { "status": "approved" | "denied", "note": "Optional note" }
+    Returns: 200, updated gate pass object. Triggers decision emails.
+    Error: 403 if the user lacks can_manage_gatepass.
+
+GET /api/gatepass/my_requests/
+    Auth: required
+    Returns: All requests submitted by the current user.
+
+GET /api/gatepass/processed-requests/
+    Auth: required, can_manage_gatepass
+    Returns: Paginated approved/denied requests, ordered by approval timestamp.
+    Pagination: 5 per page
+    Error: 403 if the user lacks can_manage_gatepass.
+```
+
+**Example — submitting a request**
+
 ```
 POST /api/gatepass/
 Content-Type: application/json
@@ -597,38 +438,34 @@ Content-Type: application/json
     "student_section": "B",
     "parent_email": "alice.parent@email.com",
     "ct_email": "ct@school.com",
-    "requested_date": "2026-04-25",
+    "requested_date": "2026-08-25",
     "reason": "Medical appointment with specialist"
 }
 
 Response (201 Created):
 {
     "id": 42,
-    "student": {
-        "id": 15,
-        "username": "alice123",
-        "email": "alice@school.com",
-        ...
-    },
-    "dno": "D7765",
+    "student": { "id": 15, "username": "alice123", "email": "alice@school.com", ... },
+    "dno": "D10060",
     "name": "Alice Johnson",
     "student_class": "11",
     "student_section": "B",
     "parent_email": "alice.parent@email.com",
     "ct_email": "ct@school.com",
-    "requested_date": "2026-04-25",
+    "requested_date": "2026-08-25",
     "reason": "Medical appointment with specialist",
     "status": "pending",
     "status_display": "Pending",
     "approved_by": null,
     "approval_note": "",
     "approval_timestamp": null,
-    "requested_at": "2026-04-18T10:30:00Z",
-    "updated_at": "2026-04-18T10:30:00Z"
+    "requested_at": "2026-07-18T10:30:00Z",
+    "updated_at": "2026-07-18T10:30:00Z"
 }
 ```
 
-Approving a gate pass request:
+**Example — approving a request**
+
 ```
 POST /api/gatepass/42/approve_or_deny/
 Content-Type: application/json
@@ -641,70 +478,28 @@ Content-Type: application/json
 Response (200 OK):
 {
     "id": 42,
-    "student": {...},
-    "dno": "A-205",
-    "name": "Alice Johnson",
-    ...
+    "student": { ... },
     "status": "approved",
     "status_display": "Approved",
-    "approved_by": {
-        "id": 3,
-        "username": "president",
-        ...
-    },
+    "approved_by": { "id": 3, "username": "president", ... },
     "approval_note": "Approved. Please collect gate pass from office.",
-    "approval_timestamp": "2026-04-18T11:15:00Z",
-    "requested_at": "2026-04-18T10:30:00Z",
-    "updated_at": "2026-04-18T11:15:00Z"
+    "approval_timestamp": "2026-07-18T11:15:00Z",
+    "requested_at": "2026-07-18T10:30:00Z",
+    "updated_at": "2026-07-18T11:15:00Z"
 }
 ```
 
-Retrieving processed (approved/denied) requests:
-```
-GET /api/gatepass/processed-requests/?page=1
-Authorization: Bearer {token}
-
-Response (200 OK):
-{
-    "count": 25,
-    "next": "/api/gatepass/processed-requests/?page=2",
-    "previous": null,
-    "results": [
-        {
-            "id": 42,
-            "student": {...},
-            "status": "approved",
-            "status_display": "Approved",
-            "approval_timestamp": "2026-04-18T11:15:00Z",
-            ...
-        },
-        ...
-    ]
-}
-```
-
-**Permission Requirements:**
-
-- **Students** — Can submit gate pass requests, view their own request history
-- **Gate Pass Managers** — Users with `can_manage_gatepass` permission can view all requests, filter by status, approve/deny requests with optional notes, view processed requests
-
-**Integration Points:**
-
-The gate pass module integrates with:
-- **Accounts Module** — User authentication and role/permission validation
-- **Notifications Module** — Triggers Celery tasks to send emails on submission and decision
-- **Email System** — Uses Django's `send_mail()` to notify students, parents, teachers, and administrators
-
-**Frontend-Backend Validation Pattern:**
+**Frontend and backend validation**
 
 ```javascript
-// Frontend validation before API call
+// Frontend — hide admin controls if the permission is missing
 if (!userData.role || !userData.role.can_manage_gatepass) {
-    // Hide admin section, show error, or redirect
     adminSection.style.display = 'none';
 }
+```
 
-// Backend validation in view
+```python
+# Backend — the authoritative check
 def approve_or_deny(self, request, pk=None):
     if not self._can_manage_gatepass(request.user):
         return Response(
@@ -713,586 +508,201 @@ def approve_or_deny(self, request, pk=None):
         )
 ```
 
-This dual-validation approach ensures that unauthorized users cannot bypass the system even if they find API endpoints directly or manipulate the frontend.
+The frontend check controls what is shown. The backend check is what actually prevents an unauthorized request from succeeding, regardless of what the frontend does or doesn't render.
 
-## Data Models
+## Data Model
 
-### Core Database Schema
+### Users and Roles
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      User Management                        │
-├─────────────────────────────────────────────────────────────┤
-│ accounts_user                                               │
-│ • id (PK)                                                   │
-│ • username (unique)                                         │
-│ • email                                                     │
-│ • password (hashed)                                         │
-│ • role_id (FK → accounts_role)                              │
-│ • grade, section, house (student info)                      │
-│ • phone, avatar, bio                                        │
-│ • is_active, is_staff, is_superuser                         │
-│ • date_joined, created_at, updated_at                       │
-│                                                             │
-│ accounts_role                                               │
-│ • id (PK)                                                   │
-│ • name (Student, Captain, Class Rep, President, etc.)       │
-│ • is_normal_student (bool)                                  │
-│ • can_edit_duty_roster (bool)                               │
-│ • can_schedule_meetings (bool)                              │
-│ • can_create_announcements (bool)                           │
-│ • can_edit_announcements (bool)                             │
-│ • can_record_discipline (bool)                              │
-│ • can_view_discipline (bool)                                │
-│ • can_add_clubs (bool)                                      │
-│ • can_manage_competitions (bool)                            │
-│ • created_at, updated_at                                    │
-│                                                             │
-│ accounts_userrole (for future multi-role support)           │
-│ • id (PK)                                                   │
-│ • user_id (FK → accounts_user)                              │
-│ • role_id (FK → accounts_role)                              │
-└─────────────────────────────────────────────────────────────┘
+accounts_user
+• id (PK)
+• username (unique)
+• email (unique)
+• password (hashed)
+• first_name, last_name
+• role_id (FK → accounts_role, nullable)
+• phone, grade, section, house, is_phase_head
+• avatar, bio
+• is_active, is_staff, is_superuser
+• date_joined, created_at, updated_at
 
-┌─────────────────────────────────────────────────────────────┐
-│                    Clubs Management                         │
-├─────────────────────────────────────────────────────────────┤
-│ clubs_club                                                  │
-│ • id (PK)                                                   │
-│ • name                                                      │
-│ • description                                               │
-│ • logo                                                      │
-│ • status (active, under_review, inactive)                   │
-│ • established_year                                          │
-│ • member_count                                              │
-│ • created_by (FK → accounts_user)                           │
-│ • created_at, updated_at                                    │
-│                                                             │
-│ clubs_clubmember                                            |
-│ • id (PK)                                                   │
-│ • user_id (FK → accounts_user)                              │
-│ • club_id (FK → clubs_club)                                 │
-│ • role (president, vice_president, member)                  │
-│ • joined_date                                               │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│                    Duty Management                          │
-├─────────────────────────────────────────────────────────────┤
-│ duty_roster_duty                                            │
-│ • id (PK)                                                   │
-│ • user_id (FK → accounts_user)                              │
-│ • duty_type (green_field, break, etc.)                      │
-│ • assigned_date                                             │
-│ • due_date                                                  │
-│ • status (pending, completed, overdue)                      │
-│ • notes                                                     │
-│ • created_at, updated_at                                    │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│                  Communications                             │
-├─────────────────────────────────────────────────────────────┤
-│ announcements_announcement                                  │
-│ • id (PK)                                                   │
-│ • title                                                     |
-│ • content                                                   │
-│ • author_id (FK → accounts_user)                            │
-│ • target_role_id (FK → accounts_role) [nullable]            │
-│ • is_published                                              │
-│ • published_date                                            │
-│ • created_at, updated_at                                    │
-│                                                             │
-│ meetings_meeting                                            │
-│ • id (PK)                                                   │
-│ • title                                                     │
-│ • date_time                                                 │
-│ • location                                                  │
-│ • description                                               │
-│ • organizer_id (FK → accounts_user)                         │
-│ • created_at, updated_at                                    │
-│                                                             │
-│ notifications_notification                                  │
-│ • id (PK)                                                   │
-│ • recipient_id (FK → accounts_user)                         │
-│ • subject                                                   │
-│ • message                                                   │
-│ • email_sent                                                │
-│ • sent_at                                                   │
-│ • created_at                                                │
-└─────────────────────────────────────────────────────────────┘
+accounts_role
+• id (PK)
+• name (unique)
+• is_normal_student
+• show_in_duty_roster
+• can_edit_duty_roster
+• can_schedule_meetings
+• can_create_announcements
+• can_edit_announcements
+• can_record_discipline
+• can_view_discipline
+• can_add_clubs
+• can_manage_competitions
+• can_manage_gatepass
+• created_at, updated_at
 ```
 
----
+### Clubs
+
+```
+clubs_club
+• id (PK)
+• name
+• description
+• logo
+• status                    active | under_review | inactive
+• established_year, established_by, tutors
+• member_count
+• created_by_id (FK → accounts_user)
+• created_at, updated_at
+
+clubs_clubsignup
+• id (PK)
+• club_id (FK → clubs_club)
+• student_name, email, phone, message
+• created_at
+```
+
+### Duty Roster
+
+```
+duty_roster_duty
+• id (PK)
+• duty_type_id (FK → duty_roster_dutytype, nullable)
+• assigned_to_id (FK → accounts_user)
+• assigned_by_id (FK → accounts_user, nullable)
+• date, location, subsidiary_area, instructions
+• is_completed, completed_at, notes
+• created_at, updated_at
+
+duty_roster_dutytype
+• id (PK)
+• name (unique), description, location, color
+• created_at, updated_at
+```
+
+### Communications
+
+```
+announcements_announcement
+• id (PK)
+• title, content, announcement_type
+• target_houses, target_grades
+• is_public, is_pinned
+• event_date, event_time, event_location
+• registration_required, registration_deadline
+• attachments
+• is_published, published_at
+• send_email, email_sent, email_sent_at
+• created_by_id (FK → accounts_user)
+• created_at, updated_at
+
+meetings_meeting
+• id (PK)
+• title, description, agenda
+• date, location, meeting_link
+• is_cancelled, cancellation_reason
+• morning_reminder_sent
+• organized_by_id (FK → accounts_user)
+• created_at, updated_at
+
+meetings_minutesofmeeting
+• id (PK)
+• meeting_id (FK → meetings_meeting, unique)
+• content, action_items, document
+• uploaded_by_id (FK → accounts_user)
+• emailed_to_phase_heads, email_sent_at
+• created_at, updated_at
+
+notifications_notification
+• id (PK)
+• recipient_id (FK → accounts_user)
+• notification_type, title, message, action_url
+• is_read, read_at, is_snoozed, snoozed_until
+• send_email, email_sent, email_sent_at
+• created_at
+```
 
 ## API Reference
 
-Post your username and password to the login endpoint to receive JWT tokens:
+### Authentication
 
 ```http
 POST /api/accounts/login/
 Content-Type: application/json
 
 {
-  "username": "user@example.com",
+  "username": "president",
   "password": "password"
 }
 
-Response: {
+Response:
+{
   "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
   "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
 }
 ```
 
-Include the access token in the Authorization header for subsequent requests:
+Include the access token on subsequent requests:
 
 ```http
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
 ```
 
-The public API returns data without authentication required:
+### Public endpoints (no authentication)
 
 ```http
-GET /api/clubs/                    # List all active clubs
-GET /api/clubs/?status=active      # Filter clubs by status
-GET /api/clubs/?search=photography # Search clubs by name
-GET /api/clubs/?page=2             # Fetch page 2 of results
-GET /api/clubs/5/                  # Retrieve single club details
+GET /api/clubs/
+GET /api/clubs/?status=active
+GET /api/clubs/?search=photography
+GET /api/clubs/?page=2
+GET /api/clubs/5/
+GET /public/clubs/                                            Public clubs page (HTML, not API)
 ```
 
-Protected endpoints require valid JWT authentication:
+### Role management
 
 ```http
-GET /api/accounts/me/              # Current user's profile
-GET /api/duty-roster/              # User's assigned duties
-GET /api/announcements/            # All announcements visible to user
-GET /api/announcements/3/          # Single announcement details
+GET /api/roles/
+    Auth: required
+    Returns: List of available roles and their IDs, for use with assign_role.
 
-# Signup Management (admin only)
-GET /api/competitions/             # List competitions
-GET /api/competitions/5/signups/   # List signups for competition 5
-POST /api/competitions/            # Create competition (requires permission)
-DELETE /api/competitions/5/delete_signup/?signup_id=123   # Remove signup from competition
-
-GET /api/clubs/                    # List all clubs
-GET /api/clubs/8/signups/          # List signups for club 8
-POST /api/clubs/                   # Create club (requires admin role)
-DELETE /api/clubs/8/delete_signup/?signup_id=456          # Remove signup from club
-
-# Admin operations
-PUT /api/clubs/5/                  # Update club (requires admin role)
-DELETE /api/clubs/5/               # Delete club (requires admin role)
-GET /api/meetings/                 # List scheduled meetings
-POST /api/meetings/                # Create new meeting (requires permission)
+POST /api/accounts/{user_id}/assign_role/
+    Auth: required, C-Suite role only
+    Body: { "role_id": 2 }
+    Returns: Updated user object with the new role.
+    Error: 403 if the requesting user is not C-Suite.
 ```
+
+### Authenticated endpoints
+
+```http
+GET /api/accounts/me/
+GET /api/duty-roster/
+GET /api/announcements/
+GET /api/announcements/3/
+
+GET /api/competitions/
+GET /api/competitions/5/signups/
+POST /api/competitions/                                     Requires can_manage_competitions
+DELETE /api/competitions/5/delete_signup/?signup_id=123      Requires C-Suite role
+
+GET /api/clubs/
+GET /api/clubs/8/signups/
+POST /api/clubs/                                             Requires can_add_clubs
+DELETE /api/clubs/8/delete_signup/?signup_id=456              Requires C-Suite role
+
+PUT /api/clubs/5/                                             Requires C-Suite role
+DELETE /api/clubs/5/                                          Requires C-Suite role
+GET /api/meetings/
+POST /api/meetings/                                           Requires can_schedule_meetings
+```
+
+Gate pass endpoints are documented in full under [Gate Pass](#gate-pass) above.
 
 ---
 
-## Deployment Architecture
-
-The production environment uses Nginx as a reverse proxy receiving all incoming HTTP and HTTPS requests. Nginx terminates SSL connections, serves static files directly, and forwards API requests to multiple Gunicorn worker processes running the Django application.
-
-Behind Gunicorn, the application connects to PostgreSQL for data persistence, Redis for caching and message brokering, Celery worker processes for background job execution, and external email services (such as SendGrid) for transactional emails.
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│                     Reverse Proxy (Nginx)                    │
-│                   • HTTPS/SSL Termination                    │
-│                   • Static File Serving                      │
-│                   • Load Balancing                           │
-└────────┬─────────────────────────────────────────────────────┘
-         │
-┌────────▼──────────────────────────────────────────────────────┐
-│              Application Layer (Gunicorn)                     │
-│                                                               │
-│  ┌────────────────────────────────────────────────────────┐   │
-│  │  Django Application (Multiple Workers)                 │   │
-│  │  • Process 1  • Process 2  • Process 3  • Process N    │   │
-│  └────────────────────────────────────────────────────────┘   │
-└────────┬──────────────────────────────────────────────────────┘
-         │
-    ┌────┴────┬─────────────────┬──────────────────┐
-    │         │                 │                  │
-┌───▼───┐  ┌──▼────────┐  ┌─────▼──────┐  ┌──────▼─────┐
-│ PgSQL │  │   Redis   │  │ Email SMTP │  │   Celery   │
-│       │  │ (Cache)   │  │  (Sendgrid)│  │  (Workers) │
-└───────┘  └───────────┘  └────────────┘  └────────────┘
-```
-
-Before deploying to production, verify the following items:
-
-- Configure Nginx reverse proxy with SSL certificates
-- Set up Gunicorn with adequate worker processes (typically 2-4 per CPU core)
-- Configure PostgreSQL with automated daily backups
-- Set up Redis cluster for caching and message brokering
-- Configure email service provider credentials (SendGrid, AWS SES, etc.)
-- Enable HTTPS/TLS with valid SSL certificates
-- Set up application monitoring and error logging
-- Configure CI/CD pipeline for automated deployments
-- Set up automated backup jobs with off-site storage
-- Configure firewall rules to restrict access to necessary ports only
-
----
-
-## Maintenance Procedures
-
-Daily maintenance tasks verify that all services remain operational and responsive.
-
-```bash
-# Check Django logs for errors
-tail -f /var/log/student-council/django.log
-
-# Inspect active Celery tasks
-celery -A student_council inspect active
-
-# Count current database connections
-psql -c "SELECT count(*) FROM pg_stat_activity;"
-
-# Verify all services are running
-systemctl status gunicorn
-systemctl status celery-worker
-systemctl status celery-beat
-systemctl status redis-server
-systemctl status postgresql
-```
-
-Watch for ERROR and WARNING entries in the logs that indicate problems with the application, database, or services.
-
-Weekly maintenance includes database optimization and backup verification.
-
-Run these commands weekly:
-
-```bash
-# Analyze and optimize database tables
-vacuumdb -U postgres student_council_db
-
-# Check table sizes to identify growth
-psql -U postgres student_council_db -c "
-  SELECT schemaname, tablename, 
-  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) 
-  FROM pg_tables 
-  ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;"
-
-# Create compressed database backup
-pg_dump -U postgres student_council_db | gzip > /backups/db_$(date +%Y%m%d).sql.gz
-
-# Search logs for errors and warnings
-grep ERROR /var/log/student-council/*.log
-grep WARNING /var/log/student-council/*.log
-```
-
-Monthly maintenance includes data cleanup and security updates.
-
-Monthly tasks:
-
-```bash
-# Remove notifications older than 6 months
-python manage.py shell << EOF
-from django.utils import timezone
-from datetime import timedelta
-from notifications.models import Notification
-
-old_date = timezone.now() - timedelta(days=180)
-Notification.objects.filter(created_at__lt=old_date).delete()
-EOF
-
-# Update Python packages to latest versions
-pip install --upgrade -r requirements.txt
-
-# Scan for security vulnerabilities in dependencies
-pip-audit
-
-# Update system packages
-apt update && apt upgrade -y
-
-# Analyze slow queries to identify performance issues
-psql -c "SELECT query, calls, mean_time FROM pg_stat_statements 
-         ORDER BY mean_time DESC LIMIT 10;"
-
-# Review index usage to find unused or missing indexes
-psql -c "SELECT schemaname, tablename, indexname 
-         FROM pg_indexes 
-         WHERE schemaname NOT IN ('pg_catalog', 'information_schema');"
-```
-
----
-
-## Monitoring & Logging
-
-The application writes logs to `/var/log/student-council/django.log` with a rotating file handler that creates a new file when the current log reaches 10MB. The system keeps 10 rotated backup log files before deleting the oldest one.
-
-Log messages include a level that indicates severity: DEBUG contains development information, INFO contains general operational messages, WARNING indicates potential problems that don't prevent the system from running, ERROR indicates failures that may impact functionality, and CRITICAL indicates system failures that require immediate attention.
-
-Configure logging in `settings.py`:
-
-```python
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/var/log/student-council/django.log',
-            'maxBytes': 1024*1024*10,  # 10MB
-            'backupCount': 10,
-        },
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file', 'console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-    },
-}
-```
-
-Monitor these key metrics for system health:
-
-| Metric | Target | Alert If Exceeded |
-|--------|--------|-----------------|
-| CPU Usage | Below 70% | 85% |
-| Memory Usage | Below 80% | 90% |
-| Disk Usage | Below 80% | 90% |
-| Database Connections | Below 80 | 100 |
-| Response Time | Below 200ms | 500ms |
-| Error Rate | Below 1% | 5% |
-| Celery Queue Length | Below 100 | 500 |
-
-When any metric exceeds the alert threshold, investigate immediately. Start with the logs to understand what changed. For database issues, check connection counts and running queries. For memory issues, identify the largest processes and consider restarting them. For response time issues, run EXPLAIN ANALYZE on slow queries to find missing indexes.
-
----
-
-## Backup & Recovery
-
-The production environment backs up the database and uploaded media files daily. These backups are compressed and uploaded to cloud storage for off-site redundancy.
-
-Automated daily backup script:
-
-```bash
-# Backup database
-pg_dump -U postgres student_council_db | gzip > /backups/daily/db_$(date +%Y%m%d).sql.gz
-
-# Backup uploaded media
-tar -czf /backups/daily/media_$(date +%Y%m%d).tar.gz /path/to/media/
-
-# Upload to cloud storage
-aws s3 cp /backups/daily/db_*.sql.gz s3://backup-bucket/daily/
-aws s3 cp /backups/daily/media_*.tar.gz s3://backup-bucket/daily/
-```
-
-If the database becomes corrupted or data is accidentally deleted, restore from a backup following these steps:
-
-1. Stop the application to prevent new writes
-2. Restore the database from the backup file
-3. Run any pending migrations
-4. Restart the application
-
-Restore database commands:
-
-```bash
-# 1. Stop application
-systemctl stop gunicorn celery-worker
-
-# 2. Restore from backup (replace date with desired backup)
-psql -U postgres student_council_db < /backups/db_20260326.sql
-
-# 3. Run migrations if needed
-python manage.py migrate
-
-# 4. Restart application
-systemctl start gunicorn celery-worker
-```
-
-The system maintains backup redundancy with the following recovery objectives:
-
-- Recovery Time Objective (RTO): 30 minutes — Time to restore and bring system back online
-- Recovery Point Objective (RPO): 24 hours — Maximum data loss is one day of changes
-
-Daily backups retain a 30-day history. Weekly backups retain a 3-month history. Monthly backups are archived indefinitely.
-
----
-
-## Troubleshooting Guide
-
-If the application cannot connect to the database, PostgreSQL may not be running or the connection string may be incorrect.
-
-Check PostgreSQL status:
-
-```bash
-systemctl status postgresql
-```
-
-If PostgreSQL is not running, start it:
-
-```bash
-systemctl start postgresql
-```
-
-Verify the service is listening on port 5432:
-
-```bash
-netstat -tlnp | grep 5432
-```
-
-Check the PostgreSQL error logs:
-
-```bash
-journalctl -u postgresql -n 20
-```
-
-When Celery background tasks do not process, Redis may be down or the Celery worker may have crashed.
-
-Inspect active Celery tasks:
-
-```bash
-celery -A student_council inspect active
-```
-
-Test the Redis connection:
-
-```bash
-redis-cli ping
-```
-
-The response should be PONG. If Redis is not responding, restart it:
-
-```bash
-systemctl restart redis-server
-```
-
-Restart the Celery worker:
-
-```bash
-systemctl restart celery-worker
-```
-
-Watch out — if you see stuck tasks that will not process, clear them with:
-
-```bash
-celery -A student_council purge
-```
-
-When the server consumes excessive memory, identify which processes are using the most:
-
-```bash
-free -h
-ps aux --sort=-%mem | head -10
-```
-
-If Gunicorn or Celery are consuming most of the memory, restart them:
-
-```bash
-systemctl restart gunicorn
-systemctl restart celery-worker
-```
-
-Monitor memory usage after restart to see if it remains high or returns to normal.
-
-When API responses are slow, database queries may be inefficient or missing indexes. Enable query logging to see which queries execute:
-
-```bash
-python manage.py shell
-from django.db import connection
-# Make request
-print(connection.queries)
-```
-
-Check for indexes on frequently queried columns:
-
-```bash
-psql -c "SELECT * FROM pg_stat_user_indexes ORDER BY idx_scan ASC;"
-```
-
-Run EXPLAIN ANALYZE on slow queries to find bottlenecks:
-
-```bash
-psql -c "EXPLAIN ANALYZE SELECT * FROM clubs_club WHERE status='active';"
-```
-
-If a query has a high execution cost, add indexes on the filtered or joined columns.
-
----
-
-## Version Control & Deployment
-
-Follow this Git workflow for feature development:
-
-```bash
-# 1. Create feature branch
-git checkout -b feature/new-feature
-
-# 2. Make changes to code
-# ... edit files ...
-
-# 3. Stage and commit changes
-git add .
-git commit -m "Add new feature"
-
-# 4. Push to repository
-git push origin feature/new-feature
-
-# 5. Create pull request on GitHub for code review
-# ... wait for approval ...
-
-# 6. Merge approved changes to main branch
-git checkout main
-git merge feature/new-feature
-git push origin main
-```
-
-Deploying to production requires these steps:
-
-```bash
-# 1. Pull latest code from main branch
-git pull origin main
-
-# 2. Update Python package dependencies
-pip install -r requirements.txt
-
-# 3. Run database migrations
-python manage.py migrate
-
-# 4. Copy static files to serving directory
-python manage.py collectstatic --noinput
-
-# 5. Restart application services
-systemctl restart gunicorn celery-worker
-
-# 6. Verify deployment succeeded
-curl http://localhost:8000/api/clubs/
-```
-
-After deployment, verify that the application responds correctly. Check the logs for any errors. Monitor resource usage for the first hour to ensure everything operates normally.
-
----
-
-## Security Considerations
-
-Store all secrets in environment variables and never commit `.env` files to the repository. Rotate secrets regularly and use dedicated secret management tools like HashiCorp Vault or AWS Secrets Manager in production.
-
-Database connections must use strong passwords with at least 16 characters including uppercase, lowercase, numbers, and symbols. Enable SSL/TLS encryption for all database connections. Implement row-level security policies to restrict users from accessing data belonging to other organizations. Conduct regular security audits of database access patterns.
-
-The API enforces HTTPS on all endpoints in production. Implement rate limiting on authentication endpoints to prevent brute force attacks. Validate all user inputs with Django serializers and form validation. Configure CORS to restrict which domains can access the API. Never trust user-supplied data.
-
-Watch out — if you accept file uploads without validation, an attacker could upload malicious files. Always validate file types and sizes on the server side. Scan uploaded files with antivirus before storing them.
-
-Keep all dependencies up to date. Run pip-audit monthly to find known vulnerabilities. Use SAST tools like Bandit and Pylint to identify code security issues. Implement code review for all pull requests. Run security tests as part of the CI/CD pipeline.
-
----
-
-Documentation is located in `/path/to/docs/`. Report issues on GitHub. Contact hiba.malkan@gmail.com for questions or emergencies.
-
----
-
-**Document Version:** 1.1  
-**Last Updated:** April 5, 2026  
-**Next Review:** July 5, 2026
-
----
-
-*This documentation is confidential and intended for authorized personnel only.*
+**Document Version:** 1.1
+**Last Updated:** July 2026

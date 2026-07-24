@@ -1,54 +1,19 @@
-# Student Council Management System — Local Development Guide
+# Local Development Guide
 
-Set up and run the application locally on your machine in under 20 minutes.
-
-## Quick Start
-
-Clone the repository, create a Python virtual environment, install dependencies, set up the database, and start four service terminals:
-
-```bash
-cd backend
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-# Edit .env with your configuration
-
-createdb student_council_db
-python manage.py migrate
-python manage.py createsuperuser
-```
-
-Open four terminals and run these commands simultaneously:
-
-```bash
-# Terminal 1
-cd backend && source venv/bin/activate && python manage.py runserver
-
-# Terminal 2
-cd backend && source venv/bin/activate && celery -A student_council worker --loglevel=info
-
-# Terminal 3
-cd backend && source venv/bin/activate && celery -A student_council beat --loglevel=info
-
-# Terminal 4
-redis-server
-```
-
-Visit http://localhost:8000 to access the application.
+This document describes how to set up and run the Student Council Management System in a local development environment.
 
 ## System Requirements
-
-You need:
 
 - macOS, Linux, or Windows with WSL2
 - Python 3.13 or later
 - Node.js 18 or later
 - PostgreSQL 12 or later
-- Redis latest stable version
-- Git latest version
+- Redis (latest stable release)
+- Git
 
-Verify your installations:
+Minimum hardware: 4GB RAM, dual-core 2GHz processor, 50GB free disk space.
+
+Verify installed versions:
 
 ```bash
 python3 --version
@@ -58,18 +23,16 @@ redis-cli --version
 git --version
 ```
 
-Hardware should have at least 4GB RAM, a dual-core processor at 2GHz, and 5GB free disk space with a stable internet connection.
-
 ## Installation
 
-Clone the repository and navigate into the directory:
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Hiba-Malkan/student-council.git
 cd student-council
 ```
 
-Create a Python virtual environment and activate it:
+### 2. Create and activate a virtual environment
 
 ```bash
 cd backend
@@ -77,21 +40,21 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-On Windows, use `venv\Scripts\activate` instead.
+On Windows, activate with `venv\Scripts\activate`.
 
-Install Python dependencies:
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Create the `.env` file by copying the example:
+### 4. Configure environment variables
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `backend/.env` with your configuration:
+Edit `backend/.env`:
 
 ```env
 SECRET_KEY=django-insecure-your-secret-key-here
@@ -116,7 +79,9 @@ DEFAULT_FROM_EMAIL=your_email@example.com
 SITE_URL=http://localhost:8000
 ```
 
-Set up the database:
+**Note:** `DB_USER` must match an existing PostgreSQL role, not necessarily your operating system username. If migration commands fail with a "role does not exist" error, run `psql -l` to confirm the correct role before proceeding.
+
+### 5. Set up the database
 
 ```bash
 createdb student_council_db
@@ -124,28 +89,29 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-Your superuser account has full admin access. New registered users automatically get the Student role by default. To assign roles to other users, only C-Suite members (President, Vice President, Secretary, Treasurer) can do so.
+Newly registered users are assigned the Student role by default. Superuser accounts have administrative access but are not automatically assigned a council role. Only users with a C-Suite role (President, Vice President, Secretary, Treasurer) can assign roles to other users, so the superuser account's role must be set manually before role assignment can occur through the application.
 
-The role system includes:
+### 6. Configure roles
 
-**Student** — The default role. Students can view clubs, announcements, and sign up for competitions and clubs. They see the public dashboard but cannot create or edit content.
+The system defines the following roles:
 
-**Captain** — Assigned to team or event leaders. Captains can manage competition signups and view participant details.
+| Role | Permissions |
+|---|---|
+| Student | Default role. View clubs and announcements, sign up for competitions and clubs. No create/edit access. |
+| Captain | Manage competition signups and view participant details. |
+| Class Representative | Access to class-specific organizational data. |
+| C-Suite (President, VP, Secretary, Treasurer) | Full administrative access: create/edit announcements, schedule meetings, edit the duty roster, manage competitions, view discipline records, assign roles. |
 
-**Class Representative** — Assigned to student class leaders. Has access to view class-specific organizational data.
+To assign a role via Django admin:
 
-**C-Suite Roles** (President, Vice President, Secretary, Treasurer) — Full administrative access. Can create and edit announcements, schedule meetings, edit the duty roster, manage competitions, view discipline records, and assign or change roles for other users.
+1. Navigate to `http://localhost:8000/admin/`
+2. Log in with superuser credentials
+3. Select "Users" from the sidebar
+4. Select the target user
+5. Set the "Role" field
+6. Save
 
-To assign a role to a user through the Django admin:
-
-1. Navigate to http://localhost:8000/admin/
-2. Log in with your superuser credentials
-3. Click "Users" in the left sidebar
-4. Select the user whose role you want to change
-5. Find the "Role" dropdown and select the new role
-6. Click "Save"
-
-To assign a role via the API (C-Suite only):
+To assign a role via the API (requires C-Suite permissions):
 
 ```bash
 curl -X POST http://localhost:8000/api/accounts/{user_id}/assign_role/ \
@@ -154,21 +120,21 @@ curl -X POST http://localhost:8000/api/accounts/{user_id}/assign_role/ \
   -d '{"role_id": 2}'
 ```
 
-Replace `{user_id}` with the target user's ID and `role_id` with the ID of the role you're assigning. Query the roles list to find role IDs:
+Retrieve available role IDs:
 
 ```bash
 curl http://localhost:8000/api/roles/
 ```
 
-Only users with C-Suite roles can use the assign_role endpoint. Attempting to assign roles without C-Suite status returns a 403 Forbidden error.
+Requests to this endpoint from users without C-Suite status return `403 Forbidden`.
 
-Verify the database has all 42 tables:
+### 7. Verify the database schema
 
 ```bash
 psql -U hiba -d student_council_db -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public';"
 ```
 
-Install frontend dependencies and build Tailwind CSS:
+### 8. Install frontend dependencies
 
 ```bash
 cd ../frontend
@@ -176,17 +142,17 @@ npm install
 npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css
 ```
 
-Watch for changes automatically:
+For automatic rebuilds during development, use watch mode:
 
 ```bash
 npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --watch
 ```
 
-## Running Services
+## Running the Application
 
-The 4-terminal approach is recommended for development. Each terminal shows logs from one service, making it easy to debug issues.
+Local development requires four concurrent processes, each run in a separate terminal.
 
-**Terminal 1 — Django Development Server:**
+**Terminal 1 — Django development server**
 
 ```bash
 cd backend
@@ -194,39 +160,35 @@ source venv/bin/activate
 python manage.py runserver 0.0.0.0:8000
 ```
 
-The server runs on http://localhost:8000 and auto-reloads whenever you change Python code. Request logs appear in real-time so you can see what the application is doing.
+The server auto-reloads on code changes. Request logs are printed to this terminal.
 
-**Terminal 2 — Celery Worker:**
+**Terminal 2 — Celery worker**
 
 ```bash
-cd backend
-source venv/bin/activate
 celery -A student_council worker --loglevel=info
 ```
 
-The worker processes background tasks asynchronously, such as sending email notifications. Task execution logs appear here so you can see if notifications are being sent correctly.
+Processes background tasks, primarily email delivery.
 
-**Terminal 3 — Celery Beat:**
+**Terminal 3 — Celery Beat**
 
 ```bash
-cd backend
-source venv/bin/activate
 celery -A student_council beat --loglevel=info
 ```
 
-Beat runs scheduled tasks automatically. Notifications are sent at 7 AM and 4 PM each day. Scheduling logs appear in this terminal.
+Executes scheduled tasks. Notifications are dispatched at 7:00 AM and 4:00 PM daily.
 
-**Terminal 4 — Redis:**
+**Terminal 4 — Redis**
 
 ```bash
 redis-server
 ```
 
-Redis acts as the message broker between Django and Celery. Connection logs appear here.
+Serves as the message broker between Django and Celery.
 
-Watch out — if you close a terminal, that service stops. The application continues running but features depending on that service will fail. For example, if you close the Celery terminal, background emails will not send even though Django keeps running.
+**Important:** All four processes must remain running for the application to function correctly. If the Celery worker or Celery Beat terminal is closed, Django continues to run without error, but background tasks — including notification emails — silently stop processing.
 
-Alternatively, create a bash script `start_dev.sh` to run all services:
+Alternatively, all services can be started from a single script:
 
 ```bash
 #!/bin/bash
@@ -241,34 +203,24 @@ redis-server &
 wait
 ```
 
-Run it with `bash start_dev.sh`. However, logs mix together, making it harder to debug.
+Run with `bash start_dev.sh`. This approach interleaves log output from all services in a single terminal, which can make debugging more difficult. The four-terminal approach is recommended when working on Celery-related functionality.
 
 ## Development Workflow
 
-### Editing Templates and Styles
+### Templates and stylesheets
 
-Edit HTML templates in `frontend/templates/`. Django reloads templates automatically, so refresh your browser to see changes immediately without restarting the server.
-
-Edit CSS in `frontend/static/src/input.css`. Rebuild the compiled CSS with Tailwind:
+HTML templates in `frontend/templates/` reload automatically; no build step is required. CSS changes require rebuilding Tailwind output:
 
 ```bash
 cd frontend
-npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css
-```
-
-Use the watch flag to rebuild automatically whenever the CSS changes:
-
-```bash
 npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css --watch
 ```
 
-### Editing Python Code
+### Backend code changes
 
-When you modify models, views, or serializers in the backend, Django detects the changes and auto-reloads. Refresh your browser and the new code runs immediately. No server restart needed.
+Changes to models, views, and serializers are picked up automatically by Django's development server. No restart is required.
 
-### Adding Database Columns
-
-When you modify a model in `models.py`, generate a migration:
+### Creating and applying migrations
 
 ```bash
 python manage.py makemigrations
@@ -280,21 +232,12 @@ Review the generated migration file before applying it:
 cat backend/accounts/migrations/000X_*.py
 ```
 
-Apply the migration to update the database schema:
-
 ```bash
 python manage.py migrate
-```
-
-Verify the changes applied:
-
-```bash
 python manage.py showmigrations
 ```
 
-### Adding a New Field to a Model
-
-Example: Add a description field to the Club model.
+### Example: adding a model field
 
 Edit `backend/clubs/models.py`:
 
@@ -302,23 +245,15 @@ Edit `backend/clubs/models.py`:
 class Club(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    # Add the new field:
     location = models.CharField(max_length=200, default='')
 ```
 
-Generate a migration:
-
 ```bash
 python manage.py makemigrations clubs
-```
-
-Apply the migration:
-
-```bash
 python manage.py migrate
 ```
 
-Update the serializer in `backend/clubs/serializers.py` to include the new field:
+Update the corresponding serializer in `backend/clubs/serializers.py`:
 
 ```python
 class ClubSerializer(serializers.ModelSerializer):
@@ -327,7 +262,7 @@ class ClubSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'location']
 ```
 
-Test via the API:
+Verify the change via the API:
 
 ```bash
 curl http://localhost:8000/api/clubs/
@@ -335,33 +270,14 @@ curl http://localhost:8000/api/clubs/
 
 ## API Testing
 
-Test the API with `curl` commands to verify endpoints work correctly.
-
-Get all active clubs:
-
 ```bash
 curl http://localhost:8000/api/clubs/
-```
-
-Filter clubs by status:
-
-```bash
 curl "http://localhost:8000/api/clubs/?status=active"
-```
-
-Search clubs by name:
-
-```bash
 curl "http://localhost:8000/api/clubs/?search=coding"
-```
-
-Paginate through results:
-
-```bash
 curl "http://localhost:8000/api/clubs/?page=2"
 ```
 
-Login to get a JWT token:
+Authenticate to obtain a token:
 
 ```bash
 curl -X POST http://localhost:8000/api/accounts/login/ \
@@ -369,16 +285,16 @@ curl -X POST http://localhost:8000/api/accounts/login/ \
   -d '{"username":"your_username","password":"your_password"}'
 ```
 
-The response contains access and refresh tokens. Use the access token for protected endpoints:
+Use the access token for protected endpoints:
 
 ```bash
 curl -H "Authorization: Bearer YOUR_TOKEN" \
   http://localhost:8000/api/accounts/me/
 ```
 
-### Using REST Client Extension
+### VS Code REST Client
 
-Install the REST Client extension in VS Code. Create a `test.http` file:
+Install the REST Client extension and create a `test.http` file:
 
 ```http
 ### Get all clubs
@@ -402,232 +318,123 @@ GET http://localhost:8000/api/duty-roster/
 Authorization: Bearer YOUR_TOKEN_HERE
 ```
 
-Click "Send Request" above each endpoint to execute it. Responses appear in a side panel.
+Requests can be executed individually by selecting "Send Request" above each block.
 
-### Using Postman
+### Postman
 
-Download Postman and create a collection called "Student Council". Add requests for each endpoint. Use the Authorization tab to set Bearer tokens. Save responses to your collection for reference.
+Create a collection for the API, with one request per endpoint. Bearer tokens are configured under the Authorization tab per request or per collection.
 
 ## Managing Signups
 
-Competitions and clubs have signup management pages. Access them through the admin dashboard.
+Competition and club signups are managed through `/competitions/signups/` and `/clubs/signups/` respectively. Each page displays signup details — name, email, phone, team assignment (competitions only), and any accompanying message — filterable by competition or club.
 
-Navigate to `/competitions/signups/` to see who signed up for competitions. You can see their name, email, phone number, team assignment, and any message they left. Select a competition from the dropdown to filter signups.
+Deleting a signup opens a confirmation modal, styled with a white background and dark text in light mode, and a dark gray background with white text in dark mode. The modal combines inline styles for structural properties (padding, font size, borders) with Tailwind `dark:` classes for color variants; this pattern is documented in `STYLING_GUIDE.md`.
 
-Navigate to `/clubs/signups/` to see who signed up for clubs. The view is similar but without the team name column.
-
-To remove someone from a signup list, click the trash icon on their row. A confirmation modal appears asking you to confirm the removal. The modal displays in white with dark text on light backgrounds, and switches to dark gray with white text in dark mode. Click "Delete" to confirm or "Cancel" to go back.
-
-The confirmation modal uses a hybrid styling approach combining inline styles with Tailwind dark: prefix classes. This ensures readability in both light and dark modes. If you need to modify modal styling, keep inline styles for padding, font size, and borders, and use Tailwind classes for color variants that change with dark mode.
-
-### Signup Page Features
-
-Signups are paginated with 10 entries per page. Use the pagination controls at the bottom to navigate.
-
-The message modal shows the full text that a signup left. Click on a message button to open it. The modal has a maximum width and fixed height with scrolling for longer messages.
-
-Search and filter signups by selecting a competition or club from the dropdown at the top of the page.
+Signup lists are paginated at 10 entries per page. The full text of a signup message is viewable via the message modal, which supports scrolling for longer content.
 
 ## Database Management
 
-View all database tables:
-
 ```bash
 psql -U hiba -d student_council_db -c "\dt"
-```
-
-View the structure of a specific table:
-
-```bash
 psql -U hiba -d student_council_db -c "\d clubs_club"
-```
-
-Run a SQL query:
-
-```bash
 psql -U hiba -d student_council_db -c "SELECT * FROM accounts_user;"
-```
-
-Access the PostgreSQL interactive shell:
-
-```bash
 psql -U hiba -d student_council_db
 ```
 
-Inside the shell:
+Interactive shell commands:
 
 ```
-\dt                   # List tables
-\d clubs_club         # Describe table structure
-SELECT * FROM clubs_club;  # Run query
-\q                    # Exit shell
+\dt                          List tables
+\d clubs_club                Describe table structure
+SELECT * FROM clubs_club;    Run a query
+\q                           Exit
 ```
 
-Backup the database to a file:
+### Backup and restore
 
 ```bash
 pg_dump -U hiba student_council_db > backup.sql
-```
-
-Compress the backup:
-
-```bash
 pg_dump -U hiba student_council_db | gzip > backup.sql.gz
-```
 
-Restore from a backup:
-
-```bash
 psql -U hiba student_council_db < backup.sql
-```
-
-Restore from a compressed backup:
-
-```bash
 gunzip -c backup.sql.gz | psql -U hiba student_council_db
 ```
 
-### Reset Database
+### Resetting the database
 
-Start fresh by dropping and recreating the database:
-
-1. Stop the Django server by pressing Ctrl+C
-
-2. Drop the existing database:
-
-```bash
-dropdb -U hiba student_council_db
-```
-
-3. Create a fresh database:
-
-```bash
-createdb -U hiba student_council_db
-```
-
-4. Run migrations:
-
-```bash
-python manage.py migrate
-```
-
-5. Create a new superuser:
-
-```bash
-python manage.py createsuperuser
-```
-
-6. Restart the Django server
+1. Stop the Django server (Ctrl+C)
+2. `dropdb -U hiba student_council_db`
+3. `createdb -U hiba student_council_db`
+4. `python manage.py migrate`
+5. `python manage.py createsuperuser`
+6. Restart the server
 
 ## Troubleshooting
 
-If port 8000 is already in use by another process, find and stop it:
+**Port 8000 already in use**
 
 ```bash
 lsof -i :8000
 kill -9 <PID>
 ```
 
-Alternatively, run Django on a different port:
+Alternatively, run on a different port: `python manage.py runserver 8001`.
 
-```bash
-python manage.py runserver 8001
-```
+**Import errors on startup**
 
-If you see an import error when running Django, ensure the virtual environment is activated:
+Confirm the virtual environment is activated and dependencies are installed:
 
 ```bash
 source venv/bin/activate
-```
-
-Reinstall dependencies to resolve missing modules:
-
-```bash
 pip install -r requirements.txt
 ```
 
-If static CSS files are not loading (page looks unstyled), rebuild the Tailwind CSS:
+**Static files not loading**
+
+Rebuild Tailwind CSS and confirm the output file exists:
 
 ```bash
 cd frontend
 npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css
-```
-
-Verify the CSS file exists:
-
-```bash
 ls -la frontend/static/dist/output.css
 ```
 
-If PostgreSQL refuses connections, verify it's running:
+**PostgreSQL connection refused**
 
 ```bash
 brew services list
-```
-
-On macOS, start PostgreSQL:
-
-```bash
-brew services start postgresql
-```
-
-On Linux:
-
-```bash
-sudo systemctl start postgresql
-```
-
-Test the connection:
-
-```bash
+brew services start postgresql     # macOS
+sudo systemctl start postgresql    # Linux
 psql -U hiba -d student_council_db -c "SELECT 1;"
 ```
 
-If the database doesn't exist, create it:
+If the database does not exist, create it and confirm:
 
 ```bash
 createdb student_council_db
-```
-
-Verify it was created:
-
-```bash
 psql -U hiba -l | grep student_council_db
 ```
 
-If Celery tasks are not processing, verify Redis is running:
+**Celery tasks not processing**
+
+Confirm Redis is running:
 
 ```bash
 redis-cli ping
-```
-
-If Redis doesn't respond with PONG, start it:
-
-```bash
 redis-server
 ```
 
-Check what tasks are registered with Celery:
+Inspect task status:
 
 ```bash
 celery -A student_council inspect registered
-```
-
-View active tasks:
-
-```bash
 celery -A student_council inspect active
-```
-
-If tasks are stuck, clear the queue:
-
-```bash
 celery -A student_council purge
 ```
 
-If email notifications are not sending, check the email configuration in `.env`. Verify EMAIL_HOST, EMAIL_PORT, and EMAIL_HOST_USER match your email provider.
+**Emails not sending**
 
-Test email sending in the Django shell:
+Verify `EMAIL_HOST`, `EMAIL_PORT`, and `EMAIL_HOST_USER` in `.env` match your provider's configuration. Test directly:
 
 ```bash
 python manage.py shell
@@ -635,103 +442,102 @@ python manage.py shell
 >>> send_mail('Test', 'Test Body', 'from@example.com', ['to@example.com'])
 ```
 
-Check Celery logs for errors. If the logs don't show a clear error, enable console email backend in `settings.py` so emails print to the terminal:
+If email delivery fails without a clear error in the Celery logs, switch to the console email backend to print outgoing emails to the terminal instead of attempting delivery:
 
 ```python
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ```
 
-## Useful Commands
+## Command Reference
 
-Django commands for development:
+**Django**
 
 ```bash
-python manage.py runserver          # Start development server
-python manage.py makemigrations     # Create migrations
-python manage.py migrate            # Apply migrations
-python manage.py showmigrations     # Show migration status
-python manage.py createsuperuser    # Create admin account
-python manage.py shell              # Enter Python REPL
-python manage.py test               # Run tests
-python manage.py check              # Check for errors
+python manage.py runserver
+python manage.py makemigrations
+python manage.py migrate
+python manage.py showmigrations
+python manage.py createsuperuser
+python manage.py shell
+python manage.py test
+python manage.py check
 ```
 
-Celery commands for background tasks:
+**Celery**
 
 ```bash
-celery -A student_council worker --loglevel=info  # Start worker
-celery -A student_council beat --loglevel=info    # Start scheduler
-celery -A student_council inspect active          # View active tasks
-celery -A student_council inspect registered      # View all tasks
-celery -A student_council purge                   # Clear task queue
+celery -A student_council worker --loglevel=info
+celery -A student_council beat --loglevel=info
+celery -A student_council inspect active
+celery -A student_council inspect registered
+celery -A student_council purge
 ```
 
-PostgreSQL commands for database management:
+**PostgreSQL**
 
 ```bash
-psql -U hiba -d student_council_db        # Access database
-psql -U hiba -l                           # List all databases
-psql -U hiba -d student_council_db -c "\dt"  # List tables
-pg_dump -U hiba student_council_db > backup.sql  # Backup database
-psql -U hiba student_council_db < backup.sql   # Restore database
+psql -U hiba -d student_council_db
+psql -U hiba -l
+psql -U hiba -d student_council_db -c "\dt"
+pg_dump -U hiba student_council_db > backup.sql
+psql -U hiba student_council_db < backup.sql
 ```
 
-Redis commands for message broker:
+**Redis**
 
 ```bash
-redis-server        # Start Redis
-redis-cli           # Access Redis CLI
-ping                # Check connection (in redis-cli)
-keys *              # View all keys
-flushall            # Delete all keys
-monitor             # Monitor real-time commands
+redis-server
+redis-cli
+ping
+keys *
+flushall
+monitor
 ```
 
 ## Project Structure
 
 ```
 student-council/
-├── backend/                    Django application
-│   ├── manage.py              CLI tool
-│   ├── requirements.txt        Python dependencies
-│   ├── .env                    Configuration (create this)
-│   ├── venv/                   Virtual environment (auto-created)
-│   ├── student_council/        Main project package
-│   │   ├── settings.py        Django configuration
-│   │   ├── urls.py            URL routing
-│   │   ├── celery.py          Celery setup
-│   │   └── wsgi.py            WSGI entry point
-│   ├── accounts/              User authentication
-│   ├── clubs/                 Club management
-│   ├── duty_roster/           Duty assignments
-│   ├── announcements/         Announcements
-│   ├── competitions/          Competitions
-│   ├── meetings/              Meetings
-│   ├── discipline/            Discipline records
-│   ├── notifications/         Email notifications
-│   ├── media/                 Uploaded files directory
-│   └── db.sqlite3             SQLite backup (local only)
+├── backend/
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── .env
+│   ├── venv/
+│   ├── student_council/
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── celery.py
+│   │   └── wsgi.py
+│   ├── accounts/
+│   ├── clubs/
+│   ├── duty_roster/
+│   ├── announcements/
+│   ├── competitions/
+│   ├── meetings/
+│   ├── discipline/
+│   ├── notifications/
+│   └── media/
 │
-├── frontend/                  Static assets and templates
-│   ├── templates/             HTML templates
-│   │   ├── base.html         Main template with navigation
-│   │   ├── public_base.html  Public pages template
-│   │   ├── dashboard.html    Admin dashboard
-│   │   └── ...               Other page templates
-│   ├── static/               Static assets
-│   │   ├── dist/output.css   Compiled Tailwind (auto-generated)
-│   │   ├── src/input.css     Tailwind source (edit this)
-│   │   └── js/               JavaScript files
-│   ├── package.json          npm dependencies
-│   └── tailwind.config.js    Tailwind configuration
+├── frontend/
+│   ├── templates/
+│   │   ├── base.html
+│   │   ├── public_base.html
+│   │   ├── dashboard.html
+│   │   └── ...
+│   ├── static/
+│   │   ├── dist/output.css
+│   │   ├── src/input.css
+│   │   └── js/
+│   ├── package.json
+│   └── tailwind.config.js
 │
-└── docs/                      Documentation
-    └── LOCAL_DEVELOPMENT.md   This file
+└── docs/
+    └── LOCAL_DEVELOPMENT.md
 ```
 
 ## Development Tips
 
-Test code changes in the Django shell:
+Test model behavior directly in the Django shell before implementing a full endpoint:
 
 ```bash
 python manage.py shell
@@ -744,9 +550,9 @@ print(club.name)
 exit()
 ```
 
-Enable query logging to see SQL statements:
+Inspect generated SQL for a queryset:
 
-```bash
+```python
 from django.db import connection
 from django.conf import settings
 
@@ -759,46 +565,26 @@ for query in connection.queries:
     print(query['sql'])
 ```
 
-Debug code with print statements. Output appears in the Django terminal:
-
-```python
-print("DEBUG: variable =", variable)
-```
-
-Monitor active Celery tasks in real-time:
+Monitor Celery events in real time:
 
 ```bash
 celery -A student_council events
 ```
 
-Test email sending locally:
-
-```bash
-python manage.py shell
->>> from django.core.mail import send_mail
->>> send_mail('Test', 'Body', 'from@example.com', ['to@example.com'])
-```
-
-The email prints to the console if EMAIL_BACKEND is set to console in settings.
-
 ## Getting Help
 
-Always check logs first when something breaks. Django logs appear in the terminal where the server runs. Celery logs appear in the Celery worker terminal. PostgreSQL logs can be viewed with `journalctl -u postgresql -n 20`.
+Check logs first: the Django terminal, the Celery worker terminal, and for PostgreSQL, `journalctl -u postgresql -n 20`.
 
-Common fixes include restarting all services (usually resolves temporary issues), checking the `.env` file (verify all settings are correct), running migrations (`python manage.py migrate`), clearing cache (`python manage.py shell` → `from django.core.cache import cache` → `cache.clear()`), and reinstalling dependencies (`pip install -r requirements.txt --force-reinstall`).
+Common resolutions include restarting all four services, verifying `.env` configuration, running `python manage.py migrate`, clearing the cache (`from django.core.cache import cache; cache.clear()` via the shell), or reinstalling dependencies with `pip install -r requirements.txt --force-reinstall`.
 
 ## Next Steps
 
-Once local development is running smoothly:
-
-1. Read SYSTEM_DOCUMENTATION.md to understand the codebase structure
-2. Read PRODUCTION_DOCUMENTATION.md to learn about deployment
-3. Test all API endpoints to verify they work correctly
-4. Make a small change to practice the development workflow
-5. Run the test suite with `python manage.py test`
+1. Review `SYSTEM_DOCUMENTATION.md` for architecture and codebase structure
+2. Review `PRODUCTION_DOCUMENTATION.md` before deploying
+3. Test all API endpoints
+4. Complete a small end-to-end change to confirm the workflow
+5. Run the test suite: `python manage.py test`
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** March 26, 2026  
-**Status:** Ready for Local Development
+**Last Updated:** July 2026

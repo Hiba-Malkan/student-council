@@ -1,35 +1,33 @@
-# Student Council Management System — Production Deployment Guide
+# Production Deployment Guide
 
-Deploy this application to a production server running Ubuntu 20.04 LTS or later with PostgreSQL, Redis, Nginx, and Gunicorn.
+This document covers deploying the Student Council Management System to a production server running Ubuntu 20.04 LTS or later, with PostgreSQL, Redis, Nginx, and Gunicorn.
 
-Before deploying to production, verify:
+## Pre-Deployment Checklist
 
-- All tests pass with `python manage.py test`
-- DEBUG is set to False in `.env`
-- SECRET_KEY is random and at least 50 characters long
-- All environment variables are configured for production
-- Code has been reviewed and committed to Git
-- Database migrations have been tested locally
-- Static files have been collected locally
+**Application**
+- All tests pass: `python manage.py test`
+- `DEBUG=False` in `.env`
+- `SECRET_KEY` is random and at least 50 characters
+- All production environment variables are configured
+- Code is reviewed and committed
+- Migrations are tested locally
+- Static files are collected locally
 
-Ensure infrastructure is ready:
-
-- Server is provisioned and accessible (recommend Ubuntu 20.04 LTS)
+**Infrastructure**
+- Server is provisioned and accessible (Ubuntu 20.04 LTS or later recommended)
 - PostgreSQL database is created
-- Redis cluster is running
+- Redis is running
 - Email service is configured (SendGrid, AWS SES, or SMTP)
-- SSL/TLS certificates are obtained (use Let's Encrypt)
-- Domain name is configured with DNS
-- Firewall rules are set up
-- Load balancer is configured if needed
+- SSL/TLS certificates are available (Let's Encrypt)
+- Domain DNS is configured
+- Firewall rules are defined
+- Load balancer is configured, if applicable
 
-Document the deployment process, rollback procedures, on-call contact information, and incident response procedures before deployment.
+Document the deployment process, rollback procedure, on-call contact, and incident response plan before deploying.
 
 ## Server Setup
 
-For 100-500 concurrent users, provision a server with 4 CPU cores, 16GB RAM, 100GB SSD storage, and 100+ Mbps bandwidth. Use Ubuntu 20.04 LTS or later as the operating system.
-
-Update the system and install required packages:
+For 100-500 concurrent users, provision 4 CPU cores, 16GB RAM, 100GB SSD, and 100+ Mbps bandwidth.
 
 ```bash
 sudo apt update && sudo apt upgrade -y
@@ -48,7 +46,7 @@ sudo apt install -y \
   python3-certbot-nginx
 ```
 
-Create a dedicated user account for the application:
+Create a dedicated application user:
 
 ```bash
 sudo useradd -m -s /bin/bash appuser
@@ -59,8 +57,6 @@ sudo chown -R appuser:appuser /var/www/student-council
 ```
 
 ## Application Deployment
-
-Switch to the application user and clone the repository:
 
 ```bash
 su - appuser
@@ -76,7 +72,7 @@ pip install -r backend/requirements.txt
 pip install gunicorn
 ```
 
-Create the PostgreSQL database and user:
+Create the database and user:
 
 ```bash
 sudo -u postgres psql
@@ -89,7 +85,7 @@ GRANT ALL PRIVILEGES ON DATABASE student_council_db TO appuser;
 \q
 ```
 
-Run database migrations:
+Run migrations:
 
 ```bash
 cd /var/www/student-council/backend
@@ -101,22 +97,17 @@ python manage.py collectstatic --noinput
 python manage.py check --deploy
 ```
 
-After initial setup, create the required roles in production. Your superuser account has administrative access but needs a role assigned. The system supports five role types: Student (default for all new users), Captain, Class Representative, and C-Suite roles (President, Vice President, Secretary, Treasurer).
+### Configuring roles in production
 
-To set up roles in production, use the Django admin panel at `https://yourdomain.com/admin/`. Only superusers can create and manage roles initially. Create the standard roles first, then assign a C-Suite role to your superuser account. Once a C-Suite user exists, they can assign roles to other users through the API or admin panel.
-
-Alternatively, create roles via the shell:
+The superuser account created above has administrative access but no council role assigned. Role assignment requires a C-Suite role to exist first, so the initial setup must be done either through the Django admin at `https://yourdomain.com/admin/` (superusers can manage roles directly) or via the shell:
 
 ```bash
 python manage.py shell
 ```
 
-Then in the Python shell:
-
 ```python
 from accounts.models import Role
 
-# Create standard roles
 student = Role.objects.create(name='Student', is_normal_student=True)
 captain = Role.objects.create(name='Captain', can_manage_competitions=True)
 class_rep = Role.objects.create(name='Class Rep')
@@ -127,10 +118,10 @@ president = Role.objects.create(
     can_create_announcements=True,
     can_edit_announcements=True,
     can_view_discipline=True,
-    can_manage_competitions=True
+    can_manage_competitions=True,
+    can_manage_gatepass=True,
 )
 
-# Assign President role to your superuser
 from accounts.models import User
 user = User.objects.get(username='yourusername')
 user.role = president
@@ -139,9 +130,11 @@ user.save()
 exit()
 ```
 
+Once a C-Suite user exists, further role assignment can go through the API or the admin panel.
+
 ## Configuration
 
-Create `backend/.env` with production settings:
+`backend/.env`:
 
 ```env
 SECRET_KEY=your-super-secret-key-minimum-50-chars-random-string
@@ -182,7 +175,7 @@ LOG_LEVEL=INFO
 LOG_FILE=/var/log/student-council/django.log
 ```
 
-Configure Gunicorn by creating `gunicorn_config.py`:
+`gunicorn_config.py`:
 
 ```python
 import multiprocessing
@@ -205,7 +198,7 @@ user = "appuser"
 group = "appuser"
 ```
 
-Configure Nginx at `/etc/nginx/sites-available/student-council`:
+`/etc/nginx/sites-available/student-council`:
 
 ```nginx
 server {
@@ -249,8 +242,6 @@ server {
 }
 ```
 
-Enable the site:
-
 ```bash
 sudo ln -s /etc/nginx/sites-available/student-council /etc/nginx/sites-enabled/
 sudo nginx -t
@@ -259,8 +250,6 @@ sudo systemctl restart nginx
 
 ## Security Hardening
 
-Obtain SSL/TLS certificates from Let's Encrypt using Certbot:
-
 ```bash
 sudo certbot certonly --webroot -w /var/www/student-council/frontend -d yourdomain.com -d www.yourdomain.com
 
@@ -268,8 +257,6 @@ sudo systemctl enable certbot.timer
 sudo systemctl start certbot.timer
 sudo certbot renew --dry-run
 ```
-
-Configure the firewall to allow only necessary ports:
 
 ```bash
 sudo ufw enable
@@ -280,66 +267,89 @@ sudo ufw default deny incoming
 sudo ufw status
 ```
 
-Secure PostgreSQL by editing `/etc/postgresql/*/main/pg_hba.conf` and `/etc/postgresql/*/main/postgresql.conf`. Set authentication to md5 or scram-sha-256 and enable SSL.
+Secure PostgreSQL by setting authentication to `scram-sha-256` and enabling SSL in `pg_hba.conf` and `postgresql.conf`.
 
-Secure Redis by editing `/etc/redis/redis.conf` to set a password and disable dangerous commands:
+Secure Redis by setting a password and disabling destructive commands in `redis.conf`:
 
-```bash
+```
 requirepass your_strong_redis_password
 rename-command FLUSHDB ""
 rename-command FLUSHALL ""
+```
 
+```bash
 sudo systemctl restart redis-server
 ```
 
-Verify Django security settings in `settings.py`:
-
-- DEBUG is False
-- ALLOWED_HOSTS contains your domains
-- SECRET_KEY is strong and random
-- SECURE_SSL_REDIRECT is True
-- SESSION_COOKIE_SECURE is True
-- CSRF_COOKIE_SECURE is True
-- SECURE_HSTS_SECONDS is 31536000
-- SECURE_BROWSER_XSS_FILTER is True
+Confirm in `settings.py`: `DEBUG` is `False`, `ALLOWED_HOSTS` is set correctly, `SECRET_KEY` is strong and random, `SECURE_SSL_REDIRECT`, `SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE`, and `SECURE_BROWSER_XSS_FILTER` are all `True`, and `SECURE_HSTS_SECONDS` is `31536000`.
 
 ## Signup Management in Production
 
-In production, the signup management pages (`/competitions/signups/` and `/clubs/signups/`) require C-Suite role access. Only administrators with President, Vice President, Secretary, or Treasurer roles can view and manage signups. Students and other roles see a 403 Forbidden error when accessing these pages.
+`/competitions/signups/` and `/clubs/signups/` require a C-Suite role. Users without President, Vice President, Secretary, or Treasurer status receive a `403 Forbidden` on these pages.
 
-The pages display paginated lists of all signups for a selected competition or club. Administrators can remove signups using the delete action, which opens a confirmation modal asking the user to verify the removal.
+Signup deletion is protected server-side as well:
 
-The modal styling is designed for reliability across different browsers and environments. It uses a combination of inline styles for structural properties (padding, font sizing, borders) and Tailwind CSS classes for color variants that change with dark mode. This hybrid approach avoids CSS specificity issues and ensures the modal displays correctly under all conditions.
+```
+DELETE /api/competitions/{id}/delete_signup/?signup_id={signup_id}    Requires C-Suite role
+DELETE /api/clubs/{id}/delete_signup/?signup_id={signup_id}           Requires C-Suite role
+```
 
-When monitoring production, watch for failed DELETE requests to the signup endpoints. Check the error logs for:
-- 403 Forbidden errors indicating insufficient permissions
-- 404 Not Found errors indicating the signup or resource doesn't exist
-- 500 Internal Server errors indicating database or server issues
+Both require a valid JWT in the Authorization header. Monitor `/var/log/student-council/django.log` for `403 Forbidden` (permission denied), `404 Not Found` (missing signup or resource), and `500 Internal Server Error` (database or server fault) responses on these endpoints.
 
-The signup deletion endpoints are protected by C-Suite role checks:
-- `DELETE /api/competitions/{id}/delete_signup/?signup_id={signup_id}` — Requires C-Suite role
-- `DELETE /api/clubs/{id}/delete_signup/?signup_id={signup_id}` — Requires C-Suite role
-
-Both endpoints require authentication and appropriate admin permissions. Include your JWT token in the Authorization header for requests.
-
-Check production logs at `/var/log/student-council/django.log` for signup deletion errors and permission denials.
-
-## Monitoring & Logging
-
-Create the log directory:
+## Monitoring and Logging
 
 ```bash
 sudo mkdir -p /var/log/student-council
 sudo chown -R appuser:appuser /var/log/student-council
 ```
 
-Configure Django logging in `settings.py` to write to rotating file handlers. Set LOG_LEVEL to INFO in production. Log files rotate at 100MB with 10 backup files retained.
+Configure Django's `LOGGING` setting in `settings.py`:
 
-Monitor these key metrics: CPU usage (alert at 85%), memory usage (alert at 90%), disk usage (alert at 85%), response time (alert above 500ms), error rate (alert above 1%), database connections (alert above 80), and Celery queue length (alert above 1000).
+```python
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '/var/log/student-council/django.log',
+            'maxBytes': 1024*1024*100,  # 100MB
+            'backupCount': 10,
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+```
 
-## Backup & Disaster Recovery
+DEBUG-level messages contain development detail and should not appear in production logs. INFO covers normal operation, WARNING flags issues that don't stop the system, ERROR indicates a failure affecting functionality, and CRITICAL requires immediate attention.
 
-Create an automated daily backup script at `/usr/local/bin/backup-student-council.sh`:
+| Metric | Target | Alert threshold |
+|---|---|---|
+| CPU usage | Below 70% | 85% |
+| Memory usage | Below 80% | 90% |
+| Disk usage | Below 80% | 85% |
+| Response time | Below 200ms | 500ms |
+| Error rate | Below 1% | 5% |
+| Database connections | Below 80 | 100 |
+| Celery queue length | Below 100 | 1000 |
+
+**Note:** The target and alert values above reflect two slightly different threshold sets that existed across the original documentation — the celery queue alert in particular varied between 500 and 1000 in earlier drafts. 1000 is used here as the alert threshold; adjust to match your actual queue throughput once you have production traffic data.
+
+When a metric crosses its alert threshold, check the logs first to see what changed. For database issues, check connection counts and running queries. For memory issues, identify the largest processes before deciding whether to restart. For response time issues, run `EXPLAIN ANALYZE` on the slow query before adding an index — guessing at which column needs an index usually wastes more time than it saves.
+
+## Backup and Disaster Recovery
+
+`/usr/local/bin/backup-student-council.sh`:
 
 ```bash
 #!/bin/bash
@@ -352,7 +362,6 @@ RETENTION_DAYS=30
 mkdir -p $BACKUP_DIR
 
 pg_dump -U $DB_USER $DB_NAME | gzip > $BACKUP_DIR/db_$(date +%Y%m%d_%H%M%S).sql.gz
-
 tar -czf $BACKUP_DIR/media_$(date +%Y%m%d_%H%M%S).tar.gz /var/www/student-council/backend/media/
 
 aws s3 cp $BACKUP_DIR/ s3://your-backup-bucket/daily/ --recursive
@@ -360,55 +369,46 @@ aws s3 cp $BACKUP_DIR/ s3://your-backup-bucket/daily/ --recursive
 find $BACKUP_DIR -name "*.gz" -mtime +$RETENTION_DAYS -delete
 ```
 
-Schedule it in crontab:
-
 ```bash
 sudo chmod +x /usr/local/bin/backup-student-council.sh
 sudo crontab -e
-
-# Add: 0 2 * * * /usr/local/bin/backup-student-council.sh
+# 0 2 * * * /usr/local/bin/backup-student-council.sh
 ```
 
-To recover from a backup:
+**Recovery procedure**
 
-1. Stop the application: `sudo systemctl stop gunicorn`
-2. Drop and recreate the database
-3. Restore the backup: `psql -U appuser -d student_council_db < backup.sql`
-4. Restore media files: `tar -xzf media_backup.tar.gz`
-5. Verify migrations: `python manage.py migrate`
-6. Restart: `sudo systemctl start gunicorn`
-7. Test: `curl https://yourdomain.com/api/clubs/`
+1. `sudo systemctl stop gunicorn`
+2. `psql -U appuser -d student_council_db < backup.sql`
+3. Restore media: `tar -xzf media_backup.tar.gz`
+4. `python manage.py migrate`
+5. `sudo systemctl start gunicorn`
+6. Verify: `curl https://yourdomain.com/api/clubs/`
 
-The system targets a 30-minute Recovery Time Objective and 24-hour Recovery Point Objective.
+Recovery Time Objective: 30 minutes. Recovery Point Objective: 24 hours. Daily backups are retained for 30 days, weekly backups for 3 months, and monthly backups indefinitely.
 
-## Scaling & Performance
+## Scaling and Performance
 
-For horizontal scaling, use a load balancer (AWS ELB/ALB) with multiple application servers. All servers connect to shared PostgreSQL (AWS RDS) and Redis (AWS ElastiCache) instances. S3 stores static files and media.
-
-Optimize the database by creating indexes on frequently queried columns:
+For horizontal scaling, place multiple application servers behind a load balancer (AWS ELB/ALB), with shared PostgreSQL (AWS RDS) and Redis (AWS ElastiCache), and S3 for static and media files.
 
 ```sql
 CREATE INDEX idx_user_username ON accounts_user(username);
 CREATE INDEX idx_club_status ON clubs_club(status);
-CREATE INDEX idx_duty_user ON duty_roster_duty(user_id);
-CREATE INDEX idx_duty_status ON duty_roster_duty(status);
+CREATE INDEX idx_duty_user ON duty_roster_duty(assigned_to_id);
+CREATE INDEX idx_duty_status ON duty_roster_duty(is_completed);
 
 ANALYZE accounts_user;
 ANALYZE clubs_club;
 ```
 
-Optimize Redis for better performance:
-
 ```bash
 redis-cli CONFIG SET maxmemory 2gb
 redis-cli CONFIG SET maxmemory-policy allkeys-lru
 redis-cli CONFIG SET tcp-backlog 511
-redis-cli INFO stats
 ```
 
-## Maintenance Operations
+## Process Management
 
-Configure Supervisor to manage application services. Create `/etc/supervisor/conf.d/student-council.conf`:
+`/etc/supervisor/conf.d/student-council.conf`:
 
 ```ini
 [program:student-council-gunicorn]
@@ -434,35 +434,98 @@ stdout_logfile=/var/log/student-council/celery_worker.log
 programs=student-council-gunicorn,student-council-celery-worker
 ```
 
-Start services:
-
 ```bash
 sudo supervisorctl reread
 sudo supervisorctl update
 sudo supervisorctl status
 ```
 
-Daily maintenance includes checking service status, reviewing logs, checking disk space, and verifying database health.
+**Note:** Celery Beat is not included in this Supervisor config. If scheduled notifications are required in production, add a corresponding `[program:student-council-celery-beat]` block running `celery -A student_council beat --loglevel=info`.
 
-Weekly maintenance includes database cleanup (`vacuumdb`), analyzing statistics, checking disk usage, and reviewing error logs.
+## Maintenance Schedule
 
-Monthly maintenance includes updating system packages, updating Python packages, checking for security vulnerabilities, cleaning old records, and creating offline backups.
+### Daily
+
+Check that all services are running and review logs for errors.
+
+```bash
+tail -f /var/log/student-council/django.log
+celery -A student_council inspect active
+psql -c "SELECT count(*) FROM pg_stat_activity;"
+
+systemctl status gunicorn
+systemctl status celery-worker
+systemctl status celery-beat
+systemctl status redis-server
+systemctl status postgresql
+```
+
+Watch for `ERROR` and `WARNING` entries, not just crashes — a service can be technically "up" and still be failing requests.
+
+### Weekly
+
+Optimize the database and verify backups are actually restorable, not just present.
+
+```bash
+vacuumdb -U postgres student_council_db
+
+psql -U postgres student_council_db -c "
+  SELECT schemaname, tablename,
+  pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename))
+  FROM pg_tables
+  ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;"
+
+pg_dump -U postgres student_council_db | gzip > /backups/db_$(date +%Y%m%d).sql.gz
+
+grep ERROR /var/log/student-council/*.log
+grep WARNING /var/log/student-council/*.log
+```
+
+### Monthly
+
+Clean up old data, update dependencies, and check for slow queries before they become a production incident.
+
+```bash
+# Remove notifications older than 6 months
+python manage.py shell << EOF
+from django.utils import timezone
+from datetime import timedelta
+from notifications.models import Notification
+
+old_date = timezone.now() - timedelta(days=180)
+Notification.objects.filter(created_at__lt=old_date).delete()
+EOF
+
+pip install --upgrade -r requirements.txt
+pip-audit
+
+apt update && apt upgrade -y
+
+# Find slow queries
+psql -c "SELECT query, calls, mean_time FROM pg_stat_statements
+         ORDER BY mean_time DESC LIMIT 10;"
+
+# Review index usage
+psql -c "SELECT schemaname, tablename, indexname
+         FROM pg_indexes
+         WHERE schemaname NOT IN ('pg_catalog', 'information_schema');"
+```
+
+`pip-audit` flags known CVEs in installed dependencies. Running it monthly, even when nothing has broken, catches vulnerable packages before they become an incident.
 
 ## Troubleshooting
 
-If the application won't start, check Supervisor status, view logs at `/var/log/student-council/gunicorn.log`, run `python manage.py check --deploy`, and test Gunicorn directly.
+**Application won't start** — check Supervisor status, review `/var/log/student-council/gunicorn.log`, run `python manage.py check --deploy`, and test Gunicorn directly.
 
-If database connections fail, verify PostgreSQL is running, test the connection with `psql`, check database size, and increase connection limits if needed.
+**Database connections fail** — verify PostgreSQL is running, test with `psql`, check database size, check connection limits.
 
-If Celery tasks are not processing, check Celery worker status, view logs, verify Redis is running, and restart the worker or purge stuck tasks.
+**Celery tasks not processing** — check worker status and logs, verify Redis is running, restart the worker or purge stuck tasks.
 
-If memory usage is high, identify processes consuming memory, check Django settings for caching and database issues, and restart services.
+**High memory usage** — identify the consuming process, check for caching or query issues, restart the affected service.
 
-If SSL certificates expire, check expiry with `sudo certbot certificates`, renew with `sudo certbot renew`, and test with `sudo certbot renew --dry-run`.
+**SSL certificate expired** — `sudo certbot certificates`, `sudo certbot renew`, `sudo certbot renew --dry-run` to verify.
 
-## Deployment Rollback
-
-If deployment fails, revert to the previous commit:
+## Rollback
 
 ```bash
 sudo supervisorctl stop all
@@ -475,23 +538,20 @@ sudo supervisorctl start all
 curl https://yourdomain.com/api/clubs/
 ```
 
-## Production Readiness
+## Production Readiness Checklist
 
-Before deployment:
-
-- All security hardening is complete
-- SSL/TLS certificates are configured
-- Automated backups are running
-- Monitoring and alerting are configured
-- Load testing is complete
-- Disaster recovery is tested
-- Team is trained
-- Documentation is reviewed
-- Contact information is updated
+- Security hardening complete
+- SSL/TLS configured
+- Automated backups running
+- Monitoring and alerting configured
+- Load testing complete
+- Disaster recovery tested
+- Team trained on procedures
+- Documentation reviewed
+- Contact information current
 - Incident response plan exists
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** March 26, 2026  
-**Status:** Ready for Production
+**Document Version:** 1.0
+**Last Updated:** July 2026
