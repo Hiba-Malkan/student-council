@@ -16,15 +16,15 @@ The application centralizes administrative workflows that were previously handle
 
 **Clubs** — Public listing of active clubs with search and filtering. Administrators create, update, and manage club status.
 
-**Duty Roster** — Monthly rotating maintenance duty assignments. Overdue duties are flagged for administrator review.
+**Duty Roster** — Monthly rotating duty assignments.
 
-**Announcements** — Council-wide or role-targeted posts, with optional email notification and event registration.
+**Announcements** — Council-wide or role-targeted posts, with optional email notifications.
 
-**Competitions** — Competition listings with participant signup tracking and deadline enforcement.
+**Competitions** — Competition listings with participant signup tracking and deadline reminders.
 
 **Meetings** — Scheduling, attendee management, and minutes of meeting storage, with automated reminder emails.
 
-**Discipline** — Records of policy violations with severity tracking and offense history.
+**Discipline** — Records of discipline violations with severity tracking and offense history.
 
 **Gate Pass** — Student-submitted gate pass requests with an approval workflow and automated email notifications to students, parents, and class teachers.
 
