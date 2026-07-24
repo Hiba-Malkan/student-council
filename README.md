@@ -18,9 +18,11 @@
   <a href="#license">License</a>
 </p>
 
+A comprehensive student council management platform that centralizes daily operations such as duty scheduling, meetings, gate pass workflows, announcements, discipline management, and club and competition registrations. Built around a permission-based authorization system, the platform allows councils to define custom roles while preserving consistent access control logic, making it adaptable to different organizational structures.
+
 ## Overview
 
-This web application provides a single system of record for council administration. Duty assignments, meeting schedules and minutes, gate pass requests, announcements, and discipline records are stored and managed in one place, with automated email notifications replacing manual follow-up.
+The application provides a single system of record for council administration. Duty assignments, meeting schedules and minutes, gate pass requests, announcements, and discipline records are stored and managed in one place, with automated email notifications replacing manual follow-up.
 
 Permissions are defined as individual boolean fields on the Role model (`can_edit_duty_roster`, `can_schedule_meetings`, `can_manage_gatepass`, and so on) rather than hardcoded role names. Any role can be assigned any combination of permissions. Users without administrative permissions have read/signup-only access: viewing announcements, signing up for clubs and competitions, and submitting and tracking their own gate pass requests.
 
