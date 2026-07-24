@@ -18,11 +18,13 @@
   <a href="#license">License</a>
 </p>
 
-A web application for managing student council operations, including clubs, competitions, meetings, duty rosters, announcements, discipline records, and gate pass requests. The system provides a role-based administrative dashboard for council members and a public-facing page listing active clubs, accessible without authentication.
-
 ## Overview
 
-The application centralizes administrative workflows that were previously handled through disconnected tools. Council members manage duty rosters, announcements, competitions, meetings, and discipline records through a single dashboard. Students access a public club listing and submit signups without requiring an account. Role-based permissions determine what each user can view and modify, enforced independently on both the frontend and the backend API.
+This web application provides a single system of record for council administration. Duty assignments, meeting schedules and minutes, gate pass requests, announcements, and discipline records are stored and managed in one place, with automated email notifications replacing manual follow-up.
+
+Permissions are defined as individual boolean fields on the Role model (`can_edit_duty_roster`, `can_schedule_meetings`, `can_manage_gatepass`, and so on) rather than hardcoded role names. Any role can be assigned any combination of permissions. Users without administrative permissions have read/signup-only access: viewing announcements, signing up for clubs and competitions, and submitting and tracking their own gate pass requests.
+
+Permissions are enforced on both the frontend and the backend API independently. The frontend check controls what is rendered; the backend check controls what is executed.
 
 ## Quick Start
 
@@ -132,7 +134,7 @@ student-council/
 
 ## License
 
-See [LICENSE.md](LICENSE.md) for full license terms. For permission requests, contact hiba.malkan@gmail.com.
+See [docs/LICENSE.md](./docs/LICENSE.md) for full license terms. For permission requests, contact hiba.malkan@gmail.com.
 
 ## Support
 

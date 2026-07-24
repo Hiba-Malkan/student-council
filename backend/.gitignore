@@ -67,3 +67,12 @@ celerybeat.pid
 # Database backups
 *.sql
 *.dump
+
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
