@@ -1,59 +1,86 @@
-# Source-Available License
+# PolyForm Strict License 1.0.0
 
-**Student Council Management System**  
-Copyright © 2026 Hiba Malkan. All Rights Reserved.
+<https://polyformproject.org/licenses/strict/1.0.0>
 
-## Viewing and Forking
+**Copyright © 2026 Hiba Malkan. All Rights Reserved.**
 
-You may view the source code and fork this repository for personal study and reference purposes only.
+## Acceptance
 
-## Restrictions
+In order to get any license under these terms, you must agree to them as both strict obligations and conditions to all your licenses.
 
-You may **NOT**:
+## Copyright License
 
-- Use, execute, or deploy this code in any environment (local, staging, or production)
-- Incorporate this code into any project, derivative work, or modification
-- Distribute, sublicense, or share this code with others
-- Use this code for commercial, educational, or organizational purposes without explicit written permission
-- Train machine learning models, large language models, or any artificial intelligence system on this code
-- Extract or utilize any part of this codebase for training data purposes
+The licensor grants you a copyright license for the software to do everything you might do with the software that would otherwise infringe the licensor's copyright in it for any permitted purpose, other than distributing the software or making changes or new works based on the software.
 
-## Explicit AI/ML Prohibition
+## Patent License
 
-This code is explicitly prohibited from use as training data for:
+The licensor grants you a patent license for the software that covers patent claims the licensor can license, or becomes able to license, that you would infringe by using the software.
 
-- Large Language Models (LLMs)
-- Machine Learning (ML) models
-- Neural networks or deep learning systems
-- Any AI or automated code analysis tools
-- Code generation models or services
+## Noncommercial Purposes
 
-Unauthorized use of this code for training AI/ML systems is a violation of this license.
+Any noncommercial purpose is a permitted purpose.
 
-## Permitted Uses
+## Personal Uses
 
-You may only:
+Personal use for research, experiment, and testing for the benefit of public knowledge, personal study, private entertainment, hobby projects, amateur pursuits, or religious observance, without any anticipated commercial application, is use for a permitted purpose.
 
-- View the source code for educational and reference purposes
-- Fork the repository to your own account
-- Create a private copy for personal study
+## Noncommercial Organizations
 
-## Permission Required
+Use by any charitable organization, educational institution, public research organization, public safety or health organization, environmental protection organization, or government institution is use for a permitted purpose regardless of the source of funding or obligations resulting from the funding.
 
-To obtain permission for any use not explicitly permitted above, contact:
+## Fair Use
 
-**Hiba Malkan**  
-hiba.malkan@gmail.com
+You may have "fair use" rights for the software under the law. These terms do not limit them.
 
-## No Warranty
+## No Other Rights
 
-This code is provided "as-is" without any warranty, express or implied.
+These terms do not allow you to sublicense or transfer any of your licenses to anyone else, or prevent the licensor from granting licenses to anyone else. These terms do not imply any other licenses.
 
-## Enforcement
+## Patent Defense
 
-Violation of this license may result in legal action. The rights granted are non-transferable and exclusive to the stated permissions.
+If you make any written claim that the software infringes or contributes to infringement of any patent, your patent license for the software granted under these terms ends immediately. If your company makes such a claim, your patent license ends immediately for work on behalf of your company.
+
+## Violations
+
+The first time you are notified in writing that you have violated any of these terms, or done anything with the software not covered by your licenses, your licenses can nonetheless continue if you come into full compliance with these terms, and take practical steps to correct past violations, within 32 days of receiving notice. Otherwise, all your licenses end immediately.
+
+## No Liability
+
+**As far as the law allows, the software comes as is, without any warranty or condition, and the licensor will not be liable to you for any damages arising out of these terms or the use or nature of the software, under any kind of legal claim.**
+
+## Definitions
+
+The **licensor** is the individual or entity offering these terms, and the **software** is the software the licensor makes available under these terms.
+
+**You** refers to the individual or entity agreeing to these terms.
+
+**Your company** is any legal entity, sole proprietorship, or other kind of organization that you work for, plus all organizations that have control over, are under the control of, or are under common control with that organization. **Control** means ownership of substantially all the assets of an entity, or the power to direct its management and policies by vote, contract, or otherwise. Control can be direct or indirect.
+
+**Your licenses** are all the licenses granted to you for the software under these terms.
+
+**Use** means anything you do with the software requiring one of your licenses.
 
 ---
 
-**Last Updated:** March 26, 2026  
-**Status:** Active
+## Additional Clause: AI/ML Training Prohibition
+
+This clause supplements the PolyForm Strict License 1.0.0 above and takes precedence over it in the event of any conflict.
+
+Notwithstanding any permitted purpose defined above, no license granted under these terms extends to using the software, in whole or in part, as training, fine-tuning, evaluation, or other input data for:
+
+- Large language models (LLMs)
+- Machine learning (ML) models of any kind
+- Neural networks or other deep learning systems
+- Code generation models or services
+- Any automated code analysis or synthesis tool trained on source code
+
+This prohibition applies regardless of whether the resulting model is commercial, noncommercial, open source, or internal to an organization, and regardless of whether the training use would otherwise qualify as a permitted purpose under the Noncommercial Purposes, Personal Uses, or Noncommercial Organizations sections above. Any use of the software for a purpose covered by this clause requires separate, explicit written permission from the licensor, obtained independently of any license granted elsewhere in this document.
+
+---
+
+For permission requests beyond the scope of this license, contact:
+
+**Hiba Malkan**
+hiba.malkan@gmail.com
+
+**Last Updated:** July 2026

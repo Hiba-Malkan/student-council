@@ -5,6 +5,18 @@
 ![PostgreSQL](https://img.shields.io/badge/postgresql-12%2B-336791)
 ![License](https://img.shields.io/badge/license-source--available-lightgrey)
 ![Status](https://img.shields.io/badge/status-production--ready-brightgreen)
+![Tests](https://github.com/Hiba-Malkan/student-council/actions/workflows/tests.yml/badge.svg)
+![Coverage](https://codecov.io/gh/Hiba-Malkan/student-council/branch/main/graph/badge.svg)
+
+<p align="center">
+  <a href="#overview">Overview</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#core-modules">Features</a> •
+  <a href="#technology-stack">Tech Stack</a> •
+  <a href="#documentation">Documentation</a> •
+  <a href="#external-documentation">External Docs</a> •
+  <a href="#license">License</a>
+</p>
 
 A web application for managing student council operations, including clubs, competitions, meetings, duty rosters, announcements, discipline records, and gate pass requests. The system provides a role-based administrative dashboard for council members and a public-facing page listing active clubs, accessible without authentication.
 
@@ -12,23 +24,51 @@ A web application for managing student council operations, including clubs, comp
 
 The application centralizes administrative workflows that were previously handled through disconnected tools. Council members manage duty rosters, announcements, competitions, meetings, and discipline records through a single dashboard. Students access a public club listing and submit signups without requiring an account. Role-based permissions determine what each user can view and modify, enforced independently on both the frontend and the backend API.
 
+## Quick Start
+
+Requires Python 3.13+, Node.js 18+, PostgreSQL 12+, Redis, and Git.
+
+```bash
+git clone https://github.com/Hiba-Malkan/student-council.git
+cd student-council/backend
+
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+cp .env.example .env
+# Configure .env — see docs/LOCAL_DEVELOPMENT.md for variable reference
+
+createdb student_council_db
+python manage.py migrate
+python manage.py createsuperuser
+
+cd ../frontend
+npm install
+npx tailwindcss -i ./static/src/input.css -o ./static/dist/output.css
+```
+
+The application also requires a Celery worker, Celery Beat, and Redis running alongside the Django server. Full instructions, including role setup, are in the [Local Development Guide](./docs/LOCAL_DEVELOPMENT.md).
+
+The app is served at `http://localhost:8000` once everything is running.
+
 ## Core Modules
 
-**Clubs** — Public listing of active clubs with search and filtering. Administrators create, update, and manage club status.
+**Duty Roster** — Users with the `can_edit_duty_roster` permission assign and manage duties for each council member from a central roster. Assignment and reminder emails are dispatched automatically ahead of each due date.
 
-**Duty Roster** — Monthly rotating duty assignments.
+**Meetings** — Users with the `can_schedule_meetings` permission create meetings with an agenda attached. All council members are notified on creation, removing the need for manual outreach. Minutes of meeting, including action items and attendance, are recorded and stored per meeting after it concludes.
 
-**Announcements** — Council-wide or role-targeted posts, with optional email notifications.
+**Gate Pass** — Students submit gate pass requests through a single form. Requests route immediately to users with the `can_manage_gatepass` permission for approval or denial, with parents notified automatically once a decision is made. Daily and monthly activity summaries are generated automatically for administrative reference.
 
-**Competitions** — Competition listings with participant signup tracking and deadline reminders.
+**Announcements** — Users with the `can_create_announcements` or `can_edit_announcements` permission publish announcements under defined categories, such as internal house, cultural, or urgent. Categorization keeps council-wide communication organized and searchable.
 
-**Meetings** — Scheduling, attendee management, and minutes of meeting storage, with automated reminder emails.
+**Discipline Management** — Users with the `can_record_discipline` permission log violations against a student's existing history or create a new record for a first offense. A student's fourth recorded violation triggers an automatic notification to school leadership and discipline staff, removing the need for manual review of past records to catch repeat offenders. Viewing records requires the separate `can_view_discipline` permission.
 
-**Discipline** — Records of discipline violations with severity tracking and offense history.
+**Clubs** — Users with the `can_add_clubs` permission create and maintain club listings, including required details for each. Centralized management supports club visibility and participation across the school.
 
-**Gate Pass** — Student-submitted gate pass requests with an approval workflow and automated email notifications to students, parents, and class teachers.
+**Competitions** — Users with the `can_manage_competitions` permission list competitions the school is entering, giving students visibility into what's available and when. Students register directly through the site, submitting their details and, where applicable, a team name. Registrations are visible to staff in real time, so participation can be tracked and support coordinated without a separate manual sign-up process.
 
-**Notifications** — Scheduled (7:00 AM and 4:00 PM daily) and event-triggered email notifications, processed asynchronously via Celery.
+**Students** — Users without an administrative role can view announcements, register for clubs and competitions, and submit and track gate pass requests, with no elevated permissions required.
 
 ## Technology Stack
 
@@ -92,7 +132,7 @@ student-council/
 
 ## License
 
-See [docs/LICENSE.md](./docs/LICENSE.md) for full license terms. For permission requests, contact hiba.malkan@gmail.com.
+See [LICENSE.md](LICENSE.md) for full license terms. For permission requests, contact hiba.malkan@gmail.com.
 
 ## Support
 
