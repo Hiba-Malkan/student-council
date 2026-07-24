@@ -109,7 +109,7 @@ Modals are the most complex styled components in the project and follow a specif
 
 This pattern combines inline `style` attributes with Tailwind classes deliberately, due to a CSS specificity issue: Tailwind padding utilities can be overridden by cascade order in certain contexts. Inline styles are used for layout properties — padding, font size, borders, flex behavior — which guarantees they apply regardless of stylesheet order. Tailwind classes are reserved for colors that need a dark mode variant, since inline styles cannot express `dark:` conditionally.
 
-This is not a preferred long-term architecture, but it resolves a real rendering issue and should be followed consistently for any new modal.
+This should be followed consistently for any new modal.
 
 **Use inline styles only for:** `padding`, `font-size`, `font-weight`, `border-bottom`, `display`, `justify-content`, `gap`, `width`, and `color` (accent colors only, such as a red name).
 
