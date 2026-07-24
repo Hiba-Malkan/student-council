@@ -343,8 +343,6 @@ DEBUG-level messages contain development detail and should not appear in product
 | Database connections | Below 80 | 100 |
 | Celery queue length | Below 100 | 1000 |
 
-**Note:** The target and alert values above reflect two slightly different threshold sets that existed across the original documentation — the celery queue alert in particular varied between 500 and 1000 in earlier drafts. 1000 is used here as the alert threshold; adjust to match your actual queue throughput once you have production traffic data.
-
 When a metric crosses its alert threshold, check the logs first to see what changed. For database issues, check connection counts and running queries. For memory issues, identify the largest processes before deciding whether to restart. For response time issues, run `EXPLAIN ANALYZE` on the slow query before adding an index — guessing at which column needs an index usually wastes more time than it saves.
 
 ## Backup and Disaster Recovery
