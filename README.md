@@ -3,8 +3,7 @@
 ![Python](https://img.shields.io/badge/python-3.13%2B-blue)
 ![Django](https://img.shields.io/badge/django-4.2-092e20)
 ![PostgreSQL](https://img.shields.io/badge/postgresql-12%2B-336791)
-![License](https://img.shields.io/badge/license-source--available-lightgrey)
-![Status](https://img.shields.io/badge/status-production--ready-brightgreen)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)![Status](https://img.shields.io/badge/status-production--ready-brightgreen)
 ![Tests](https://github.com/Hiba-Malkan/student-council/actions/workflows/tests.yml/badge.svg)
 ![Coverage](https://codecov.io/gh/Hiba-Malkan/student-council/branch/main/graph/badge.svg)
 
