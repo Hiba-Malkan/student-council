@@ -1,9 +1,5 @@
 # System Documentation
 
-**Version:** 1.1
-**Last Updated:** July 2026
-**Status:** Production Ready
-
 This document describes the architecture, codebase structure, data model, and API surface of the Student Council Management System.
 
 ## Table of Contents
