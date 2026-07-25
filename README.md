@@ -136,7 +136,7 @@ student-council/
 
 ## License
 
-See [docs/LICENSE.md](./docs/LICENSE.md) for full license terms. For permission requests, contact hiba.malkan@gmail.com.
+See [LICENSE.md](LICENSE.md) for full license terms. For permission requests, contact hiba.malkan@gmail.com.
 
 ## Support
 
