@@ -19,7 +19,12 @@ class NotificationViewSet(viewsets.ModelViewSet):
         user = self.request.user
         queryset = Notification.objects.filter(recipient=user)
         
-        # Filter out snoozed notifications that are still snoozed
+        # Filter out currently snoozed notifications from normal listing actions.
+        # Keep them addressable by the unsnooze action, otherwise it can never
+        # retrieve the notification it is meant to restore.
+        if self.action == 'unsnooze':
+            return queryset
+
         now = timezone.now()
         queryset = queryset.exclude(
             is_snoozed=True,

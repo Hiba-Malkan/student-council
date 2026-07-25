@@ -61,13 +61,13 @@ class AnnouncementViewSet(viewsets.ModelViewSet):
         if isinstance(is_published, str):
             is_published = is_published.lower() == 'true'
         
-        if is_published:
-            data['published_at'] = timezone.now()
-        
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
             # Ensure the created_by is set server-side (serializer marks it read-only)
-            serializer.save(created_by=request.user)
+            save_kwargs = {'created_by': request.user}
+            if is_published:
+                save_kwargs['published_at'] = timezone.now()
+            serializer.save(**save_kwargs)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

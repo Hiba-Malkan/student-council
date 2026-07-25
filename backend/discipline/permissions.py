@@ -41,7 +41,11 @@ class IsDisciplineManager(permissions.BasePermission):
         # Write permissions for staff, creator, or users with can_record_discipline
         if request.user.is_staff or request.user.is_superuser:
             return True
-        if obj.created_by == request.user:
+        # Offense logs inherit ownership from their parent discipline record.
+        created_by = getattr(obj, 'created_by', None)
+        if created_by is None and hasattr(obj, 'record'):
+            created_by = obj.record.created_by
+        if created_by == request.user:
             return True
         if request.user.role and request.user.role.can_record_discipline:
             return True

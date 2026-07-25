@@ -49,6 +49,12 @@ class FeedbackViewSet(viewsets.ModelViewSet):
                     return queryset.none()
         
         return queryset
+
+    def _can_manage(self, user):
+        return (
+            user.is_staff or user.is_superuser or
+            (getattr(user, 'role', None) and getattr(user.role, 'can_manage_feedback', False))
+        )
     
     def create(self, request, *args, **kwargs):
         """Create new feedback - allow anonymous or authenticated users"""
@@ -75,13 +81,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         feedback = self.get_object()
         
         # Check if user has permission
-        if not (request.user.is_staff or request.user.is_superuser):
-            if hasattr(request.user, 'role') and request.user.role:
-                if not getattr(request.user.role, 'can_manage_feedback', False):
-                    return Response(
-                        {'error': 'You do not have permission to assign feedback'},
-                        status=status.HTTP_403_FORBIDDEN
-                    )
+        if not self._can_manage(request.user):
+            return Response({'error': 'You do not have permission to assign feedback'}, status=status.HTTP_403_FORBIDDEN)
         
         assigned_to_id = request.data.get('assigned_to_id')
         if not assigned_to_id:
@@ -111,13 +112,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         feedback = self.get_object()
         
         # Check if user has permission
-        if not (request.user.is_staff or request.user.is_superuser):
-            if hasattr(request.user, 'role') and request.user.role:
-                if not getattr(request.user.role, 'can_manage_feedback', False):
-                    return Response(
-                        {'error': 'You do not have permission to update feedback status'},
-                        status=status.HTTP_403_FORBIDDEN
-                    )
+        if not self._can_manage(request.user):
+            return Response({'error': 'You do not have permission to update feedback status'}, status=status.HTTP_403_FORBIDDEN)
         
         new_status = request.data.get('status')
         if not new_status or new_status not in dict(Feedback.STATUS_CHOICES):
@@ -144,13 +140,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         feedback = self.get_object()
         
         # Check if user has permission
-        if not (request.user.is_staff or request.user.is_superuser):
-            if hasattr(request.user, 'role') and request.user.role:
-                if not getattr(request.user.role, 'can_manage_feedback', False):
-                    return Response(
-                        {'error': 'You do not have permission to add notes'},
-                        status=status.HTTP_403_FORBIDDEN
-                    )
+        if not self._can_manage(request.user):
+            return Response({'error': 'You do not have permission to add notes'}, status=status.HTTP_403_FORBIDDEN)
         
         notes = request.data.get('notes', '').strip()
         if not notes:
@@ -179,13 +170,8 @@ class FeedbackViewSet(viewsets.ModelViewSet):
         feedback = self.get_object()
         
         # Check if user has permission
-        if not (request.user.is_staff or request.user.is_superuser):
-            if hasattr(request.user, 'role') and request.user.role:
-                if not getattr(request.user.role, 'can_manage_feedback', False):
-                    return Response(
-                        {'error': 'You do not have permission to update feedback priority'},
-                        status=status.HTTP_403_FORBIDDEN
-                    )
+        if not self._can_manage(request.user):
+            return Response({'error': 'You do not have permission to update feedback priority'}, status=status.HTTP_403_FORBIDDEN)
         
         new_priority = request.data.get('priority')
         if not new_priority or new_priority not in dict(Feedback.PRIORITY_CHOICES):
