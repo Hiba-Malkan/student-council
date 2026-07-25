@@ -135,8 +135,7 @@ student-council/
 
 ## License
 
-See [LICENSE.md](LICENSE.md) for full license terms. For permission requests, contact hiba.malkan@gmail.com.
-
+MIT License. See [LICENSE.md](LICENSE.md) for full license terms.
 ## Support
 
 Consult the relevant document in `docs/` before submitting a support request, as most setup and troubleshooting issues are addressed there. Bug reports should be filed as GitHub issues. For other inquiries, contact hiba.malkan@gmail.com.
