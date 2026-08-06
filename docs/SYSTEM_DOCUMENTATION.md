@@ -20,12 +20,12 @@ This document describes the architecture, codebase structure, data model, and AP
 │  Dashboard · Admin Panel · Public Pages                         │
 └─────────────────────┬───────────────────────────────────────────┘
                       │ HTTP/HTTPS
-┌─────────────────────▼────────────────────────────────────────────┐
-│                    API Layer                                     │
-│  Django REST Framework                                           │
-│  REST Endpoints (/api/*) · JWT Authentication ·                  │
-│  Serializers & Validation · Permission Classes                   │
-└─────────┬──────────────────────────────────────┬─────────────────┘
+┌─────────────────────▼───────────────────────────────────────────┐
+│                    API Layer                                    │
+│  Django REST Framework                                          │
+│  REST Endpoints (/api/*) · JWT Authentication ·                 │
+│  Serializers & Validation · Permission Classes                  │
+└─────────┬──────────────────────────────────────┬────────────────┘
           │ SQL                                  │ Tasks
 ┌─────────▼───────────────────┐  ┌───────────────▼────────────────┐
 │   PostgreSQL Database       │  │  Message Queue System          │
