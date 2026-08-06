@@ -15,29 +15,29 @@ This document describes the architecture, codebase structure, data model, and AP
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Client Layer                              │
-│  Web Browser (HTML, CSS, JavaScript, Tailwind CSS)               │
-│  Dashboard · Admin Panel · Public Pages                          │
-└─────────────────────┬──────────────────────────────────────────┘
-                       │ HTTP/HTTPS
-┌─────────────────────▼──────────────────────────────────────────┐
+│                        Client Layer                             │
+│  Web Browser (HTML, CSS, JavaScript, Tailwind CSS)              │
+│  Dashboard · Admin Panel · Public Pages                         │
+└─────────────────────┬───────────────────────────────────────────┘
+                      │ HTTP/HTTPS
+┌─────────────────────▼────────────────────────────────────────────┐
 │                    API Layer                                     │
 │  Django REST Framework                                           │
 │  REST Endpoints (/api/*) · JWT Authentication ·                  │
 │  Serializers & Validation · Permission Classes                   │
-└─────────┬──────────────────────────────────────┬────────────────┘
+└─────────┬──────────────────────────────────────┬─────────────────┘
           │ SQL                                  │ Tasks
-┌─────────▼──────────────────┐  ┌────────────────▼──────────────┐
+┌─────────▼───────────────────┐  ┌───────────────▼────────────────┐
 │   PostgreSQL Database       │  │  Message Queue System          │
 │  Users & Roles · Clubs      │  │  Redis (Message Broker)        │
 │  Duties · Announcements     │  │  Celery (Task Queue)           │
 │  Competitions · Meetings    │  │  Celery Beat (Scheduler)       │
-│  Discipline · Notifications │  │                                 │
-│                              │  │  Background Jobs:              │
-│                              │  │  Email Notifications           │
-│                              │  │  Duty Cycling                  │
-│                              │  │  Scheduled Tasks               │
-└──────────────────────────────┘  └─────────────────────────────┘
+│  Discipline · Notifications │  │                                │
+│                             │  │  Background Jobs:              │
+│                             │  │  Email Notifications           │
+│                             │  │  Duty Cycling                  │
+│                             │  │  Scheduled Tasks               │
+└─────────────────────────────┘  └────────────────────────────────┘
 ```
 
 The frontend is server-rendered HTML with Tailwind CSS for styling and vanilla JavaScript (ES6+) for interactivity — there is no frontend framework. The backend runs Django 4.2 with Django REST Framework delivering the API. PostgreSQL 12+ is the primary data store. Redis handles message brokering for Celery, which processes background tasks and, via Celery Beat, scheduled tasks. Authentication uses JWT via djangorestframework-simplejwt for stateless request validation. In production, Gunicorn serves the Django application behind Nginx, which terminates SSL and serves static files directly.
@@ -280,16 +280,6 @@ student-council/
 ### Accounts
 
 Handles authentication and role management. Implements JWT-based auth with role-based access control; users log in with credentials and receive access and refresh tokens for subsequent requests.
-
-Role types:
-
-**Student** — Default role for all registered users. View clubs, browse announcements, sign up for competitions and clubs. No create or edit access.
-
-**Captain** — Assigned to team captains or event leaders. All Student permissions plus competition management and signup visibility.
-
-**Class Representative** — Assigned to class representatives. All Student permissions plus extended organizational capabilities, depending on assigned permissions.
-
-**C-Suite** (President, Vice President, Secretary, Treasurer) — Edit the duty roster, schedule meetings, create and edit announcements, view discipline records, manage competitions and signups, and assign roles to other users. Role assignment is restricted to C-Suite members.
 
 Database tables: `accounts_user`, `accounts_role`.
 
@@ -683,15 +673,15 @@ GET /api/announcements/3/
 GET /api/competitions/
 GET /api/competitions/5/signups/
 POST /api/competitions/                                     Requires can_manage_competitions
-DELETE /api/competitions/5/delete_signup/?signup_id=123      Requires C-Suite role
+DELETE /api/competitions/5/delete_signup/?signup_id=123      
 
 GET /api/clubs/
 GET /api/clubs/8/signups/
 POST /api/clubs/                                             Requires can_add_clubs
-DELETE /api/clubs/8/delete_signup/?signup_id=456              Requires C-Suite role
+DELETE /api/clubs/8/delete_signup/?signup_id=456              
 
-PUT /api/clubs/5/                                             Requires C-Suite role
-DELETE /api/clubs/5/                                          Requires C-Suite role
+PUT /api/clubs/5/                                            
+DELETE /api/clubs/5/                                         
 GET /api/meetings/
 POST /api/meetings/                                           Requires can_schedule_meetings
 ```
