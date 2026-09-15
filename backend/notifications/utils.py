@@ -284,16 +284,20 @@ def send_competition_deadline_email(competition, days_remaining, recipients):
 
 
 # ===========================================================================
-# 9. DISCIPLINE WARNING  (3+ offenses — to phase heads)
+# 9. DISCIPLINE WARNING  (3+ offenses — to staff)
 # ===========================================================================
 def send_discipline_warning_email(record, offense_log):
     """
     record      – DisciplineRecord instance
     offense_log – the triggering OffenseLog
+
+    NOTE: This is not called automatically anymore (no per-offense emails).
+    The only discipline email is the daily report to staff. Kept here so it can
+    be used manually if needed.
     """
     COLOR = "#b71c1c"
-    phase_heads = User.objects.filter(is_phase_head=True, is_active=True)
-    if not phase_heads.exists():
+    staff = User.objects.filter(is_staff=True, is_active=True)
+    if not staff.exists():
         return
 
     rows = [
@@ -306,9 +310,9 @@ def send_discipline_warning_email(record, offense_log):
     if offense_log.reason:
         rows.append(("Reason", offense_log.reason))
 
-    for ph in phase_heads:
+    for st in staff:
         body = (
-            f"<p>Dear {ph.first_name or ph.username},</p>"
+            f"<p>Dear {st.first_name or st.username},</p>"
             f"<p>A student has reached <strong>{record.offense_count} offenses</strong> and requires your attention:</p>"
             + _detail_box(COLOR, rows)
             + "<p>Please review the student's discipline record and take appropriate action.</p>"
@@ -317,11 +321,11 @@ def send_discipline_warning_email(record, offense_log):
                            f"{record.student_name} — {record.offense_count} offenses",
                            body, f"{getattr(settings,'SITE_URL','')}/discipline/{record.id}/",
                            "View Discipline Record")
-        _send(f"⚠️ Discipline Alert: {record.student_name} ({record.offense_count} offenses)", html, ph.email)
+        _send(f"⚠️ Discipline Alert: {record.student_name} ({record.offense_count} offenses)", html, st.email)
 
 
 # ===========================================================================
-# 10. DAILY DISCIPLINE SUMMARY  (to all phase heads)
+# 10. DAILY DISCIPLINE SUMMARY  (to all staff only)
 # ===========================================================================
 def send_daily_discipline_report(students_qs, report_date):
     """
@@ -329,8 +333,8 @@ def send_daily_discipline_report(students_qs, report_date):
     report_date – date object
     """
     COLOR = "#b71c1c"
-    phase_heads = User.objects.filter(is_phase_head=True, is_active=True)
-    if not phase_heads.exists():
+    staff = User.objects.filter(is_staff=True, is_active=True)
+    if not staff.exists():
         return
 
     # Build report rows
@@ -377,9 +381,9 @@ def send_daily_discipline_report(students_qs, report_date):
 
     date_str = report_date.strftime("%B %d, %Y")
 
-    for ph in phase_heads:
+    for st in staff:
         body = (
-            f"<p>Dear {ph.first_name or ph.username},</p>"
+            f"<p>Dear {st.first_name or st.username},</p>"
             f"<p>Here is the daily discipline summary for <strong>{date_str}</strong>. "
             f"The students listed below reached 3 or more offenses:</p>"
             + table_html
@@ -388,7 +392,7 @@ def send_daily_discipline_report(students_qs, report_date):
         )
         html = _html_email(COLOR, "📊", "Daily Discipline Report", date_str,
                            body, f"{getattr(settings,'SITE_URL','')}/discipline/", "View All Records")
-        _send(f"📊 Daily Discipline Report — {date_str}", html, ph.email)
+        _send(f"📊 Daily Discipline Report — {date_str}", html, st.email)
 
 
 # ===========================================================================

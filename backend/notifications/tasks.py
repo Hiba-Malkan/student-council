@@ -6,21 +6,18 @@ Schedule via Celery Beat (example at bottom of file).
 """
 import logging
 from celery import shared_task
+from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
 
 from accounts.models import User
 from meetings.models import Meeting
-from duty_roster.models import Duty
-from competitions.models import Competition
 from discipline.models import DisciplineRecord
 
 from .models import Notification, NotificationPreference
 from .utils import (
     send_notification_email,
     send_meeting_today_email,
-    send_duty_today_email,
-    send_competition_deadline_email,
     send_daily_discipline_report,
 )
 
@@ -121,19 +118,25 @@ def send_pending_email_notifications():
 def send_morning_meeting_reminders():
     """Create MEETING_TODAY notifications for all today's meetings."""
     today = timezone.now().date()
-    meetings = Meeting.objects.filter(date=today, is_cancelled=False).prefetch_related('attendees')
+    meetings = Meeting.objects.filter(date=today, is_cancelled=False)
+
+    # Council members = users marked visible in the duty roster
+    council = list(User.objects.filter(is_active=True).filter(
+        Q(show_in_duty_roster=True) |
+        Q(show_in_duty_roster__isnull=True, role__show_in_duty_roster=True)
+    ).distinct())
+
     created = 0
 
     for meeting in meetings:
         if getattr(meeting, 'morning_reminder_sent', False):
             continue
-        attendees = list(meeting.attendees.filter(is_active=True))
-        send_meeting_today_email(meeting, attendees)
+        send_meeting_today_email(meeting, council)
 
         # Persist in-app notifications
-        for attendee in attendees:
+        for member in council:
             Notification.objects.get_or_create(
-                recipient=attendee,
+                recipient=member,
                 notification_type='MEETING_TODAY',
                 defaults=dict(
                     title=f"Meeting Today: {meeting.title}",
@@ -154,77 +157,6 @@ def send_morning_meeting_reminders():
             Meeting.objects.filter(pk=meeting.pk).update(morning_reminder_sent=True)
 
     return f"Meeting reminders sent for {created} attendees"
-
-
-# ---------------------------------------------------------------------------
-# Duty today reminders  (run ~7 AM daily)
-# ---------------------------------------------------------------------------
-
-@shared_task
-def send_duty_reminders():
-    """Send duty-today email to each person on duty today."""
-    today = timezone.now().date()
-    duties = Duty.objects.filter(date=today, is_completed=False).select_related('assigned_to')
-    sent = 0
-
-    for duty in duties:
-        if not duty.assigned_to or not duty.assigned_to.email:
-            continue
-        send_duty_today_email(duty)
-
-        Notification.objects.get_or_create(
-            recipient=duty.assigned_to,
-            notification_type='DUTY_TODAY',
-            defaults=dict(
-                title=f"Duty Today: {duty.duty_type_name}",
-                message=(
-                    f"You have {duty.duty_type_name} duty today.\n"
-                    f"Location: {duty.location or 'TBD'}"
-                ),
-                action_url="/duty-roster/",
-                send_email=False,
-                email_sent=True,
-            )
-        )
-        sent += 1
-
-    return f"Duty reminders sent to {sent} members"
-
-
-# ---------------------------------------------------------------------------
-# Competition deadline reminders  (run daily)
-# ---------------------------------------------------------------------------
-
-@shared_task
-def send_competition_deadline_reminders():
-    """Remind council members 7, 3, and 1 day before a competition's event date."""
-    today = timezone.now().date()
-    remind_days = [7, 3, 1]
-    created = 0
-
-    for days in remind_days:
-        target_date = today + timedelta(days=days)
-        competitions = Competition.objects.filter(event_date=target_date, is_active=True)
-
-        for comp in competitions:
-            recipients = list(User.objects.filter(is_active=True, role__isnull=False))
-            send_competition_deadline_email(comp, days, recipients)
-
-            for user in recipients:
-                Notification.objects.get_or_create(
-                    recipient=user,
-                    notification_type='COMPETITION_DEADLINE',
-                    defaults=dict(
-                        title=f"⏰ Competition in {days} day{'s' if days > 1 else ''}: {comp.name}",
-                        message=f"{comp.name} is on {comp.event_date.strftime('%B %d')}. {days} day{'s' if days > 1 else ''} left!",
-                        action_url="/competitions/",
-                        send_email=False,
-                        email_sent=True,
-                    )
-                )
-                created += 1
-
-    return f"Competition deadline notifications created: {created}"
 
 
 # ---------------------------------------------------------------------------
@@ -263,8 +195,6 @@ def send_daily_notifications():
     """
     results = [
         send_morning_meeting_reminders(),
-        send_duty_reminders(),
-        send_competition_deadline_reminders(),
         send_pending_email_notifications(),
     ]
     return " | ".join(results)

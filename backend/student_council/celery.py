@@ -33,12 +33,6 @@ app.conf.beat_schedule = {
         'schedule': crontab(hour=16, minute=0),
     },
     
-    # Send competition deadline reminders at 8:00 AM
-    'send-competition-deadline-reminders': {
-        'task': 'notifications.tasks.send_competition_deadline_reminders',
-        'schedule': crontab(hour=8, minute=0),
-    },
-    
     # Cleanup old notifications weekly on Sunday at 2:00 AM
     'cleanup-old-notifications': {
         'task': 'notifications.tasks.cleanup_old_notifications',

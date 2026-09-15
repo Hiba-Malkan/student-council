@@ -22,6 +22,9 @@ class NotificationEmailTests(TestCase):
         self.phase_head = User.objects.create_user(
             'head', 'head@example.com', 'password123', first_name='Head', is_phase_head=True
         )
+        self.staff = User.objects.create_user(
+            'staff', 'staff@example.com', 'password123', first_name='Eff', is_staff=True
+        )
         self.meeting = Meeting.objects.create(title='Council meeting', date=date.today(), location='Hall')
         self.announcement = Announcement.objects.create(
             title='Important update', content='x' * 310, announcement_type='URGENT', is_public=True
@@ -68,7 +71,8 @@ class NotificationEmailTests(TestCase):
 
         recipients = [call.args[-1] for call in send.call_args_list]
         self.assertIn(self.user.email, recipients)
-        self.assertIn(self.phase_head.email, recipients)
+        self.assertIn(self.staff.email, recipients)
+        self.assertNotIn(self.phase_head.email, recipients)
         self.assertGreaterEqual(send.call_count, 10)
 
     @patch('notifications.utils._send')
@@ -145,47 +149,30 @@ class NotificationTaskAndApiTests(TestCase):
         self.assertTrue(opted_out.email_sent)
         self.assertEqual(sender.call_count, 2)
 
-    @patch('notifications.tasks.send_duty_today_email')
-    def test_duty_reminder_task_creates_one_notification_and_skips_completed(self, send):
-        Duty.objects.create(duty_type_name='Morning', assigned_to=self.user, date=date.today())
-        Duty.objects.create(duty_type_name='Done', assigned_to=self.user, date=date.today(), is_completed=True)
-
-        self.assertEqual(tasks.send_duty_reminders(), 'Duty reminders sent to 1 members')
-        self.assertTrue(Notification.objects.filter(recipient=self.user, notification_type='DUTY_TODAY').exists())
-        send.assert_called_once()
+    def test_cleanup_old_notifications(self):
+        old = Notification.objects.create(
+            recipient=self.user, notification_type='GENERAL', title='Old', message='old', is_read=True,
+            read_at=timezone.now() - timedelta(days=31),
+        )
+        self.assertEqual(tasks.cleanup_old_notifications(), 'Deleted 1 old notifications')
+        self.assertFalse(Notification.objects.filter(id=old.id).exists())
 
     @patch('notifications.tasks.send_meeting_today_email')
-    def test_meeting_reminder_task_notifies_active_attendees_once(self, send):
+    def test_meeting_reminder_task_notifies_council_members_once(self, send):
         meeting = Meeting.objects.create(title='Today', date=date.today(), location='Hall')
-        meeting.attendees.add(self.user)
+        council_user = User.objects.create_user(
+            'council', 'council@example.com', 'password123',
+            role=Role.objects.create(name='Member', show_in_duty_roster=True),
+        )
 
         self.assertEqual(tasks.send_morning_meeting_reminders(), 'Meeting reminders sent for 1 attendees')
-        self.assertTrue(Notification.objects.filter(recipient=self.user, notification_type='MEETING_TODAY').exists())
+        self.assertTrue(Notification.objects.filter(recipient=council_user, notification_type='MEETING_TODAY').exists())
         meeting.refresh_from_db()
         self.assertTrue(meeting.morning_reminder_sent)
         self.assertEqual(tasks.send_morning_meeting_reminders(), 'Meeting reminders sent for 0 attendees')
         send.assert_called_once()
 
-    @patch('notifications.tasks.send_competition_deadline_email')
-    def test_competition_deadline_task_and_cleanup(self, send):
-        council_user = User.objects.create_user(
-            'council', 'council@example.com', 'password123', role=Role.objects.create(name='Member')
-        )
-        Competition.objects.create(name='Soon', hosted_by='Council', event_date=date.today() + timedelta(days=3))
-        old = Notification.objects.create(
-            recipient=self.user, notification_type='GENERAL', title='Old', message='old', is_read=True,
-            read_at=timezone.now() - timedelta(days=31),
-        )
-
-        self.assertEqual(tasks.send_competition_deadline_reminders(), 'Competition deadline notifications created: 1')
-        self.assertTrue(Notification.objects.filter(recipient=council_user, notification_type='COMPETITION_DEADLINE').exists())
-        self.assertEqual(tasks.cleanup_old_notifications(), 'Deleted 1 old notifications')
-        self.assertFalse(Notification.objects.filter(id=old.id).exists())
-        send.assert_called_once()
-
     @patch('notifications.tasks.send_pending_email_notifications', return_value='pending')
-    @patch('notifications.tasks.send_competition_deadline_reminders', return_value='competition')
-    @patch('notifications.tasks.send_duty_reminders', return_value='duty')
     @patch('notifications.tasks.send_morning_meeting_reminders', return_value='meeting')
     def test_daily_notification_task_combines_subtask_results(self, *_mocks):
-        self.assertEqual(tasks.send_daily_notifications(), 'meeting | duty | competition | pending')
+        self.assertEqual(tasks.send_daily_notifications(), 'meeting | pending')
