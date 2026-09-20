@@ -20,15 +20,15 @@
     <meta property="og:title" content="Student Council">
     <meta property="og:description" content="Student Council — school announcements, meetings, clubs, competitions, duties and more.">
     <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}">
-    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'Image_1.png' %}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'icon.svg' %}{% endblock %}">
     {% endblock %}
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Student Council">
     <meta name="twitter:description" content="Student Council — school announcements, meetings, clubs, competitions, duties and more.">
-    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'Image_1.png' %}{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'icon.svg' %}{% endblock %}">
 
-    <link rel="icon" type="image/png" href="{% static 'Image_1.png' %}">
+    <link rel="icon" type="image/svg+xml" href="{% static 'icon.svg' %}">
 
     {% block json_ld %}
     <script type="application/ld+json">
@@ -37,7 +37,7 @@
       "@type": "Organization",
       "name": "Student Council",
       "url": "{{ request.build_absolute_uri }}",
-      "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'Image_1.png' %}"
+      "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'icon.svg' %}"
     }
     </script>
     {% endblock %}
