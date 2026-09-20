@@ -18,22 +18,27 @@
     --admin-accent: #2d7a4f;
 
     /* mode-aware values (overridden below for dark mode) */
-    --admin-link: #1f4d3c;
-    --admin-link-hover: #2d7a4f;
+    --admin-link: #000000;
+    --admin-link-hover: #000000;
     --admin-soft-bg: #e6f0eb;
   }
 
   @media (prefers-color-scheme: dark) {
-    :root {
-      --admin-link: #8fd0ab;
-      --admin-link-hover: #b5e6c9;
+    :root:not([data-theme="light"]) {
+      --admin-link: #ffffff;
+      --admin-link-hover: #ffffff;
       --admin-soft-bg: #1c2b24;
     }
   }
   html[data-theme="dark"] {
-    --admin-link: #8fd0ab;
-    --admin-link-hover: #b5e6c9;
+    --admin-link: #ffffff;
+    --admin-link-hover: #ffffff;
     --admin-soft-bg: #1c2b24;
+  }
+  html[data-theme="light"] {
+    --admin-link: #000000;
+    --admin-link-hover: #000000;
+    --admin-soft-bg: #e6f0eb;
   }
 
   /* Header bar */
