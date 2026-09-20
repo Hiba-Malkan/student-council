@@ -1,0 +1,173 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | Student Council Admin{% endblock %}
+
+{% block branding %}
+<div id="site-name"><a href="{% url 'admin:index' %}">Student Council Admin</a></div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+  /* Brand theme — matches frontend primary #1F4D3C (tailwind.config.js) */
+  :root {
+    --admin-primary: #1f4d3c;
+    --admin-primary-dark: #173a2e;
+    --admin-primary-light: #e6f0eb;
+    --admin-accent: #2d7a4f;
+
+    /* mode-aware values (overridden below for dark mode) */
+    --admin-link: #1f4d3c;
+    --admin-link-hover: #2d7a4f;
+    --admin-soft-bg: #e6f0eb;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --admin-link: #8fd0ab;
+      --admin-link-hover: #b5e6c9;
+      --admin-soft-bg: #1c2b24;
+    }
+  }
+  html[data-theme="dark"] {
+    --admin-link: #8fd0ab;
+    --admin-link-hover: #b5e6c9;
+    --admin-soft-bg: #1c2b24;
+  }
+
+  /* Header bar */
+  #header {
+    background: var(--admin-primary);
+    border-bottom: 3px solid var(--admin-accent);
+  }
+  #branding h1, #branding h1 a:link, #branding h1 a:visited {
+    color: #ffffff;
+  }
+  #branding h1 a:hover {
+    color: var(--admin-primary-light);
+  }
+  #user-tools {
+    color: var(--admin-primary-light);
+  }
+  #user-tools a {
+    color: var(--admin-primary-light);
+    border-bottom: 1px solid var(--admin-primary-light);
+  }
+  #user-tools a:hover {
+    color: #ffffff;
+    border-bottom-color: #ffffff;
+  }
+
+  /* Breadcrumbs */
+  div.breadcrumbs {
+    background: var(--admin-primary-dark);
+    color: var(--admin-primary-light);
+  }
+  div.breadcrumbs a {
+    color: #ffffff;
+  }
+  div.breadcrumbs a:focus, div.breadcrumbs a:hover {
+    color: var(--admin-primary-light);
+  }
+
+  /* Links */
+  a:link, a:visited {
+    color: var(--admin-link);
+  }
+  a:focus, a:hover {
+    color: var(--admin-link-hover);
+  }
+
+  /* Module headers (section titles, tables captions) */
+  .module h2, .module caption, .inline-group h2 {
+    background: var(--admin-primary);
+    color: #ffffff;
+  }
+
+  /* Buttons */
+  .button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: var(--admin-primary);
+    color: #ffffff;
+  }
+  .button:hover, input[type=submit]:hover, input[type=button]:hover,
+  .submit-row input:hover, a.button:hover {
+    background: var(--admin-primary-dark);
+    color: #ffffff;
+  }
+  .button.default, input[type=submit].default, .submit-row input.default {
+    background: var(--admin-accent);
+  }
+  .button.default:hover, input[type=submit].default:hover, .submit-row input.default:hover {
+    background: var(--admin-primary);
+  }
+
+  /* Object tools */
+  .object-tools a:link, .object-tools a:visited {
+    background: var(--admin-primary);
+    color: #ffffff;
+  }
+  .object-tools a:hover, .object-tools a:focus {
+    background: var(--admin-primary-dark);
+  }
+
+  /* Pagination */
+  .paginator {
+    background: var(--admin-soft-bg);
+  }
+  .paginator a:link, .paginator a:visited {
+    color: var(--admin-link);
+  }
+  .paginator .this-page {
+    background: var(--admin-accent);
+    color: #ffffff;
+  }
+
+  /* Filter sidebar */
+  #changelist-filter li.selected a {
+    color: var(--admin-link);
+    font-weight: 600;
+  }
+  #changelist-filter a:hover {
+    color: var(--admin-link-hover);
+  }
+
+  /* Calendar widgets */
+  .calendar td.selected a, .calendarbox h2 {
+    background: var(--admin-accent);
+    color: #ffffff;
+  }
+  .calendar caption, .calendarbox .calendar-caption {
+    background: var(--admin-primary);
+    color: #ffffff;
+  }
+  .calendar th {
+    background: var(--admin-soft-bg);
+  }
+
+  /* Selectable filter boxes (filter_horizontal) */
+  .selector-chosen h2 {
+    background: var(--admin-accent);
+    color: #ffffff;
+  }
+  .selector-available h2 {
+    background: var(--admin-primary);
+    color: #ffffff;
+  }
+
+  /* Related model links */
+  .related-widget-wrapper-link, .addlink {
+    color: var(--admin-link);
+  }
+
+  /* Fieldset headers / inline titles */
+  fieldset.collapse h2, .inline-group h2 {
+    background: var(--admin-primary);
+  }
+
+  /* Login page */
+  body.login #header {
+    background: var(--admin-primary);
+  }
+</style>
+{% endblock %}

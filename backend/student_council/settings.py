@@ -217,6 +217,12 @@ EMAIL_SSL_CERTFILE = None
 EMAIL_SSL_KEYFILE = None
 EMAIL_TIMEOUT = 10
 
+# Mass email batching: identical broadcast emails are chunked into groups of
+# this many recipients, and each group is sent as a single message BCC'd to
+# everyone in the group (keeps addresses private and stays under provider
+# per-message recipient limits).
+MASS_EMAIL_BATCH_SIZE = config('MASS_EMAIL_BATCH_SIZE', default=50, cast=int)
+
 # Site settings
 SITE_URL = config('SITE_URL', default='http://localhost:8000')
 
