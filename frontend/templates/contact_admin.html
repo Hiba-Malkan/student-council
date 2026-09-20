@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Admin - Student Council Management</title>
+    <meta name="description" content="Contact the Student Council admin for help or to report an issue.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <link rel="icon" type="image/png" href="{% static 'Image_1.png' %}">
     <style>
         * {
             margin: 0;

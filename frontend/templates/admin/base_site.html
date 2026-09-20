@@ -21,6 +21,8 @@
     --admin-link: #000000;
     --admin-link-hover: #000000;
     --admin-soft-bg: #e6f0eb;
+    --admin-pager-bg: #cfe3f2;
+    --admin-pager-bg-hover: #b4d3e8;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -28,17 +30,23 @@
       --admin-link: #e6e6e6;
       --admin-link-hover: #ffffff;
       --admin-soft-bg: #1c2b24;
+      --admin-pager-bg: #24405c;
+      --admin-pager-bg-hover: #2f5578;
     }
   }
   html[data-theme="dark"] {
     --admin-link: #e6e6e6;
     --admin-link-hover: #ffffff;
     --admin-soft-bg: #1c2b24;
+    --admin-pager-bg: #24405c;
+    --admin-pager-bg-hover: #2f5578;
   }
   html[data-theme="light"] {
     --admin-link: #000000;
     --admin-link-hover: #000000;
     --admin-soft-bg: #e6f0eb;
+    --admin-pager-bg: #cfe3f2;
+    --admin-pager-bg-hover: #b4d3e8;
   }
 
   /* Header bar */
@@ -121,11 +129,27 @@
     background: var(--admin-soft-bg);
   }
   .paginator a:link, .paginator a:visited {
+    background: var(--admin-pager-bg);
+    color: var(--admin-link);
+    border-radius: 4px;
+  }
+  .paginator a:focus, .paginator a:hover {
+    background: var(--admin-pager-bg-hover);
     color: var(--admin-link);
   }
   .paginator .this-page {
-    background: var(--admin-accent);
-    color: #ffffff;
+    background: var(--admin-pager-bg);
+    color: var(--admin-link);
+    font-weight: 700;
+    border-radius: 4px;
+  }
+  .paginator a.showall {
+    background: none;
+    color: var(--admin-link);
+  }
+  .paginator a.showall:focus, .paginator a.showall:hover {
+    background: var(--admin-pager-bg-hover);
+    color: var(--admin-link);
   }
 
   /* Filter sidebar */

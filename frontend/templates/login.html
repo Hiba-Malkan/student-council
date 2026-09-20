@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Student Council Management</title>
+    <meta name="description" content="Log in to the Student Council portal.">
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <link rel="icon" type="image/png" href="{% static 'Image_1.png' %}">
     <style>
         * {
             margin: 0;

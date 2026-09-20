@@ -3,10 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% load static %}
+
+    {% block meta_tags %}
+    <meta name="description" content="{% block meta_description %}Student Council — school announcements, meetings, clubs, competitions, duties and more.{% endblock %}">
+    <meta name="keywords" content="student council, school, students, announcements, meetings, clubs, competitions, duties">
+    <meta name="author" content="Student Council">
+    <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+    <link rel="canonical" href="{% block canonical_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    {% endblock %}
+
+    {% block og_tags %}
+    <meta property="og:site_name" content="Student Council">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Student Council">
+    <meta property="og:description" content="Student Council — school announcements, meetings, clubs, competitions, duties and more.">
+    <meta property="og:url" content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'Image_1.png' %}{% endblock %}">
+    {% endblock %}
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Student Council">
+    <meta name="twitter:description" content="Student Council — school announcements, meetings, clubs, competitions, duties and more.">
+    <meta name="twitter:image" content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'Image_1.png' %}{% endblock %}">
+
+    <link rel="icon" type="image/png" href="{% static 'Image_1.png' %}">
+
+    {% block json_ld %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Student Council",
+      "url": "{{ request.build_absolute_uri }}",
+      "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'Image_1.png' %}"
+    }
+    </script>
+    {% endblock %}
+
     <title>{% block title %} Council App{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    {% load static %}
     <link href="{% static 'dist/output.css' %}?v=20251215v2" rel="stylesheet">
     
     <link href="{% static 'css/components.css' %}" rel="stylesheet">

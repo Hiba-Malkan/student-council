@@ -133,7 +133,7 @@ def send_meeting_scheduled_email(meeting, recipients):
         + "<p>Please make sure to arrive on time and come prepared.</p>"
     )
     html = _html_email(COLOR, "📅", "Meeting Scheduled", meeting.date.strftime("%B %d, %Y"),
-                       body, f"{getattr(settings,'SITE_URL','')}/meetings/{meeting.id}/",
+                       body, f"{getattr(settings,'SITE_URL','')}/meetings/",
                        "View Meeting Details")
     _send(f"📅 Meeting Scheduled: {meeting.title}", html, _emails(recipients))
 
@@ -154,7 +154,7 @@ def send_meeting_today_email(meeting, recipients):
         + "<p>Please come prepared and be on time.</p>"
     )
     html = _html_email(COLOR, "📅", "Meeting Today", "Don't forget!",
-                       body, f"{getattr(settings,'SITE_URL','')}/meetings/{meeting.id}/",
+                       body, f"{getattr(settings,'SITE_URL','')}/meetings/",
                        "View Meeting Details")
     _send(f"📅 Meeting Today: {meeting.title}", html, _emails(recipients))
 
@@ -331,7 +331,7 @@ def send_discipline_warning_email(record, offense_log):
         )
         html = _html_email(COLOR, "⚠️", "Discipline Alert",
                            f"{record.student_name} — {record.offense_count} offenses",
-                           body, f"{getattr(settings,'SITE_URL','')}/discipline/{record.id}/",
+                           body, f"{getattr(settings,'SITE_URL','')}/discipline/detail/{record.id}/",
                            "View Discipline Record")
         _send(f"⚠️ Discipline Alert: {record.student_name} ({record.offense_count} offenses)", html, st.email)
 
@@ -516,7 +516,7 @@ def send_gatepass_submitted_email(gatepass):
             + f"<p>Please review in the system if follow-up is needed.</p>"
         )
         html = _html_email(COLOR, "📝", "Gate Pass Request", f"Student: {gatepass.name}",
-                           body, f"{getattr(settings,'SITE_URL','')}/gatepasses/",
+                           body, f"{getattr(settings,'SITE_URL','')}/gatepass/",
                            "View Gate Pass")
         _send(f"📝 Gate Pass Request — {gatepass.name}", html, ct_email)
 
@@ -529,7 +529,7 @@ def send_gatepass_submitted_email(gatepass):
             + "<p>Please review and ensure it is handled appropriately.</p>"
         )
         html = _html_email(COLOR, "📝", "Gate Pass Request", f"Student: {gatepass.name}",
-                           body, f"{getattr(settings,'SITE_URL','')}/gatepasses/",
+                           body, f"{getattr(settings,'SITE_URL','')}/gatepass/",
                            "View Gate Pass")
         _send(f"📝 Gate Pass Request — {gatepass.name}", html, ph.email)
 
@@ -596,6 +596,6 @@ def send_gatepass_decision_email(gatepass):
         body = _decision_body()
         html = _html_email(COLOR, icon, f"Gate Pass {decision_label}",
                            f"Student: {gatepass.name}", body,
-                           f"{getattr(settings,'SITE_URL','')}/gatepasses/",
+                           f"{getattr(settings,'SITE_URL','')}/gatepass/",
                            "View Gate Pass")
         _send(f"{icon} Gate Pass {decision_label} — {gatepass.name}", html, ct_email)

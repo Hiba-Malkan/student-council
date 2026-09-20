@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from .seo import robots_txt, sitemap_xml
 from clubs.urls import html_urlpatterns as clubs_html_urls
 from competitions.urls import html_urlpatterns as competitions_html_urls
 from rest_framework.decorators import api_view, permission_classes
@@ -20,6 +21,12 @@ def trigger_send_pending_emails(request):
 
 
 urlpatterns = [
+    # ============================================
+    # SEO
+    # ============================================
+    path('robots.txt', robots_txt, name='robots'),
+    path('sitemap.xml', sitemap_xml, name='sitemap'),
+
     # ============================================
     # ADMIN
     # ============================================
