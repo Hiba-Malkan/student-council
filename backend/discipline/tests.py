@@ -10,6 +10,7 @@ class DisciplineApiTests(TestCase):
         self.client = APIClient()
         self.manager = User.objects.create_user(
             'manager', 'manager@example.com', 'password123',
+            is_staff=True,
             role=Role.objects.create(name='Discipline', can_record_discipline=True, can_view_discipline=True),
         )
         self.viewer = User.objects.create_user(

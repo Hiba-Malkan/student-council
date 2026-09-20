@@ -10,7 +10,11 @@ class IsDisciplineManager(permissions.BasePermission):
     def has_permission(self, request, view):
         if not request.user or not request.user.is_authenticated:
             return False
-        
+
+        # Deleting records is restricted to staff only
+        if request.method == 'DELETE':
+            return request.user.is_staff
+
         # Read permissions for users with can_view_discipline
         if request.method in permissions.SAFE_METHODS:
             if request.user.is_staff or request.user.is_superuser:
@@ -29,7 +33,11 @@ class IsDisciplineManager(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if not request.user or not request.user.is_authenticated:
             return False
-        
+
+        # Deleting records is restricted to staff only
+        if request.method == 'DELETE':
+            return request.user.is_staff
+
         # Read permissions for users with can_view_discipline
         if request.method in permissions.SAFE_METHODS:
             if request.user.is_staff or request.user.is_superuser:
