@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.core.mail import send_mail
 from django.conf import settings
+from django.core.cache import cache
 from django.utils import timezone
 from .models import User, Role, PasswordResetOTP, ContactMessage
 from .serializers import (
@@ -15,6 +16,34 @@ from .serializers import (
     ForgotPasswordSerializer, VerifyOTPSerializer, ResetPasswordSerializer,
     ContactMessageSerializer
 )
+
+OTP_MAX_ATTEMPTS = 5
+OTP_LOCK_TTL_SECONDS = 15 * 60
+
+
+def _get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        return x_forwarded_for.split(',')[0].strip()
+    return request.META.get('REMOTE_ADDR', '')
+
+
+def _otp_attempts_key(identifier, ip):
+    return f'otp_attempts:{ip}:{identifier}'
+
+
+def _otp_rate_limited(identifier, ip):
+    return cache.get(_otp_attempts_key(identifier, ip), 0) >= OTP_MAX_ATTEMPTS
+
+
+def _register_otp_failure(identifier, ip):
+    key = _otp_attempts_key(identifier, ip)
+    attempts = cache.get(key, 0) + 1
+    cache.set(key, attempts, OTP_LOCK_TTL_SECONDS)
+
+
+def _clear_otp_rate_limit(identifier, ip):
+    cache.delete(_otp_attempts_key(identifier, ip))
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -124,7 +153,39 @@ class UserViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(id__in=visible_ids)
 
         return queryset
-    
+
+    def create(self, request, *args, **kwargs):
+        if not self._can_manage_users(request.user):
+            return Response(
+                {'error': 'You do not have permission to create users'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if not self._can_manage_users(request.user):
+            return Response(
+                {'error': 'You do not have permission to update users'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        if not self._can_manage_users(request.user):
+            return Response(
+                {'error': 'You do not have permission to update users'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        if not self._can_manage_users(request.user):
+            return Response(
+                {'error': 'You do not have permission to delete users'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().destroy(request, *args, **kwargs)
+
     @action(detail=True, methods=['post'])
     def assign_role(self, request, pk=None):
         """Assign role to user (C-Suite only)"""
@@ -256,6 +317,13 @@ class VerifyOTPView(generics.GenericAPIView):
         
         identifier = serializer.validated_data['identifier']
         otp = serializer.validated_data['otp']
+        ip_address = _get_client_ip(request)
+        
+        if _otp_rate_limited(identifier, ip_address):
+            return Response(
+                {'error': 'Too many attempts. Please request a new OTP.'},
+                status=status.HTTP_429_TOO_MANY_REQUESTS
+            )
         
         try:
             user = User.objects.get(email=identifier)
@@ -263,17 +331,21 @@ class VerifyOTPView(generics.GenericAPIView):
             try:
                 user = User.objects.get(username=identifier)
             except User.DoesNotExist:
+                _register_otp_failure(identifier, ip_address)
                 return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
             otp_obj = PasswordResetOTP.objects.get(user=user, otp=otp, is_used=False)
             
             if not otp_obj.is_valid():
+                _register_otp_failure(identifier, ip_address)
                 return Response({'error': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
             
+            _clear_otp_rate_limit(identifier, ip_address)
             return Response({'message': 'OTP verified successfully'}, status=status.HTTP_200_OK)
             
         except PasswordResetOTP.DoesNotExist:
+            _register_otp_failure(identifier, ip_address)
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -288,6 +360,13 @@ class ResetPasswordView(generics.GenericAPIView):
         identifier = serializer.validated_data['identifier']
         otp = serializer.validated_data['otp']
         new_password = serializer.validated_data['new_password']
+        ip_address = _get_client_ip(request)
+        
+        if _otp_rate_limited(identifier, ip_address):
+            return Response(
+                {'error': 'Too many attempts. Please request a new OTP.'},
+                status=status.HTTP_429_TOO_MANY_REQUESTS
+            )
         
         try:
             user = User.objects.get(email=identifier)
@@ -295,21 +374,25 @@ class ResetPasswordView(generics.GenericAPIView):
             try:
                 user = User.objects.get(username=identifier)
             except User.DoesNotExist:
+                _register_otp_failure(identifier, ip_address)
                 return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
             otp_obj = PasswordResetOTP.objects.get(user=user, otp=otp, is_used=False)
             
             if not otp_obj.is_valid():
+                _register_otp_failure(identifier, ip_address)
                 return Response({'error': 'OTP has expired'}, status=status.HTTP_400_BAD_REQUEST)
             
             user.set_password(new_password)
             user.save()
             otp_obj.mark_as_used()
+            _clear_otp_rate_limit(identifier, ip_address)
             
             return Response({'message': 'Password has been reset successfully'}, status=status.HTTP_200_OK)
             
         except PasswordResetOTP.DoesNotExist:
+            _register_otp_failure(identifier, ip_address)
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
 

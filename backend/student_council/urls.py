@@ -15,6 +15,11 @@ from rest_framework.response import Response
 @permission_classes([IsAuthenticated])
 def trigger_send_pending_emails(request):
     """Manually flush the pending email queue — useful for testing."""
+    if not (request.user.is_staff or request.user.is_superuser or request.user.is_c_suite):
+        return Response(
+            {'error': 'Only staff or C-Suite can flush the email queue'},
+            status=403
+        )
     from notifications.tasks import send_pending_email_notifications
     result = send_pending_email_notifications()
     return Response({'result': result})

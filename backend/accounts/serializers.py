@@ -41,7 +41,10 @@ class UserSerializer(serializers.ModelSerializer):
             'is_class_rep', 'show_in_duty_roster', 'is_visible_in_duty_roster',
             'date_joined', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['date_joined', 'created_at', 'updated_at']
+        read_only_fields = [
+            'date_joined', 'created_at', 'updated_at',
+            'is_active', 'is_staff', 'is_superuser', 'is_phase_head',
+        ]
         extra_kwargs = {
             'password': {'write_only': True}
         }

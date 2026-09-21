@@ -15,6 +15,14 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-this-in-produc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
+# Fail closed: never allow the publicly-known default secret key outside development.
+if not DEBUG and SECRET_KEY == 'django-insecure-change-this-in-production':
+    from django.core.exceptions import ImproperlyConfigured
+    raise ImproperlyConfigured(
+        'SECRET_KEY is still set to the insecure development default. '
+        'Set a real SECRET_KEY via environment config before running in production.'
+    )
+
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS', 
     default='localhost,127.0.0.1', 
