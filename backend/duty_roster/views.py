@@ -75,8 +75,10 @@ class DutyViewSet(viewsets.ModelViewSet):
         
         assigned_to_id = self.request.query_params.get('assigned_to')
         if assigned_to_id:
-            queryset = queryset.filter(assigned_to_id=assigned_to_id)
-            return queryset.order_by('-date', '-created_at')
+            if self._can_edit(self.request.user):
+                queryset = queryset.filter(assigned_to_id=assigned_to_id)
+                return queryset.order_by('-date', '-created_at')
+            return queryset.filter(assigned_to=self.request.user).order_by('-date', '-created_at')
         
         if not self._can_edit(self.request.user):
             queryset = queryset.filter(assigned_to=self.request.user)
@@ -188,7 +190,10 @@ class DutyViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def today(self, request):
         today = timezone.now().date()
-        duties = Duty.objects.filter(date=today)
+        if self._can_edit(request.user):
+            duties = Duty.objects.filter(date=today)
+        else:
+            duties = Duty.objects.filter(date=today, assigned_to=request.user)
         serializer = self.get_serializer(duties, many=True)
         return Response(serializer.data)
     

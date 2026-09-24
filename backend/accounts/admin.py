@@ -36,6 +36,7 @@ class RoleAdmin(admin.ModelAdmin):
                 'can_add_clubs',
                 'can_manage_competitions',
                 'can_manage_gatepass',
+                'can_manage_feedback',
             )
         }),
         ('Timestamps', {

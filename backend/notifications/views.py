@@ -71,8 +71,12 @@ class NotificationViewSet(viewsets.ModelViewSet):
         """Snooze notification"""
         notification = self.get_object()
         
-        # Default snooze: 1 hour
-        snooze_duration = request.data.get('duration_hours', 1)
+        # Default snooze: 1 hour (bounded to prevent absurd/overflow values)
+        try:
+            snooze_duration = int(request.data.get('duration_hours', 1))
+        except (TypeError, ValueError):
+            snooze_duration = 1
+        snooze_duration = max(1, min(snooze_duration, 168))
         notification.is_snoozed = True
         notification.snoozed_until = timezone.now() + timedelta(hours=snooze_duration)
         notification.save()

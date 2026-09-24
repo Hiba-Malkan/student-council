@@ -19,6 +19,7 @@ class Role(models.Model):
     can_add_clubs = models.BooleanField(default=False)
     can_manage_competitions = models.BooleanField(default=False)
     can_manage_gatepass = models.BooleanField(default=False)
+    can_manage_feedback = models.BooleanField(default=False)
 
     # Duty Roster visibility — default for all users with this role
     show_in_duty_roster = models.BooleanField(

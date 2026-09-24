@@ -95,6 +95,24 @@ class CanScheduleMeetings(permissions.BasePermission):
         return False
 
 
+class CanManageMeetings(permissions.BasePermission):
+    """Users with any role other than a normal student can manage meeting
+    content: create meetings, add agendas, upload Minutes of Meeting."""
+
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        
+        if request.user.is_staff or request.user.is_superuser:
+            return True
+        
+        if getattr(request.user, 'is_c_suite', False):
+            return True
+        
+        role = getattr(request.user, 'role', None)
+        return bool(role) and not role.is_normal_student
+
+
 class CanRecordDiscipline(permissions.BasePermission):
     """Permission to record discipline offences"""
     

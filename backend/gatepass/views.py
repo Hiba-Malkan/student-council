@@ -41,7 +41,43 @@ class GatePassViewSet(viewsets.ModelViewSet):
     
     def _can_manage_gatepass(self, user):
         """Check if the user has the permission to manage gate passes."""
-        return user.role and user.role.can_manage_gatepass
+        return (
+            user.is_staff or user.is_superuser or
+            (user.role and user.role.can_manage_gatepass)
+        )
+
+    def _gatepass_modifiable(self, request, instance):
+        """Non-managers cannot alter a gate pass once it has been processed."""
+        if not self._can_manage_gatepass(request.user):
+            return instance.status not in ['approved', 'denied']
+        return True
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if not self._gatepass_modifiable(request, instance):
+            return Response(
+                {'error': 'This gate pass has already been processed and cannot be modified.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if not self._gatepass_modifiable(request, instance):
+            return Response(
+                {'error': 'This gate pass has already been processed and cannot be modified.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if not self._gatepass_modifiable(request, instance):
+            return Response(
+                {'error': 'This gate pass has already been processed and cannot be deleted.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().destroy(request, *args, **kwargs)
     
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
