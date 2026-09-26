@@ -116,7 +116,7 @@ def send_pending_email_notifications():
 
 @shared_task
 def send_morning_meeting_reminders():
-    """Create MEETING_TODAY notifications for all today's meetings."""
+    """Email the morning meeting reminder to all of today's meetings' attendees."""
     today = timezone.now().date()
     meetings = Meeting.objects.filter(date=today, is_cancelled=False)
 
@@ -126,37 +126,19 @@ def send_morning_meeting_reminders():
         Q(show_in_duty_roster__isnull=True, role__show_in_duty_roster=True)
     ).distinct())
 
-    created = 0
+    sent = 0
 
     for meeting in meetings:
         if getattr(meeting, 'morning_reminder_sent', False):
             continue
         send_meeting_today_email(meeting, council)
-
-        # Persist in-app notifications
-        for member in council:
-            Notification.objects.get_or_create(
-                recipient=member,
-                notification_type='MEETING_TODAY',
-                defaults=dict(
-                    title=f"Meeting Today: {meeting.title}",
-                    message=(
-                        f"You have a meeting today: {meeting.title}\n"
-                        f"Time: {getattr(meeting,'time','TBD')}\n"
-                        f"Location: {meeting.location or 'TBD'}"
-                    ),
-                    action_url=f"/meetings/{meeting.id}/",
-                    send_email=False,   # already sent directly above
-                    email_sent=True,
-                )
-            )
-            created += 1
+        sent += len(council)
 
         # Mark so Beat doesn't re-fire if task runs twice
         if hasattr(meeting, 'morning_reminder_sent'):
             Meeting.objects.filter(pk=meeting.pk).update(morning_reminder_sent=True)
 
-    return f"Meeting reminders sent for {created} attendees"
+    return f"Meeting reminders sent for {sent} attendees"
 
 
 # ---------------------------------------------------------------------------
@@ -167,7 +149,7 @@ def send_morning_meeting_reminders():
 def send_daily_discipline_report_task():
     """
     Send a summary of students with 3+ offenses who had activity yesterday
-    to all phase heads.
+    to all phase heads and superusers.
     """
     yesterday = timezone.now().date() - timedelta(days=1)
 

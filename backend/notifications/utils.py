@@ -1,6 +1,7 @@
 import logging
 from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
+from django.db.models import Q
 from django.utils.html import strip_tags
 from django.utils import timezone
 
@@ -68,6 +69,14 @@ def _detail_box(color, rows):
 def _emails(users):
     """Extract email addresses from a queryset / list of User objects."""
     return [u.email for u in users]
+
+
+def discipline_alert_recipients():
+    """Active phase heads and superusers — the people who action discipline alerts."""
+    return User.objects.filter(
+        Q(is_phase_head=True) | Q(is_superuser=True),
+        is_active=True,
+    ).distinct()
 
 
 def _send(subject, html, recipients):
@@ -297,7 +306,7 @@ def send_competition_deadline_email(competition, days_remaining, recipients):
 
 
 # ===========================================================================
-# 9. DISCIPLINE WARNING  (3+ offenses — to staff)
+# 9. DISCIPLINE WARNING  (3+ offenses — to phase heads & superusers)
 # ===========================================================================
 def send_discipline_warning_email(record, offense_log):
     """
@@ -305,12 +314,12 @@ def send_discipline_warning_email(record, offense_log):
     offense_log – the triggering OffenseLog
 
     NOTE: This is not called automatically anymore (no per-offense emails).
-    The only discipline email is the daily report to staff. Kept here so it can
-    be used manually if needed.
+    The only discipline email is the daily report to phase heads. Kept here so
+    it can be used manually if needed.
     """
     COLOR = "#8a1c1c"
-    staff = User.objects.filter(is_staff=True, is_active=True)
-    if not staff.exists():
+    recipients = discipline_alert_recipients()
+    if not recipients.exists():
         return
 
     rows = [
@@ -323,7 +332,7 @@ def send_discipline_warning_email(record, offense_log):
     if offense_log.reason:
         rows.append(("Reason", offense_log.reason))
 
-    for st in staff:
+    for st in recipients:
         body = (
             f"<p>A student has reached <strong>{record.offense_count} offenses</strong> and requires your attention:</p>"
             + _detail_box(COLOR, rows)
@@ -337,7 +346,7 @@ def send_discipline_warning_email(record, offense_log):
 
 
 # ===========================================================================
-# 10. DAILY DISCIPLINE SUMMARY  (to all staff only)
+# 10. DAILY DISCIPLINE SUMMARY  (to phase heads & superusers only)
 # ===========================================================================
 def send_daily_discipline_report(students_qs, report_date):
     """
@@ -345,8 +354,8 @@ def send_daily_discipline_report(students_qs, report_date):
     report_date – date object
     """
     COLOR = "#8a1c1c"
-    staff = User.objects.filter(is_staff=True, is_active=True)
-    if not staff.exists():
+    recipients = discipline_alert_recipients()
+    if not recipients.exists():
         return
 
     # Build report rows
@@ -393,7 +402,7 @@ def send_daily_discipline_report(students_qs, report_date):
 
     date_str = report_date.strftime("%B %d, %Y")
 
-    for st in staff:
+    for st in recipients:
         body = (
             f"<p>Here is the daily discipline summary for <strong>{date_str}</strong>. "
             f"The students listed below reached 3 or more offenses:</p>"

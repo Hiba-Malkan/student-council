@@ -22,6 +22,9 @@ class NotificationEmailTests(TestCase):
         self.phase_head = User.objects.create_user(
             'head', 'head@example.com', 'password123', first_name='Head', is_phase_head=True
         )
+        self.superuser = User.objects.create_superuser(
+            'root', 'root@example.com', 'password123', first_name='Root'
+        )
         self.staff = User.objects.create_user(
             'staff', 'staff@example.com', 'password123', first_name='Eff', is_staff=True
         )
@@ -71,8 +74,9 @@ class NotificationEmailTests(TestCase):
 
         recipients = [call.args[-1] for call in send.call_args_list]
         self.assertIn(self.user.email, recipients)
-        self.assertIn(self.staff.email, recipients)
-        self.assertNotIn(self.phase_head.email, recipients)
+        self.assertIn(self.phase_head.email, recipients)
+        self.assertIn(self.superuser.email, recipients)
+        self.assertNotIn(self.staff.email, recipients)
         self.assertGreaterEqual(send.call_count, 10)
 
     @patch('notifications.utils._send')
@@ -166,7 +170,7 @@ class NotificationTaskAndApiTests(TestCase):
         )
 
         self.assertEqual(tasks.send_morning_meeting_reminders(), 'Meeting reminders sent for 1 attendees')
-        self.assertTrue(Notification.objects.filter(recipient=council_user, notification_type='MEETING_TODAY').exists())
+        self.assertFalse(Notification.objects.filter(notification_type='MEETING_TODAY').exists())
         meeting.refresh_from_db()
         self.assertTrue(meeting.morning_reminder_sent)
         self.assertEqual(tasks.send_morning_meeting_reminders(), 'Meeting reminders sent for 0 attendees')
