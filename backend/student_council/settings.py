@@ -247,8 +247,11 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'\
 
-# Security settings — driven by env, defaulting to on whenever DEBUG is off.
-SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=not DEBUG, cast=bool)
+# Security settings — driven by env. SECURE_SSL_REDIRECT is opt-in rather than
+# defaulting on with DEBUG=False: TLS terminates upstream of this app, so the
+# proxy hands us plain HTTP and redirecting would loop. It also has to stay off
+# under test, where the test client speaks http.
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
 SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=not DEBUG, cast=bool)
 CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=not DEBUG, cast=bool)
 SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=0, cast=int)
