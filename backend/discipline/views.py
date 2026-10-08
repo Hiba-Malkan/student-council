@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.pagination import PageNumberPagination
 from .models import DisciplineRecord, OffenseLog  # Added OffenseLog
+from .audit import clear_current_user, set_current_user
 from .serializers import DisciplineRecordSerializer, OffenseLogSerializer
 from .permissions import IsDisciplineManager
 
@@ -24,6 +25,8 @@ class OffenseLogViewSet(viewsets.ModelViewSet):
         """When deleting an offense log, decrease the parent record's offense_count or delete the record"""
         record = instance.record
         
+        set_current_user(self.request.user)
+        
         # Delete the offense log first
         instance.delete()
         
@@ -37,6 +40,8 @@ class OffenseLogViewSet(viewsets.ModelViewSet):
             # Update the offense count to match the actual number of logs
             record.offense_count = remaining_offenses
             record.save()
+        
+        clear_current_user()
 
 
 class DisciplineRecordViewSet(viewsets.ModelViewSet):

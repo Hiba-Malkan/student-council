@@ -1,7 +1,9 @@
+import re
+from datetime import date, datetime, timedelta
+
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
-from datetime import timedelta
 
 from meetings.models import Meeting
 from duty_roster.models import Duty
@@ -36,6 +38,20 @@ def on_meeting_save(sender, instance, created, **kwargs):
 # into 2-week chunks. No daily reminder notifications.
 # ---------------------------------------------------------------------------
 
+# Chunks are laid out on a fixed 14-day grid rather than anchored to the first
+# date in whatever batch happens to arrive. Anchoring to arrival time made the
+# window (and therefore the notification title) shift depending on WHEN duties
+# were assigned, so the same date range could produce several notifications.
+_CHUNK_EPOCH = date(2024, 1, 1)
+_CHUNK_DAYS = 14
+
+
+def _chunk_bounds(duty_date):
+    """Return the (start, end) of the 14-day grid window containing duty_date."""
+    start = _CHUNK_EPOCH + timedelta(days=((duty_date - _CHUNK_EPOCH).days // _CHUNK_DAYS) * _CHUNK_DAYS)
+    return start, start + timedelta(days=_CHUNK_DAYS)
+
+
 @receiver(post_save, sender=Duty)
 def on_duty_assigned(sender, instance, created, **kwargs):
     if not created:
@@ -46,66 +62,77 @@ def on_duty_assigned(sender, instance, created, **kwargs):
     subsidiary = (f", {instance.subsidiary_area}" if getattr(instance, 'subsidiary_area', None) else "")
     instructions = getattr(instance, 'instructions', None)
 
-    # Gather the whole assignment batch for this person + duty type
-    batch = list(Duty.objects.filter(
+    # Every duty for this person + duty type inside this window, not just the
+    # ones created in the last hour. The old time-based batch window meant a
+    # duty assigned the next day started a fresh chunk and emailed again.
+    chunk_start, chunk_end = _chunk_bounds(instance.date)
+    chunk_duties = list(Duty.objects.filter(
         assigned_to=user,
         duty_type_name=instance.duty_type_name,
-        created_at__gte=timezone.now() - timedelta(hours=1),
+        date__gte=chunk_start,
+        date__lt=chunk_end,
     ).order_by('date'))
 
-    if not batch:
+    if not chunk_duties:
         return
 
-    # Group the batch into 2-week chunks measured from the first assigned date.
-    # Each chunk becomes its own email so a single email never spans >2 weeks.
-    anchor = batch[0].date
-    chunks = {}
-    for duty in batch:
-        index = (duty.date - anchor).days // 14
-        chunks.setdefault(index, []).append(duty)
+    # Stable title keyed on the fixed window start, so every duty landing in
+    # this window updates the SAME notification.
+    title = f"Duty Assigned — {instance.duty_type_name} (from {chunk_start.strftime('%B %d, %Y')})"
+    dates = [d.date for d in chunk_duties]
 
-    for index, chunk_duties in chunks.items():
-        chunk_duties.sort(key=lambda d: d.date)
-        first = chunk_duties[0].date
+    existing = Notification.objects.filter(
+        recipient=user,
+        notification_type='DUTY_ASSIGNED',
+        title=title,
+    )
 
-        # Stable title keyed on the 2-week window start so every duty added to
-        # this chunk updates the SAME pending email (no duplicate emails).
-        chunk_start = anchor + timedelta(days=index * 14)
-        title = f"Duty Assigned — {instance.duty_type_name} (from {chunk_start.strftime('%B %d, %Y')})"
-        pending = Notification.objects.filter(
-            recipient=user,
-            notification_type='DUTY_ASSIGNED',
-            title=title,
-            send_email=True,
-            email_sent=False,
-        ).first()
-        notification = pending or Notification.objects.create(
-            recipient=user,
-            notification_type='DUTY_ASSIGNED',
-            title=title,
-            message="",
-            action_url="/duty-roster/",
-            send_email=True,
+    # Dates this recipient has already been told about in this window. If the
+    # email already went out and covers every date, there is nothing to say —
+    # creating a row here is what produced thousands of unread no-ops.
+    already_covered = set()
+    pending = None
+    for notification in existing:
+        if not notification.email_sent:
+            if pending is None:
+                pending = notification
+            continue
+        for covered in re.findall(r'[A-Z][a-z]+ \d{2}, \d{4}', notification.message):
+            try:
+                already_covered.add(datetime.strptime(covered, '%B %d, %Y').date())
+            except ValueError:
+                continue
+
+    if pending is None and all(d in already_covered for d in dates):
+        return
+
+    notification = pending or Notification.objects.create(
+        recipient=user,
+        notification_type='DUTY_ASSIGNED',
+        title=title,
+        message="",
+        action_url="/duty-roster/",
+        send_email=True,
+    )
+
+    if len(chunk_duties) > 1:
+        dates_str = ", ".join(d.strftime("%B %d, %Y") for d in dates)
+        message = (
+            f"You have been assigned {instance.duty_type_name} duty on "
+            f"the following dates:\n{dates_str}\n"
+            f"Location: {location}{subsidiary}"
         )
+    else:
+        message = (
+            f"You have been assigned {instance.duty_type_name} duty on "
+            f'{dates[0].strftime("%B %d, %Y")}.\n'
+            f"Location: {location}{subsidiary}"
+        )
+    if instructions:
+        message += f"\n\nInstructions:\n{instructions}"
 
-        if len(chunk_duties) > 1:
-            dates_str = ", ".join(d.date.strftime("%B %d, %Y") for d in chunk_duties)
-            message = (
-                f"You have been assigned {instance.duty_type_name} duty on "
-                f"the following dates:\n{dates_str}\n"
-                f"Location: {location}{subsidiary}"
-            )
-        else:
-            message = (
-                f"You have been assigned {instance.duty_type_name} duty on "
-                f'{first.strftime("%B %d, %Y")}.\n'
-                f"Location: {location}{subsidiary}"
-            )
-        if instructions:
-            message += f"\n\nInstructions:\n{instructions}"
-
-        notification.message = message
-        notification.save(update_fields=['message'])
+    notification.message = message
+    notification.save(update_fields=['message'])
 
 
 # ---------------------------------------------------------------------------

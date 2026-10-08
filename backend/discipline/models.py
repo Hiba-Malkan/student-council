@@ -1,6 +1,7 @@
 # discipline/models.py
 from django.db import models
 from django.core.validators import RegexValidator
+from django.utils import timezone
 from accounts.models import User
 
 
@@ -89,3 +90,53 @@ class OffenseLog(models.Model):
     
     def __str__(self):
         return f"{self.record.dno} - {self.get_category_display()} on {self.created_at.date()}"
+
+
+class DeletionLog(models.Model):
+    """Audit trail of deleted discipline records and offense logs."""
+    OBJECT_TYPE_CHOICES = [
+        ('RECORD', 'Discipline Record'),
+        ('OFFENSE', 'Offense Log'),
+    ]
+    
+    object_type = models.CharField(
+        max_length=10,
+        choices=OBJECT_TYPE_CHOICES,
+        default='OFFENSE'
+    )
+    
+    # Snapshot of the deleted object
+    dno = models.CharField(max_length=9, blank=True)
+    student_name = models.CharField(max_length=200, blank=True)
+    class_section = models.CharField(max_length=10, blank=True)
+    offense_count = models.PositiveIntegerField(null=True, blank=True)
+    category = models.CharField(
+        max_length=20,
+        choices=OffenseLog.CATEGORY_CHOICES,
+        blank=True
+    )
+    reason = models.TextField(blank=True)
+    
+    # Who / when / why
+    deleted_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='deletion_logs'
+    )
+    deleted_at = models.DateTimeField(default=timezone.now)
+    note = models.TextField(
+        blank=True,
+        help_text="Optional context for this deletion"
+    )
+    
+    class Meta:
+        ordering = ['-deleted_at']
+        indexes = [
+            models.Index(fields=['deleted_at']),
+            models.Index(fields=['dno']),
+        ]
+    
+    def __str__(self):
+        return f"{self.object_type} {self.dno or self.student_name} deleted on {self.deleted_at.date()}"

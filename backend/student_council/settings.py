@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'duty_roster',
     'meetings',
     'announcements',
-    'discipline',
+    'discipline.apps.DisciplineConfig',
     'notifications',
     'clubs',
     'competitions',
@@ -65,6 +65,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'discipline.middleware.DisciplineAuditMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

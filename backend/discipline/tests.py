@@ -2,7 +2,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 
 from accounts.models import Role, User
-from .models import DisciplineRecord, OffenseLog
+from .models import DeletionLog, DisciplineRecord, OffenseLog
 
 
 class DisciplineApiTests(TestCase):
@@ -59,3 +59,39 @@ class DisciplineApiTests(TestCase):
         }, format='json')
         self.assertEqual(response.status_code, 400)
         self.assertIn('dno', response.data)
+
+
+class DeletionLogTests(TestCase):
+    def setUp(self):
+        self.manager = User.objects.create_user(
+            'manager', 'manager@example.com', 'password123',
+            is_staff=True,
+            role=Role.objects.create(name='Discipline', can_record_discipline=True, can_view_discipline=True),
+        )
+        self.record = DisciplineRecord.objects.create(
+            student_name='Alex', class_section='10A', dno='D1234', offense_count=1, created_by=self.manager,
+        )
+
+    def test_deleting_offense_log_records_snapshot(self):
+        log = OffenseLog.objects.create(record=self.record, category='LATE', reason='Late to class')
+        log.delete()
+        entry = DeletionLog.objects.get(object_type='OFFENSE')
+        self.assertEqual(entry.dno, 'D1234')
+        self.assertEqual(entry.student_name, 'Alex')
+        self.assertEqual(entry.category, 'LATE')
+        self.assertEqual(entry.reason, 'Late to class')
+
+    def test_deleting_record_records_snapshot(self):
+        self.record.delete()
+        entry = DeletionLog.objects.get(object_type='RECORD')
+        self.assertEqual(entry.dno, 'D1234')
+        self.assertEqual(entry.offense_count, 1)
+
+    def test_api_delete_captures_deleted_by(self):
+        log = OffenseLog.objects.create(record=self.record, category='LATE')
+        client = APIClient()
+        client.force_authenticate(self.manager)
+        response = client.delete(f'/api/discipline/offense-logs/{log.id}/')
+        self.assertEqual(response.status_code, 204)
+        entry = DeletionLog.objects.get(object_type='OFFENSE')
+        self.assertEqual(entry.deleted_by, self.manager)

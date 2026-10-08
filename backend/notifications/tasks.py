@@ -71,9 +71,9 @@ _PREF_MAP = {
     'DUTY_MORNING':           'email_for_duties',
     'ANNOUNCEMENT_NEW':       'email_for_announcements',
     'ANNOUNCEMENT_IMPORTANT': 'email_for_announcements',
-    'COMPETITION_NEW':        'email_for_competitions',  # field added below
-    'COMPETITION_DEADLINE':   'email_for_competitions',
-    'COMPETITION_STARTING':   'email_for_competitions',
+    'COMPETITION_NEW':        'email_for_projects',
+    'COMPETITION_DEADLINE':   'email_for_projects',
+    'COMPETITION_STARTING':   'email_for_projects',
     'DISCIPLINE_WARNING':     'email_for_discipline',
     'DISCIPLINE_DAILY_REPORT':'email_for_discipline',
     'DISCIPLINE_NEW_OFFENSE': 'email_for_discipline',

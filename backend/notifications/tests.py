@@ -2,6 +2,7 @@ from datetime import date, timedelta
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from django.db import models
 from django.test import TestCase
 from django.utils import timezone
 from rest_framework.test import APIClient
@@ -153,6 +154,36 @@ class NotificationTaskAndApiTests(TestCase):
         self.assertTrue(opted_out.email_sent)
         self.assertEqual(sender.call_count, 2)
 
+    def test_every_mapped_notification_type_resolves_to_a_real_preference_field(self):
+        """Regression: _PREF_MAP pointed competition types at a field that does
+        not exist. getattr's default swallowed the miss, so competition emails
+        silently ignored opt-outs instead of erroring."""
+        real = {
+            f.name for f in NotificationPreference._meta.get_fields()
+            if isinstance(f, models.BooleanField)
+        }
+        self.assertEqual(
+            set(tasks._PREF_MAP.values()) - real,
+            set(),
+            "_PREF_MAP references preference fields that don't exist",
+        )
+
+    @patch('notifications.tasks.send_notification_email')
+    def test_competition_notifications_honour_the_projects_opt_out(self, sender):
+        """Regression: competition types mapped to a nonexistent field, so this
+        opt-out was ignored and the email went out anyway."""
+        NotificationPreference.objects.create(user=self.user, email_for_projects=False)
+        notification = Notification.objects.create(
+            recipient=self.user, notification_type='COMPETITION_NEW',
+            title='Comp', message='x', send_email=True,
+        )
+
+        tasks.send_pending_email_notifications()
+
+        notification.refresh_from_db()
+        self.assertTrue(notification.email_sent)  # marked done as skipped
+        sender.assert_not_called()
+
     def test_cleanup_old_notifications(self):
         old = Notification.objects.create(
             recipient=self.user, notification_type='GENERAL', title='Old', message='old', is_read=True,
@@ -180,3 +211,111 @@ class NotificationTaskAndApiTests(TestCase):
     @patch('notifications.tasks.send_morning_meeting_reminders', return_value='meeting')
     def test_daily_notification_task_combines_subtask_results(self, *_mocks):
         self.assertEqual(tasks.send_daily_notifications(), 'meeting | pending')
+
+
+class DutyNotificationDedupTests(TestCase):
+    """Regression tests: one notification per 14-day window per person/type."""
+
+    def setUp(self):
+        self.user = User.objects.create_user('sam', 'sam@example.com', 'password123')
+        self.duty_type = 'Morning'
+
+    def _duty(self, day):
+        return Duty.objects.create(
+            duty_type_name=self.duty_type, assigned_to=self.user, date=day, location='Gate'
+        )
+
+    def _window_notifications(self):
+        return Notification.objects.filter(
+            recipient=self.user, notification_type='DUTY_ASSIGNED'
+        )
+
+    def test_duties_in_same_window_reuse_one_notification(self):
+        from .signals import _chunk_bounds
+
+        start, _ = _chunk_bounds(date(2026, 3, 4))
+        self._duty(start)
+        self._duty(start + timedelta(days=3))
+        self._duty(start + timedelta(days=7))
+
+        self.assertEqual(self._window_notifications().count(), 1)
+        message = self._window_notifications().first().message
+        for offset in (0, 3, 7):
+            self.assertIn((start + timedelta(days=offset)).strftime('%B %d, %Y'), message)
+
+    def test_duties_assigned_on_different_days_still_share_a_window(self):
+        """The original bug: the window was anchored to arrival time, so a duty
+        assigned a day later landed in a different window and created a
+        second notification for the same date range."""
+        from .signals import _chunk_bounds
+
+        start, _ = _chunk_bounds(date(2026, 3, 4))
+        self._duty(start)
+
+        # Same logical window, but created much later than the 1-hour cutoff
+        # the old batch query used.
+        later = start + timedelta(days=5)
+        self._duty(later)
+        Duty.objects.filter(date=later).update(
+            created_at=timezone.now() - timedelta(days=3)
+        )
+
+        self.assertEqual(self._window_notifications().count(), 1)
+        message = self._window_notifications().first().message
+        self.assertIn(start.strftime('%B %d, %Y'), message)
+        self.assertIn(later.strftime('%B %d, %Y'), message)
+
+    def test_separate_windows_get_separate_notifications(self):
+        from .signals import _chunk_bounds
+
+        start, _ = _chunk_bounds(date(2026, 3, 4))
+        self._duty(start)
+        self._duty(start + timedelta(days=20))
+
+        self.assertEqual(self._window_notifications().count(), 2)
+
+    def test_already_sent_dates_do_not_regenerate_a_notification(self):
+        from .signals import _chunk_bounds
+
+        start, _ = _chunk_bounds(date(2026, 3, 4))
+        self._duty(start)
+
+        # Simulate the 10-minute beat job having sent it.
+        notification = self._window_notifications().first()
+        notification.email_sent = True
+        notification.email_sent_at = timezone.now()
+        notification.save(update_fields=['email_sent', 'email_sent_at'])
+
+        # Remove and re-add the same date. The unique_together constraint on
+        # (assigned_to, date, duty_type_name) blocks a second row, so recreating
+        # is the only way to re-fire the signal for a date already emailed. The
+        # recipient must not be told about it twice.
+        Duty.objects.filter(date=start).delete()
+        self._duty(start)
+
+        self.assertEqual(self._window_notifications().count(), 1)
+
+        # A different date in the same window, created after the send. The old
+        # code matched only on email_sent=False, so the already-sent row fell
+        # out of the lookup and a duplicate row was created alongside it.
+        self._duty(start + timedelta(days=1))
+
+        self.assertEqual(self._window_notifications().count(), 2)
+
+    def test_new_date_in_sent_window_creates_one_more_notification(self):
+        from .signals import _chunk_bounds
+
+        start, _ = _chunk_bounds(date(2026, 3, 4))
+        self._duty(start)
+
+        notification = self._window_notifications().first()
+        notification.email_sent = True
+        notification.email_sent_at = timezone.now()
+        notification.save(update_fields=['email_sent', 'email_sent_at'])
+
+        self._duty(start + timedelta(days=6))
+
+        self.assertEqual(self._window_notifications().count(), 2)
+        latest = self._window_notifications().first()
+        self.assertFalse(latest.email_sent)
+        self.assertIn((start + timedelta(days=6)).strftime('%B %d, %Y'), latest.message)

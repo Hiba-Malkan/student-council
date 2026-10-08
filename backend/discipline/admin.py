@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import DisciplineRecord, OffenseLog
+from .models import DeletionLog, DisciplineRecord, OffenseLog
 
 
 @admin.register(DisciplineRecord)
@@ -43,5 +43,23 @@ class OffenseLogAdmin(admin.ModelAdmin):
         ('Metadata', {
             'fields': ('created_at',),
             'classes': ('collapse',)
+        }),
+    )
+
+@admin.register(DeletionLog)
+class DeletionLogAdmin(admin.ModelAdmin):
+    list_display = ['student_name', 'dno', 'class_section', 'object_type', 'category', 'deleted_by', 'deleted_at']
+    list_filter = ['object_type', 'category', 'deleted_at', 'deleted_by']
+    search_fields = ['student_name', 'dno', 'class_section', 'reason', 'note', 'deleted_by__username']
+    
+    fieldsets = (
+        ('What Was Deleted', {
+            'fields': ('object_type', 'dno', 'student_name', 'class_section', 'offense_count')
+        }),
+        ('Offense Details', {
+            'fields': ('category', 'reason'),
+        }),
+        ('Deletion Info', {
+            'fields': ('deleted_by', 'deleted_at', 'note'),
         }),
     )
