@@ -48,9 +48,29 @@ class OffenseLogAdmin(admin.ModelAdmin):
 
 @admin.register(DeletionLog)
 class DeletionLogAdmin(admin.ModelAdmin):
+    HIDDEN_EXCEPT_OWNER = 'Hiba_Khan'
+
     list_display = ['student_name', 'dno', 'class_section', 'object_type', 'category', 'deleted_by', 'deleted_at']
     list_filter = ['object_type', 'category', 'deleted_at', 'deleted_by']
     search_fields = ['student_name', 'dno', 'class_section', 'reason', 'note', 'deleted_by__username']
+
+    def _is_owner(self, request):
+        return request.user.is_authenticated and request.user.username == self.HIDDEN_EXCEPT_OWNER
+
+    def has_module_permission(self, request):
+        return self._is_owner(request)
+
+    def has_view_permission(self, request, obj=None):
+        return self._is_owner(request)
+
+    def has_change_permission(self, request, obj=None):
+        return self._is_owner(request)
+
+    def has_add_permission(self, request):
+        return self._is_owner(request)
+
+    def has_delete_permission(self, request, obj=None):
+        return self._is_owner(request)
     
     fieldsets = (
         ('What Was Deleted', {
